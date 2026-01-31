@@ -57,16 +57,20 @@ const quarters: { id: Quarter; label: string; description: string }[] = [
 
 const healthConfig = {
   active: {
-    color: "bg-green-100 text-green-700 border-green-200 hover:bg-green-200",
+    color: "bg-success/15 text-success border-success/30 hover:bg-success/25",
     icon: CheckCircle2,
     label: "Ativo",
   },
   warning: {
-    color: "bg-yellow-100 text-yellow-700 border-yellow-200 hover:bg-yellow-200",
+    color: "bg-amber-500/15 text-amber-500 border-amber-500/30 hover:bg-amber-500/25",
     icon: AlertTriangle,
     label: "Atenção",
   },
-  risk: { color: "bg-red-100 text-red-700 border-red-200 hover:bg-red-200", icon: AlertOctagon, label: "Risco" },
+  risk: { 
+    color: "bg-destructive/15 text-destructive border-destructive/30 hover:bg-destructive/25", 
+    icon: AlertOctagon, 
+    label: "Risco" 
+  },
 };
 
 export default function CRM() {
@@ -287,7 +291,7 @@ export default function CRM() {
                               </div>
                             </CardContent>
 
-                            <CardFooter className="p-4 pt-3 text-xs text-muted-foreground flex justify-between items-center border-t mt-3 bg-muted/10">
+                            <CardFooter className="p-4 pt-3 text-xs text-muted-foreground flex justify-between items-center border-t border-border/50 mt-3 bg-muted/20">
                               <span className="flex items-center gap-1">
                                 <Calendar className="h-3 w-3" />
                                 {journey.start_date
@@ -300,7 +304,7 @@ export default function CRM() {
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="h-6 w-6 hover:bg-green-100 hover:text-green-700 transition-colors"
+                                  className="h-6 w-6 hover:bg-success/20 hover:text-success transition-colors"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     moveQuarter.mutate({

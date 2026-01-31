@@ -306,21 +306,21 @@ export function CrmCustomerSheet({ journeyId, open, onOpenChange }: CrmCustomerS
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-xl flex flex-col h-full bg-white">
-        <SheetHeader className="pb-4 border-b">
+      <SheetContent className="w-full sm:max-w-xl flex flex-col h-full bg-card border-border">
+        <SheetHeader className="pb-4 border-b border-border">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <SheetTitle className="text-xl text-primary">{journey.leads?.full_name}</SheetTitle>
+              <SheetTitle className="text-xl text-secondary">{journey.leads?.full_name}</SheetTitle>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Calendar className="h-3 w-3" />
                 Início: {journey.start_date ? format(new Date(journey.start_date), "dd/MM/yyyy") : "-"}
               </div>
             </div>
-            <Badge variant="outline" className="text-base px-3 py-1 bg-secondary/10 text-secondary border-secondary/20">
+            <Badge variant="outline" className="text-base px-3 py-1 bg-secondary/10 text-secondary border-secondary/30">
               {journey.current_quarter}
             </Badge>
           </div>
-          <SheetDescription>
+          <SheetDescription className="text-muted-foreground">
             Siga a linha do tempo de entregas.
           </SheetDescription>
         </SheetHeader>
@@ -341,23 +341,23 @@ export function CrmCustomerSheet({ journeyId, open, onOpenChange }: CrmCustomerS
                   const isCurrent = journey.current_quarter === q;
 
                   return (
-                    <AccordionItem key={q} value={q} className="border rounded-lg mb-4 px-4 bg-card shadow-sm">
+                    <AccordionItem key={q} value={q} className="border border-border rounded-lg mb-4 px-4 bg-card shadow-sm">
                       <AccordionTrigger className="hover:no-underline py-4">
                         <div className="flex items-center gap-4 w-full">
                           <div className={`
                             flex items-center justify-center w-10 h-10 rounded-full font-bold text-sm shrink-0 transition-all
-                            ${isCurrent ? "bg-primary text-primary-foreground shadow-md scale-110" : "bg-muted text-muted-foreground"}
+                            ${isCurrent ? "bg-secondary text-secondary-foreground shadow-md scale-110" : "bg-muted text-muted-foreground"}
                           `}>
                             {q}
                           </div>
                           <div className="flex-1 text-left min-w-0">
-                            <p className="font-semibold text-sm truncate">
+                            <p className="font-semibold text-sm truncate text-foreground">
                               {quarterLabels[q]}
                             </p>
                             <div className="flex items-center gap-2 mt-1.5">
-                              <div className="h-1.5 flex-1 bg-gray-100 rounded-full overflow-hidden">
+                              <div className="h-1.5 flex-1 bg-muted rounded-full overflow-hidden">
                                 <div 
-                                  className="h-full bg-green-500 transition-all duration-500 rounded-full" 
+                                  className="h-full bg-success transition-all duration-500 rounded-full" 
                                   style={{ width: `${progress}%` }} 
                                 />
                               </div>
@@ -375,7 +375,7 @@ export function CrmCustomerSheet({ journeyId, open, onOpenChange }: CrmCustomerS
                         ) : (
                           <div className="relative pl-6 space-y-6 mt-2">
                             {/* Linha vertical conectora */}
-                            <div className="absolute left-[11px] top-2 bottom-4 w-[2px] bg-muted/50" />
+                            <div className="absolute left-[11px] top-2 bottom-4 w-[2px] bg-border" />
 
                             {items.map((item) => {
                               return (
@@ -383,8 +383,8 @@ export function CrmCustomerSheet({ journeyId, open, onOpenChange }: CrmCustomerS
                                   
                                   {/* Bolinha da Timeline */}
                                   <div className={`
-                                    absolute -left-[19px] top-1 w-3 h-3 rounded-full border-2 z-10 bg-white
-                                    ${item.status === 'done' ? 'border-green-500 bg-green-500' : 'border-primary'}
+                                    absolute -left-[19px] top-1 w-3 h-3 rounded-full border-2 z-10 bg-card
+                                    ${item.status === 'done' ? 'border-success bg-success' : 'border-secondary'}
                                   `} />
 
                                   <div className="mt-0.5">
@@ -392,7 +392,7 @@ export function CrmCustomerSheet({ journeyId, open, onOpenChange }: CrmCustomerS
                                       id={item.id}
                                       checked={item.status === 'done'}
                                       onCheckedChange={() => toggleItem.mutate({ id: item.id, currentStatus: item.status })}
-                                      className="data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
+                                      className="data-[state=checked]:bg-success data-[state=checked]:border-success"
                                     />
                                   </div>
 
@@ -407,7 +407,7 @@ export function CrmCustomerSheet({ journeyId, open, onOpenChange }: CrmCustomerS
                                     </label>
                                     
                                     {item.completed_at && (
-                                      <p className="text-[10px] text-green-600 flex items-center gap-1 font-medium animate-in fade-in slide-in-from-left-2">
+                                      <p className="text-[10px] text-success flex items-center gap-1 font-medium animate-in fade-in slide-in-from-left-2">
                                         <CheckCircle2 className="h-3 w-3" />
                                         Concluído em {format(new Date(item.completed_at), "dd/MM 'às' HH:mm")}
                                       </p>
@@ -422,8 +422,8 @@ export function CrmCustomerSheet({ journeyId, open, onOpenChange }: CrmCustomerS
                                           size="sm" 
                                           className={`h-6 text-[10px] px-2 gap-1 relative ${
                                             item.attachment_url 
-                                              ? 'bg-green-50 border-green-300 text-green-700 hover:bg-green-100' 
-                                              : 'bg-white hover:bg-slate-50'
+                                              ? 'bg-success/15 border-success/30 text-success hover:bg-success/25' 
+                                              : 'bg-card hover:bg-muted'
                                           }`}
                                           onClick={() => handleFileSelect(item.id)}
                                           disabled={uploadAttachment.isPending && uploadingItemId === item.id}
@@ -435,7 +435,7 @@ export function CrmCustomerSheet({ journeyId, open, onOpenChange }: CrmCustomerS
                                           )}
                                           Anexar
                                           {item.attachment_url && (
-                                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border border-white" />
+                                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-success rounded-full border border-card" />
                                           )}
                                         </Button>
                                       )}
@@ -447,14 +447,14 @@ export function CrmCustomerSheet({ journeyId, open, onOpenChange }: CrmCustomerS
                                             href={item.attachment_url} 
                                             target="_blank" 
                                             rel="noopener noreferrer"
-                                            className="text-[10px] text-green-700 hover:underline flex items-center gap-1"
+                                            className="text-[10px] text-success hover:underline flex items-center gap-1"
                                           >
                                             Ver <ExternalLink className="h-2.5 w-2.5" />
                                           </a>
                                           <Button
                                             variant="ghost"
                                             size="sm"
-                                            className="h-5 w-5 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                            className="h-5 w-5 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
                                             onClick={() => removeAttachment.mutate(item.id)}
                                           >
                                             <X className="h-3 w-3" />
@@ -469,14 +469,14 @@ export function CrmCustomerSheet({ journeyId, open, onOpenChange }: CrmCustomerS
                                           size="sm" 
                                           className={`h-6 text-[10px] px-2 gap-1 relative ${
                                             item.observations 
-                                              ? 'bg-green-50 border-green-300 text-green-700 hover:bg-green-100' 
-                                              : 'bg-white hover:bg-slate-50'
+                                              ? 'bg-success/15 border-success/30 text-success hover:bg-success/25' 
+                                              : 'bg-card hover:bg-muted'
                                           }`}
                                           onClick={() => handleStartEditObs(item)}
                                         >
                                           <FileText className="h-3 w-3" /> Obs
                                           {item.observations && (
-                                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border border-white" />
+                                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-success rounded-full border border-card" />
                                           )}
                                         </Button>
                                       )}
@@ -484,18 +484,18 @@ export function CrmCustomerSheet({ journeyId, open, onOpenChange }: CrmCustomerS
 
                                     {/* Campo de edição/visualização de observação - só aparece ao clicar */}
                                     {editingObsItemId === item.id && (
-                                      <div className="mt-2 space-y-2 bg-slate-50 border border-slate-200 rounded p-2">
+                                      <div className="mt-2 space-y-2 bg-muted/50 border border-border rounded p-2">
                                         <Textarea 
                                           value={obsText}
                                           onChange={(e) => setObsText(e.target.value)}
                                           placeholder="Digite a observação..."
-                                          className="text-xs min-h-[60px] resize-none bg-white"
+                                          className="text-xs min-h-[60px] resize-none bg-card border-border"
                                           autoFocus
                                         />
                                         <div className="flex gap-2 items-center">
                                           <Button 
                                             size="sm" 
-                                            className="h-6 text-[10px] px-3"
+                                            className="h-6 text-[10px] px-3 bg-secondary hover:bg-secondary/90"
                                             onClick={() => handleSaveObs(item.id)}
                                             disabled={saveObservation.isPending}
                                           >
@@ -513,7 +513,7 @@ export function CrmCustomerSheet({ journeyId, open, onOpenChange }: CrmCustomerS
                                             <Button
                                               variant="ghost"
                                               size="sm"
-                                              className="h-6 text-[10px] px-2 text-red-500 hover:text-red-700 hover:bg-red-50 ml-auto"
+                                              className="h-6 text-[10px] px-2 text-destructive hover:text-destructive hover:bg-destructive/10 ml-auto"
                                               onClick={() => {
                                                 deleteObservation.mutate(item.id);
                                                 handleCancelObs();
