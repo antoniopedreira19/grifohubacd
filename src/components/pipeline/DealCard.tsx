@@ -1,0 +1,201 @@
+import { Draggable } from "@hello-pangea/dnd";
+import { cn } from "@/lib/utils";
+import { differenceInDays } from "date-fns";
+import { CalendarDays, Clock, User, TrendingUp, Phone, MapPin, Timer } from "lucide-react";
+import type { Deal } from "./types";
+import { getRegionByPhone, getRegionColor } from "@/lib/ddd-regions";
+import { TagBadge } from "./tags";
+import type { DealTag } from "./tags";
+interface DealCardProps {
+  deal: Deal;
+  index: number;
+  stageType?: string;
+  onClick: () => void;
+  tags?: DealTag[];
+}
+
+const priorityConfig: Record<string, { label: string; className: string }> = {
+  High: { label: "Alta", className: "bg-red-50 text-red-600 border-red-200" },
+  Medium: { label: "Média", className: "bg-amber-50 text-amber-600 border-amber-200" },
+  Low: { label: "Baixa", className: "bg-emerald-50 text-emerald-600 border-emerald-200" },
+};
+
+export function DealCard({ deal, index, stageType, onClick, tags = [] }: DealCardProps) {
+  const priority = deal.priority || "Medium";
+  const config = priorityConfig[priority] || priorityConfig.Medium;
+  const isMeetingStage = stageType === "meeting";
+  const regionInfo = getRegionByPhone(deal.lead?.phone || null);
+  // Calcula dias no estágio atual
+  const daysInStage = deal.stage_entered_at
+    ? differenceInDays(new Date(), new Date(deal.stage_entered_at))
+    : 0;
+
+  const formattedValue = deal.value
+    ? new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }).format(deal.value)
+    : "—";
+
+  const formattedLtv = deal.lead?.ltv
+    ? new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }).format(deal.lead.ltv)
+    : null;
+
+  // Parse meeting date preservando horário local (sem conversão UTC)
+  const meetingInfo = deal.meeting_date
+    ? (() => {
+        // Extrai data e hora diretamente do string para evitar conversão UTC
+        const dateStr = deal.meeting_date;
+        if (dateStr.includes("T")) {
+          const [datePart, timePart] = dateStr.split("T");
+          const [year, month, day] = datePart.split("-").map(Number);
+          const time = timePart.split(":").slice(0, 2).join(":");
+          return {
+            date: `${String(day).padStart(2, "0")}/${String(month).padStart(2, "0")}`,
+            time,
+          };
+        }
+        // Fallback para datas sem horário
+        const [year, month, day] = dateStr.split("-").map(Number);
+        return {
+          date: `${String(day).padStart(2, "0")}/${String(month).padStart(2, "0")}`,
+          time: "00:00",
+        };
+      })()
+    : null;
+
+  return (
+    <Draggable draggableId={deal.id} index={index}>
+      {(provided, snapshot) => (
+        <div
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          onClick={onClick}
+          style={{
+            ...provided.draggableProps.style,
+            // Remove transition during drag to prevent jerky movement
+            transition: snapshot.isDragging 
+              ? undefined 
+              : 'box-shadow 0.2s ease, border-color 0.2s ease, transform 0.15s ease',
+          }}
+          className={cn(
+            "rounded-xl border border-border bg-card p-4 shadow-card cursor-pointer",
+            "hover:border-secondary/50 hover:shadow-card-hover",
+            snapshot.isDragging && "shadow-soft-lg ring-2 ring-secondary/40 rotate-1 scale-[1.02]"
+          )}
+        >
+          <div className="space-y-3">
+            {/* Header: Lead Name + Days Badge */}
+            <div className="flex items-start justify-between gap-2">
+              <p className="font-semibold text-foreground truncate text-sm flex-1">
+                {deal.lead?.full_name || "Lead desconhecido"}
+              </p>
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium shrink-0",
+                  daysInStage >= 7
+                    ? "bg-red-50 text-red-600 border border-red-200"
+                    : daysInStage >= 3
+                      ? "bg-amber-50 text-amber-600 border border-amber-200"
+                      : "bg-muted text-muted-foreground border border-border"
+                )}
+              >
+                <Timer className="h-3 w-3" />
+                {daysInStage}d
+              </span>
+            </div>
+
+            {/* Phone and Region */}
+            {deal.lead?.phone && (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <div className="flex items-center gap-1.5">
+                  <Phone className="h-3 w-3" />
+                  <span className="text-xs">{deal.lead.phone}</span>
+                </div>
+                {regionInfo && (
+                  <span 
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-xs font-medium",
+                      getRegionColor(regionInfo.isInternational ? "Internacional" : regionInfo.region)
+                    )}
+                  >
+                    <MapPin className="h-2.5 w-2.5" />
+                    {regionInfo.isInternational ? "Int" : regionInfo.state}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Product Name */}
+            <p className="text-sm text-muted-foreground truncate">
+              {deal.product?.name || "Sem produto"}
+            </p>
+
+            {/* LTV Badge */}
+            {formattedLtv && (
+              <div className="flex items-center gap-1.5">
+                <span className="inline-flex items-center gap-1 rounded-md bg-green-50 border border-green-200 px-1.5 py-0.5 text-xs font-medium text-green-700">
+                  <TrendingUp className="h-3 w-3" />
+                  LTV: {formattedLtv}
+                </span>
+              </div>
+            )}
+
+            {/* Meeting Info Badges - Only in meeting stage */}
+            {isMeetingStage && (meetingInfo || deal.meeting_owner) && (
+              <div className="flex flex-wrap items-center gap-1.5">
+                {meetingInfo && (
+                  <>
+                    <span className="inline-flex items-center gap-1 rounded-md bg-blue-50 border border-blue-200 px-1.5 py-0.5 text-xs font-medium text-blue-700">
+                      <CalendarDays className="h-3 w-3" />
+                      {meetingInfo.date}
+                    </span>
+                    <span className="inline-flex items-center gap-1 rounded-md bg-blue-50 border border-blue-200 px-1.5 py-0.5 text-xs font-medium text-blue-700">
+                      <Clock className="h-3 w-3" />
+                      {meetingInfo.time}
+                    </span>
+                  </>
+                )}
+                {deal.meeting_owner && (
+                  <span className="inline-flex items-center gap-1 rounded-md bg-purple-50 border border-purple-200 px-1.5 py-0.5 text-xs font-medium text-purple-700">
+                    <User className="h-3 w-3" />
+                    {deal.meeting_owner.name.split(" ")[0]}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Tags */}
+            {tags.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {tags.slice(0, 3).map((tag) => (
+                  <TagBadge key={tag.id} tag={tag} size="sm" />
+                ))}
+                {tags.length > 3 && (
+                  <span className="text-[10px] text-muted-foreground px-1">+{tags.length - 3}</span>
+                )}
+              </div>
+            )}
+
+            {/* Value and Priority */}
+            <div className="flex items-center justify-between gap-2 pt-1">
+              <span className="font-bold text-secondary text-base">{formattedValue}</span>
+              <span
+                className={cn(
+                  "inline-flex items-center rounded-lg border px-2 py-1 text-xs font-semibold",
+                  config.className
+                )}
+              >
+                {config.label}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+    </Draggable>
+  );
+}
