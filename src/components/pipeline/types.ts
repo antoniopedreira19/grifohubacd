@@ -17,6 +17,7 @@ export interface Deal {
   stage_entered_at?: string;
 
   meeting_owner_id?: string | null;
+  owner_id?: string | null;
 
   lead?: {
     id: string;
@@ -24,7 +25,7 @@ export interface Deal {
     email?: string;
     phone?: string;
     ltv?: number;
-    company_revenue?: number | null; // <--- O CAMPO QUE FALTAVA
+    company_revenue?: number | null;
   } | null;
 
   product?: {
@@ -34,6 +35,11 @@ export interface Deal {
   } | null;
 
   meeting_owner?: {
+    id: string;
+    name: string;
+  } | null;
+
+  owner?: {
     id: string;
     name: string;
   } | null;

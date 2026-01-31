@@ -20,6 +20,7 @@ import {
   XCircle,
   GitBranch,
   Tag,
+  UserCircle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
@@ -79,6 +80,8 @@ export function DealDetailSheet({ deal, open, onOpenChange }: DealDetailSheetPro
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [isEditingPriority, setIsEditingPriority] = useState(false);
   const [selectedPriority, setSelectedPriority] = useState<string>("Medium");
+  const [isEditingOwner, setIsEditingOwner] = useState(false);
+  const [selectedOwnerId, setSelectedOwnerId] = useState<string | null>(null);
   
   // Contact editing state
   const [isEditingContact, setIsEditingContact] = useState(false);
@@ -99,6 +102,20 @@ export function DealDetailSheet({ deal, open, onOpenChange }: DealDetailSheetPro
       return data;
     },
     enabled: open,
+  });
+
+  // Fetch team members for owner selector
+  const { data: teamMembers = [] } = useQuery({
+    queryKey: ["team-members-active"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("team_members")
+        .select("id, name")
+        .eq("active", true)
+        .order("name");
+      if (error) throw error;
+      return data;
+    },
   });
 
   // Fetch current stage to check if it's a "lost" stage
@@ -293,6 +310,51 @@ export function DealDetailSheet({ deal, open, onOpenChange }: DealDetailSheetPro
     },
   });
 
+  // Update deal owner mutation with optimistic updates
+  const updateOwnerMutation = useMutation({
+    mutationFn: async ({ dealId, ownerId }: { dealId: string; ownerId: string | null }) => {
+      const { error } = await supabase.from("deals").update({ owner_id: ownerId }).eq("id", dealId);
+      if (error) throw error;
+      return { ownerId };
+    },
+    onMutate: async ({ dealId, ownerId }) => {
+      await queryClient.cancelQueries({ queryKey: ["deals"] });
+      const previousDeals = queryClient.getQueryData(["deals"]);
+      const selectedOwner = teamMembers.find((m) => m.id === ownerId);
+
+      queryClient.setQueryData(["deals"], (old: any) => {
+        if (!old || !Array.isArray(old)) return old;
+        return old.map((d: any) =>
+          d.id === dealId
+            ? { ...d, owner_id: ownerId, owner: selectedOwner || null }
+            : d
+        );
+      });
+
+      return { previousDeals };
+    },
+    onError: (_, __, context) => {
+      if (context?.previousDeals) {
+        queryClient.setQueryData(["deals"], context.previousDeals);
+      }
+      toast({
+        title: "Erro ao atualizar",
+        description: "Não foi possível atualizar o responsável.",
+        variant: "destructive",
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Responsável atualizado",
+        description: "O responsável pelo deal foi atualizado com sucesso.",
+      });
+      setIsEditingOwner(false);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["deals"] });
+    },
+  });
+
   // Delete deal mutation
   const deleteDealMutation = useMutation({
     mutationFn: async (dealId: string) => {
@@ -463,6 +525,21 @@ export function DealDetailSheet({ deal, open, onOpenChange }: DealDetailSheetPro
   const handleCancelEditPriority = () => {
     setIsEditingPriority(false);
     setSelectedPriority("Medium");
+  };
+
+  const handleStartEditOwner = () => {
+    setSelectedOwnerId(deal?.owner_id ?? null);
+    setIsEditingOwner(true);
+  };
+
+  const handleSaveOwner = () => {
+    if (!deal) return;
+    updateOwnerMutation.mutate({ dealId: deal.id, ownerId: selectedOwnerId });
+  };
+
+  const handleCancelEditOwner = () => {
+    setIsEditingOwner(false);
+    setSelectedOwnerId(null);
   };
 
   const handleStartEditContact = () => {
@@ -897,6 +974,70 @@ export function DealDetailSheet({ deal, open, onOpenChange }: DealDetailSheetPro
                   ) : (
                     <p className="text-sm text-muted-foreground p-3 rounded-lg bg-muted/30">
                       Nenhuma tag atribuída
+                    </p>
+                  )}
+                </div>
+
+                <Separator />
+
+                {/* Owner Section */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold text-primary flex items-center gap-2">
+                      <UserCircle className="h-4 w-4" />
+                      Responsável
+                    </h4>
+                    {!isEditingOwner && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleStartEditOwner}
+                        className="h-7 px-2 text-muted-foreground hover:text-foreground"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
+                    )}
+                  </div>
+
+                  {isEditingOwner ? (
+                    <div className="flex items-center gap-2">
+                      <Select
+                        value={selectedOwnerId ?? "none"}
+                        onValueChange={(value) => setSelectedOwnerId(value === "none" ? null : value)}
+                      >
+                        <SelectTrigger className="flex-1">
+                          <SelectValue placeholder="Selecione um responsável" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">Sem responsável</SelectItem>
+                          {teamMembers.map((m) => (
+                            <SelectItem key={m.id} value={m.id}>
+                              {m.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleSaveOwner}
+                        disabled={updateOwnerMutation.isPending}
+                        className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
+                      >
+                        <Check className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleCancelEditOwner}
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <p className="text-sm p-3 rounded-lg bg-muted/30">
+                      {deal.owner?.name || "Sem responsável atribuído"}
                     </p>
                   )}
                 </div>
