@@ -1,7 +1,7 @@
 import { Draggable } from "@hello-pangea/dnd";
 import { cn } from "@/lib/utils";
 import { differenceInDays } from "date-fns";
-import { CalendarDays, Clock, User, TrendingUp, Phone, MapPin, Timer } from "lucide-react";
+import { CalendarDays, Clock, User, TrendingUp, Phone, MapPin, Timer, UserCircle } from "lucide-react";
 import type { Deal } from "./types";
 import { getRegionByPhone, getRegionColor } from "@/lib/ddd-regions";
 import { TagBadge } from "./tags";
@@ -178,6 +178,16 @@ export function DealCard({ deal, index, stageType, onClick, tags = [] }: DealCar
                 {tags.length > 3 && (
                   <span className="text-[10px] text-muted-foreground px-1">+{tags.length - 3}</span>
                 )}
+              </div>
+            )}
+
+            {/* Owner Badge */}
+            {deal.owner && (
+              <div className="flex items-center gap-1.5">
+                <span className="inline-flex items-center gap-1 rounded-md bg-secondary/10 border border-secondary/20 px-1.5 py-0.5 text-xs font-medium text-secondary">
+                  <UserCircle className="h-3 w-3" />
+                  {deal.owner.name.split(" ")[0]}
+                </span>
               </div>
             )}
 

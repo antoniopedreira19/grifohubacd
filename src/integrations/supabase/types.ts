@@ -239,6 +239,7 @@ export type Database = {
           meeting_date: string | null
           meeting_owner_id: string | null
           order_index: number | null
+          owner_id: string | null
           payment_date: string | null
           payment_method: string | null
           pipeline_id: string | null
@@ -261,6 +262,7 @@ export type Database = {
           meeting_date?: string | null
           meeting_owner_id?: string | null
           order_index?: number | null
+          owner_id?: string | null
           payment_date?: string | null
           payment_method?: string | null
           pipeline_id?: string | null
@@ -283,6 +285,7 @@ export type Database = {
           meeting_date?: string | null
           meeting_owner_id?: string | null
           order_index?: number | null
+          owner_id?: string | null
           payment_date?: string | null
           payment_method?: string | null
           pipeline_id?: string | null
@@ -305,6 +308,13 @@ export type Database = {
           {
             foreignKeyName: "deals_meeting_owner_id_fkey"
             columns: ["meeting_owner_id"]
+            isOneToOne: false
+            referencedRelation: "team_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_owner_id_fkey"
+            columns: ["owner_id"]
             isOneToOne: false
             referencedRelation: "team_members"
             referencedColumns: ["id"]
