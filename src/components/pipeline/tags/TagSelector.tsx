@@ -38,25 +38,56 @@ export function TagSelector({ dealId, currentTagIds, onTagsChange }: TagSelector
     },
   });
 
-  // Add tag to deal
+  // Add tag to deal with optimistic update
   const addTagMutation = useMutation({
     mutationFn: async (tagId: string) => {
       const { error } = await supabase
         .from("deal_tag_assignments")
         .insert({ deal_id: dealId, tag_id: tagId });
       if (error) throw error;
+      return tagId;
     },
-    onSuccess: () => {
+    onMutate: async (tagId: string) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ["deals"] });
+      
+      // Snapshot previous value
+      const previousDeals = queryClient.getQueryData(["deals"]);
+      
+      // Find the tag being added
+      const tagToAdd = allTags.find(t => t.id === tagId);
+      
+      // Optimistically update deals cache
+      if (tagToAdd) {
+        queryClient.setQueryData(["deals"], (old: any) => {
+          if (!old) return old;
+          return old.map((deal: any) => {
+            if (deal.id === dealId) {
+              const currentTags = deal.tags || [];
+              return { ...deal, tags: [...currentTags, tagToAdd] };
+            }
+            return deal;
+          });
+        });
+      }
+      
+      return { previousDeals };
+    },
+    onError: (_err, _tagId, context) => {
+      // Rollback on error
+      if (context?.previousDeals) {
+        queryClient.setQueryData(["deals"], context.previousDeals);
+      }
+      toast.error("Erro ao adicionar tag");
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["deal-tag-assignments", dealId] });
       queryClient.invalidateQueries({ queryKey: ["deals"] });
       onTagsChange?.();
     },
-    onError: () => {
-      toast.error("Erro ao adicionar tag");
-    },
   });
 
-  // Remove tag from deal
+  // Remove tag from deal with optimistic update
   const removeTagMutation = useMutation({
     mutationFn: async (tagId: string) => {
       const { error } = await supabase
@@ -65,14 +96,37 @@ export function TagSelector({ dealId, currentTagIds, onTagsChange }: TagSelector
         .eq("deal_id", dealId)
         .eq("tag_id", tagId);
       if (error) throw error;
+      return tagId;
     },
-    onSuccess: () => {
+    onMutate: async (tagId: string) => {
+      await queryClient.cancelQueries({ queryKey: ["deals"] });
+      
+      const previousDeals = queryClient.getQueryData(["deals"]);
+      
+      // Optimistically remove tag from deals cache
+      queryClient.setQueryData(["deals"], (old: any) => {
+        if (!old) return old;
+        return old.map((deal: any) => {
+          if (deal.id === dealId) {
+            const currentTags = deal.tags || [];
+            return { ...deal, tags: currentTags.filter((t: any) => t.id !== tagId) };
+          }
+          return deal;
+        });
+      });
+      
+      return { previousDeals };
+    },
+    onError: (_err, _tagId, context) => {
+      if (context?.previousDeals) {
+        queryClient.setQueryData(["deals"], context.previousDeals);
+      }
+      toast.error("Erro ao remover tag");
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["deal-tag-assignments", dealId] });
       queryClient.invalidateQueries({ queryKey: ["deals"] });
       onTagsChange?.();
-    },
-    onError: () => {
-      toast.error("Erro ao remover tag");
     },
   });
 
