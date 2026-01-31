@@ -1,5 +1,9 @@
 import { cn } from "@/lib/utils";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import type { DealTag } from "./types";
 
 interface TagBadgeProps {
@@ -13,7 +17,7 @@ export function TagBadge({ tag, size = "sm", showTooltip = true, onRemove }: Tag
   const badge = (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full font-medium border",
+        "inline-flex items-center gap-1 rounded-full font-medium border cursor-default",
         size === "sm" ? "px-1.5 py-0.5 text-[10px]" : "px-2 py-1 text-xs"
       )}
       style={{
@@ -41,18 +45,33 @@ export function TagBadge({ tag, size = "sm", showTooltip = true, onRemove }: Tag
     </span>
   );
 
-  if (!showTooltip || !tag.description) {
+  if (!showTooltip) {
     return badge;
   }
 
   return (
-    <TooltipProvider delayDuration={200}>
-      <Tooltip>
-        <TooltipTrigger asChild>{badge}</TooltipTrigger>
-        <TooltipContent side="top" className="max-w-[200px]">
-          <p className="text-xs">{tag.description}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <HoverCard openDelay={150} closeDelay={100}>
+      <HoverCardTrigger asChild>{badge}</HoverCardTrigger>
+      <HoverCardContent 
+        side="top" 
+        className="w-auto max-w-[220px] p-3"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span
+              className="h-2.5 w-2.5 rounded-full shrink-0"
+              style={{ backgroundColor: tag.color }}
+            />
+            <p className="text-sm font-medium">{tag.name}</p>
+          </div>
+          {tag.description && (
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              {tag.description}
+            </p>
+          )}
+        </div>
+      </HoverCardContent>
+    </HoverCard>
   );
 }
