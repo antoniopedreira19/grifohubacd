@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { 
@@ -33,6 +34,15 @@ const staggerContainer = {
 };
 
 export default function Mentoria360() {
+  // Preload images on mount
+  useEffect(() => {
+    const imagesToPreload = [heroBackground, solutionBackground, setupBackground, danielGedeon];
+    imagesToPreload.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
+
   const handleCTAClick = () => {
     window.open(CTA_URL, "_blank");
   };
