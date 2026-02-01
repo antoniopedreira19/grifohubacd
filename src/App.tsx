@@ -22,6 +22,7 @@ import NotFound from "@/pages/NotFound";
 import PublicPageRenderer from "@/pages/PublicPageRenderer";
 import NpsPageRenderer from "@/pages/NpsPageRenderer";
 import ThankYouPage from "@/pages/ThankYouPage";
+import Mentoria360 from "@/pages/Mentoria360";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/p/:slug" element={<PublicPageRenderer />} />
             <Route path="/nps/:slug" element={<NpsPageRenderer />} />
             <Route path="/obrigado/:slug" element={<ThankYouPage />} />
+            <Route path="/mentoria-360" element={<Mentoria360 />} />
             
             {/* Auth routes */}
             <Route path="/login" element={<Login />} />
