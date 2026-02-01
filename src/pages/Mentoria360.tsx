@@ -105,9 +105,9 @@ export default function Mentoria360() {
             
             {/* Daniel Photo */}
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
+              initial={{ opacity: 0, x: 24 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
+              transition={{ duration: 0.55, delay: 0 }}
               className="hidden lg:flex justify-end"
             >
               <div className="relative">
@@ -115,6 +115,8 @@ export default function Mentoria360() {
                 <img 
                   src={danielGedeon} 
                   alt="Daniel Gedeon" 
+                  loading="eager"
+                  fetchPriority="high"
                   className="relative z-10 w-[400px] h-[500px] object-cover object-top rounded-2xl shadow-2xl border border-secondary/20"
                 />
               </div>
