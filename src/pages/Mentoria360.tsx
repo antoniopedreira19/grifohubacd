@@ -63,12 +63,12 @@ export default function Mentoria360() {
         <div className="relative z-10 container mx-auto px-4 sm:px-6 py-12 lg:py-20">
           <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             
-            {/* Daniel Photo + Text - Mobile First (appears first on mobile) */}
+            {/* Daniel Photo - Mobile First (appears first on mobile) */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0 }}
-              className="lg:hidden flex flex-col items-center gap-4 w-full"
+              className="lg:hidden flex justify-center w-full"
             >
               <div className="relative">
                 <div className="absolute -inset-3 bg-gradient-to-br from-secondary/40 to-transparent rounded-2xl blur-xl" />
@@ -79,15 +79,6 @@ export default function Mentoria360() {
                   fetchPriority="high"
                   className="relative z-10 w-48 h-60 sm:w-56 sm:h-72 object-cover object-top rounded-xl shadow-2xl border-2 border-secondary/30"
                 />
-              </div>
-              <div className="text-center space-y-1">
-                <p className="text-base sm:text-lg font-bold text-white">Daniel Gedeon</p>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Engenheiro Civil e Mentor de Construtoras
-                </p>
-                <p className="text-xs text-secondary font-medium">
-                  +150 construtoras mentoradas
-                </p>
               </div>
             </motion.div>
 
@@ -133,12 +124,12 @@ export default function Mentoria360() {
               </motion.div>
             </motion.div>
             
-            {/* Daniel Photo + Text - Desktop (hidden on mobile) */}
+            {/* Daniel Photo - Desktop (hidden on mobile) */}
             <motion.div
               initial={{ opacity: 0, x: 24 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.55, delay: 0 }}
-              className="hidden lg:flex items-center gap-8"
+              className="hidden lg:flex justify-end"
             >
               <div className="relative">
                 <div className="absolute -inset-4 bg-gradient-to-br from-secondary/30 to-transparent rounded-3xl blur-2xl" />
@@ -147,17 +138,8 @@ export default function Mentoria360() {
                   alt="Daniel Gedeon" 
                   loading="eager"
                   fetchPriority="high"
-                  className="relative z-10 w-[320px] h-[400px] object-cover object-top rounded-2xl shadow-2xl border border-secondary/20"
+                  className="relative z-10 w-[400px] h-[500px] object-cover object-top rounded-2xl shadow-2xl border border-secondary/20"
                 />
-              </div>
-              <div className="space-y-3 max-w-[200px]">
-                <p className="text-lg font-bold text-white">Daniel Gedeon</p>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Engenheiro Civil e Mentor de Construtoras. Fundador da Grifo Academy.
-                </p>
-                <p className="text-xs text-secondary font-medium">
-                  +150 construtoras mentoradas
-                </p>
               </div>
             </motion.div>
           </div>
