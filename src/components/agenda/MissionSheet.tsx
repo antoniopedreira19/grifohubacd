@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -256,9 +256,12 @@ export function MissionSheet({ open, onOpenChange, mission }: MissionSheetProps)
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    mutation.mutate(data);
-  };
+  const onSubmit = useCallback(
+    (data: FormData) => {
+      mutation.mutate(data);
+    },
+    [mutation.mutate],
+  );
 
   const getMemberName = (memberId: string | null) => {
     if (!memberId) return "Não definido";
@@ -277,7 +280,8 @@ export function MissionSheet({ open, onOpenChange, mission }: MissionSheetProps)
   };
 
   // Detail View Component
-  const DetailView = () => {
+  // NOTE: useCallback to keep component identity stable across re-renders (prevents input focus loss)
+  const DetailView = useCallback(() => {
     if (!mission) return null;
     const missionData = mission as any;
     const supportNames = getSupportNames(missionData.support_ids);
@@ -446,24 +450,38 @@ export function MissionSheet({ open, onOpenChange, mission }: MissionSheetProps)
         </div>
       </div>
     );
-  };
+  }, [mission, members]);
 
   // Edit Form Component
-  const EditForm = () => (
+  // NOTE: useCallback to keep component identity stable across re-renders (prevents input focus loss)
+  const EditForm = useCallback(() => (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-6">
         <FormField
           control={form.control}
           name="mission"
-          render={({ field }) => (
+          render={({ field }) => {
+            const { onChange, ...rest } = field;
+            return (
             <FormItem>
               <FormLabel>Missão *</FormLabel>
               <FormControl>
-                <Input placeholder="Descreva a missão..." {...field} />
+                <Input
+                  placeholder="Descreva a missão..."
+                  {...rest}
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    onChange(e);
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
-          )}
+            );
+          }}
         />
 
         <FormField
@@ -854,15 +872,22 @@ export function MissionSheet({ open, onOpenChange, mission }: MissionSheetProps)
         </div>
       </form>
     </Form>
-  );
+  ), [
+    existingDepartments,
+    form,
+    isExistingMission,
+    members,
+    mission,
+    mutation.isPending,
+    onOpenChange,
+    onSubmit,
+    watchIsRecurring,
+    watchRecurrenceType,
+  ]);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent 
-        className="sm:max-w-lg overflow-y-auto"
-        onInteractOutside={(e) => e.preventDefault()}
-        onPointerDownOutside={(e) => e.preventDefault()}
-      >
+      <SheetContent className="sm:max-w-lg overflow-y-auto">
         <SheetHeader>
           <SheetTitle className="text-primary flex items-center gap-2">
             <Target className="h-5 w-5" />
@@ -877,7 +902,7 @@ export function MissionSheet({ open, onOpenChange, mission }: MissionSheetProps)
           </SheetDescription>
         </SheetHeader>
 
-        {isExistingMission && !isEditMode ? <DetailView /> : <EditForm />}
+        {isExistingMission && !isEditMode ? DetailView() : EditForm()}
       </SheetContent>
     </Sheet>
   );
