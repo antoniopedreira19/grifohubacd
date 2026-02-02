@@ -13,6 +13,7 @@ import {
   Plus,
   Package,
   TrendingUp,
+  Trash2,
   ShoppingCart,
   MapPin,
 } from "lucide-react";
@@ -368,6 +369,25 @@ export function LeadDetailSheet({ lead, open, onOpenChange }: LeadDetailSheetPro
     },
     onError: (error) => {
       toast.error("Erro ao registrar venda: " + error.message);
+    },
+  });
+
+  // Delete sale mutation
+  const deleteSale = useMutation({
+    mutationFn: async (saleId: string) => {
+      const { error } = await supabase
+        .from("sales")
+        .delete()
+        .eq("id", saleId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["lead-sales", lead?.id] });
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+      toast.success("Compra excluída com sucesso!");
+    },
+    onError: (error) => {
+      toast.error("Erro ao excluir compra: " + error.message);
     },
   });
 
@@ -802,7 +822,7 @@ export function LeadDetailSheet({ lead, open, onOpenChange }: LeadDetailSheetPro
                     {sales.map((sale) => (
                       <div
                         key={sale.id}
-                        className="bg-muted/30 rounded-lg p-4 flex items-center justify-between border-l-4 border-green-500"
+                        className="bg-muted/30 rounded-lg p-4 flex items-center justify-between border-l-4 border-green-500 group"
                       >
                         <div className="flex-1">
                           <div className="flex items-center gap-3">
@@ -814,13 +834,26 @@ export function LeadDetailSheet({ lead, open, onOpenChange }: LeadDetailSheetPro
                             </span>
                           </div>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                           <span className="text-lg font-bold text-green-600">
                             R$ {sale.amount.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                           </span>
                           <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                             Pago
                           </Badge>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                            onClick={() => {
+                              if (confirm("Tem certeza que deseja excluir esta compra?")) {
+                                deleteSale.mutate(sale.id);
+                              }
+                            }}
+                            disabled={deleteSale.isPending}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </div>
                       </div>
                     ))}
