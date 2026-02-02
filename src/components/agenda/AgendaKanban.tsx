@@ -292,7 +292,7 @@ export function AgendaKanban({ ownerFilter, departmentFilter, searchTerm = "" }:
                                     <Badge
                                       variant="secondary"
                                       className={cn(
-                                        "text-xs mb-2",
+                                        "text-[10px] mb-2 whitespace-nowrap max-w-full truncate",
                                         departmentColors[mission.department] || "bg-gray-100 text-gray-800",
                                       )}
                                     >
