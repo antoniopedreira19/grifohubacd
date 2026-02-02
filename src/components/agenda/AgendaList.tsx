@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format, isBefore, isToday } from "date-fns";
@@ -59,6 +59,10 @@ export function AgendaList({ ownerFilter, departmentFilter, statusFilter, search
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sortField, setSortField] = useState<SortField>("deadline");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+  
+  // Ref para preservar a ordem atual quando apenas o status muda
+  const orderRef = useRef<string[]>([]);
+  const isStatusChangeRef = useRef(false);
 
   const { data: missions = [] } = useQuery({
     queryKey: ["team_missions"],
@@ -86,11 +90,16 @@ export function AgendaList({ ownerFilter, departmentFilter, statusFilter, search
       const { error } = await supabase.from("team_missions").update({ status }).eq("id", id);
       if (error) throw error;
     },
+    onMutate: () => {
+      // Marca que é uma mudança de status para preservar a ordem
+      isStatusChangeRef.current = true;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["team_missions"] });
       toast.success("Status atualizado!");
     },
     onError: () => {
+      isStatusChangeRef.current = false;
       toast.error("Erro ao atualizar status");
     },
   });
@@ -121,37 +130,57 @@ export function AgendaList({ ownerFilter, departmentFilter, statusFilter, search
     return matchesOwner && matchesDepartment && matchesStatus && matchesSearch;
   });
 
-  // Sort missions
-  const sortedMissions = [...filteredMissions].sort((a, b) => {
-    let comparison = 0;
-
-    switch (sortField) {
-      case "mission":
-        comparison = (a.mission || "").localeCompare(b.mission || "");
-        break;
-      case "status":
-        comparison = (a.status || "").localeCompare(b.status || "");
-        break;
-      case "department":
-        comparison = (a.department || "").localeCompare(b.department || "");
-        break;
-      case "deadline":
-        if (!a.deadline && !b.deadline) comparison = 0;
-        else if (!a.deadline) comparison = 1;
-        else if (!b.deadline) comparison = -1;
-        else comparison = new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
-        break;
-      case "owner":
-        const ownerA = getMemberById(a.owner_id)?.name || "";
-        const ownerB = getMemberById(b.owner_id)?.name || "";
-        comparison = ownerA.localeCompare(ownerB);
-        break;
+  // Sort missions - preserve order when status changes
+  const sortedMissions = (() => {
+    // Se foi uma mudança de status, mantém a ordem anterior
+    if (isStatusChangeRef.current && orderRef.current.length > 0) {
+      isStatusChangeRef.current = false;
+      const orderMap = new Map(orderRef.current.map((id, index) => [id, index]));
+      return [...filteredMissions].sort((a, b) => {
+        const indexA = orderMap.get(a.id) ?? 999999;
+        const indexB = orderMap.get(b.id) ?? 999999;
+        return indexA - indexB;
+      });
     }
 
-    return sortDirection === "asc" ? comparison : -comparison;
-  });
+    // Ordenação normal
+    const sorted = [...filteredMissions].sort((a, b) => {
+      let comparison = 0;
+
+      switch (sortField) {
+        case "mission":
+          comparison = (a.mission || "").localeCompare(b.mission || "");
+          break;
+        case "status":
+          comparison = (a.status || "").localeCompare(b.status || "");
+          break;
+        case "department":
+          comparison = (a.department || "").localeCompare(b.department || "");
+          break;
+        case "deadline":
+          if (!a.deadline && !b.deadline) comparison = 0;
+          else if (!a.deadline) comparison = 1;
+          else if (!b.deadline) comparison = -1;
+          else comparison = new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+          break;
+        case "owner":
+          const ownerA = getMemberById(a.owner_id)?.name || "";
+          const ownerB = getMemberById(b.owner_id)?.name || "";
+          comparison = ownerA.localeCompare(ownerB);
+          break;
+      }
+
+      return sortDirection === "asc" ? comparison : -comparison;
+    });
+
+    // Salva a ordem atual para preservar em mudanças de status
+    orderRef.current = sorted.map((m) => m.id);
+    return sorted;
+  })();
 
   const handleSort = (field: SortField) => {
+    // Limpa a ref de ordem quando o usuário explicitamente muda a ordenação
+    orderRef.current = [];
     if (sortField === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
