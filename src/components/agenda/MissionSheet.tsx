@@ -858,7 +858,11 @@ export function MissionSheet({ open, onOpenChange, mission }: MissionSheetProps)
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="sm:max-w-lg overflow-y-auto">
+      <SheetContent 
+        className="sm:max-w-lg overflow-y-auto"
+        onInteractOutside={(e) => e.preventDefault()}
+        onPointerDownOutside={(e) => e.preventDefault()}
+      >
         <SheetHeader>
           <SheetTitle className="text-primary flex items-center gap-2">
             <Target className="h-5 w-5" />
