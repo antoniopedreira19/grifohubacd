@@ -92,16 +92,16 @@ export function CallsTrackingDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-4 py-4">
           {/* Ligações Atendidas */}
-          <div className="flex items-center justify-between p-4 rounded-lg border bg-green-50/50 border-green-200">
+          <div className="flex items-center justify-between p-4 rounded-lg border border-green-500/30 bg-green-500/10">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                <PhoneCall className="h-5 w-5 text-green-600" />
+              <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                <PhoneCall className="h-5 w-5 text-green-500" />
               </div>
               <div>
-                <p className="font-medium text-green-800">Atendidas</p>
-                <p className="text-xs text-green-600">Ligações completadas</p>
+                <p className="font-medium text-green-400">Atendidas</p>
+                <p className="text-xs text-green-500/70">Ligações completadas</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -109,19 +109,19 @@ export function CallsTrackingDialog({
                 type="button"
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 border-green-300 hover:bg-green-100"
+                className="h-8 w-8 border-border hover:bg-muted"
                 onClick={decrementAnswered}
               >
                 <Minus className="h-4 w-4" />
               </Button>
-              <span className="w-10 text-center text-xl font-bold text-green-700">
+              <span className="w-10 text-center text-xl font-bold text-green-400">
                 {callsAnswered}
               </span>
               <Button
                 type="button"
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 border-green-300 hover:bg-green-100"
+                className="h-8 w-8 border-border hover:bg-muted"
                 onClick={incrementAnswered}
               >
                 <Plus className="h-4 w-4" />
@@ -130,14 +130,14 @@ export function CallsTrackingDialog({
           </div>
 
           {/* Ligações Perdidas */}
-          <div className="flex items-center justify-between p-4 rounded-lg border bg-red-50/50 border-red-200">
+          <div className="flex items-center justify-between p-4 rounded-lg border border-red-500/30 bg-red-500/10">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-                <PhoneMissed className="h-5 w-5 text-red-600" />
+              <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
+                <PhoneMissed className="h-5 w-5 text-red-500" />
               </div>
               <div>
-                <p className="font-medium text-red-800">Perdidas</p>
-                <p className="text-xs text-red-600">Não atendeu / Ocupado</p>
+                <p className="font-medium text-red-400">Perdidas</p>
+                <p className="text-xs text-red-500/70">Não atendeu / Ocupado</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -145,19 +145,19 @@ export function CallsTrackingDialog({
                 type="button"
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 border-red-300 hover:bg-red-100"
+                className="h-8 w-8 border-border hover:bg-muted"
                 onClick={decrementMissed}
               >
                 <Minus className="h-4 w-4" />
               </Button>
-              <span className="w-10 text-center text-xl font-bold text-red-700">
+              <span className="w-10 text-center text-xl font-bold text-red-400">
                 {callsMissed}
               </span>
               <Button
                 type="button"
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 border-red-300 hover:bg-red-100"
+                className="h-8 w-8 border-border hover:bg-muted"
                 onClick={incrementMissed}
               >
                 <Plus className="h-4 w-4" />
