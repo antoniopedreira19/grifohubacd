@@ -8,7 +8,7 @@ export interface Stage {
   id?: string;
   name: string;
   order_index: number;
-  type?: "default" | "meeting" | "won" | "lost" | "negotiation" | "followup";
+  type?: "default" | "meeting" | "won" | "lost" | "negotiation" | "followup" | "calls_tracking";
 }
 
 interface StageEditorProps {
@@ -105,6 +105,7 @@ export function StageEditor({ stages, onChange }: StageEditorProps) {
                             <SelectItem value="negotiation">🤝 Em Negociação</SelectItem>
                             <SelectItem value="meeting">📅 Agendamento</SelectItem>
                             <SelectItem value="followup">🔄 Follow-up</SelectItem>
+                            <SelectItem value="calls_tracking">📞 Ligações Feitas</SelectItem>
                             <SelectItem value="won">🏆 Ganho</SelectItem>
                             <SelectItem value="lost">❌ Perdido</SelectItem>
                           </SelectContent>

@@ -21,6 +21,10 @@ import {
   GitBranch,
   Tag,
   UserCircle,
+  PhoneCall,
+  PhoneMissed,
+  Minus,
+  Plus,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
@@ -88,6 +92,11 @@ export function DealDetailSheet({ deal, open, onOpenChange }: DealDetailSheetPro
   const [editEmail, setEditEmail] = useState("");
   const [editPhone, setEditPhone] = useState("");
   const [editSocialMedia, setEditSocialMedia] = useState("");
+
+  // Calls tracking editing state
+  const [isEditingCalls, setIsEditingCalls] = useState(false);
+  const [editCallsAnswered, setEditCallsAnswered] = useState(0);
+  const [editCallsMissed, setEditCallsMissed] = useState(0);
 
   // Fetch products for the selector
   const { data: products = [] } = useQuery({
@@ -450,6 +459,53 @@ export function DealDetailSheet({ deal, open, onOpenChange }: DealDetailSheetPro
     },
   });
 
+  // Update calls tracking mutation
+  const updateCallsMutation = useMutation({
+    mutationFn: async ({ dealId, callsAnswered, callsMissed }: { dealId: string; callsAnswered: number; callsMissed: number }) => {
+      const { error } = await supabase
+        .from("deals")
+        .update({
+          calls_answered: callsAnswered,
+          calls_missed: callsMissed,
+        })
+        .eq("id", dealId);
+      if (error) throw error;
+    },
+    onMutate: async ({ dealId, callsAnswered, callsMissed }) => {
+      await queryClient.cancelQueries({ queryKey: ["deals"] });
+      const previousDeals = queryClient.getQueryData(["deals"]);
+
+      queryClient.setQueryData(["deals"], (old: any) => {
+        if (!old || !Array.isArray(old)) return old;
+        return old.map((d: any) =>
+          d.id === dealId ? { ...d, calls_answered: callsAnswered, calls_missed: callsMissed } : d
+        );
+      });
+
+      return { previousDeals };
+    },
+    onError: (_, __, context) => {
+      if (context?.previousDeals) {
+        queryClient.setQueryData(["deals"], context.previousDeals);
+      }
+      toast({
+        title: "Erro ao atualizar",
+        description: "Não foi possível atualizar as ligações.",
+        variant: "destructive",
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Ligações atualizadas",
+        description: "O registro de ligações foi atualizado com sucesso.",
+      });
+      setIsEditingCalls(false);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["deals"] });
+    },
+  });
+
   // Transfer deal to another pipeline mutation
   const transferPipelineMutation = useMutation({
     mutationFn: async ({ dealId, targetPipelineId }: { dealId: string; targetPipelineId: string }) => {
@@ -564,6 +620,27 @@ export function DealDetailSheet({ deal, open, onOpenChange }: DealDetailSheetPro
     setEditEmail("");
     setEditPhone("");
     setEditSocialMedia("");
+  };
+
+  const handleStartEditCalls = () => {
+    setEditCallsAnswered((deal as any)?.calls_answered || 0);
+    setEditCallsMissed((deal as any)?.calls_missed || 0);
+    setIsEditingCalls(true);
+  };
+
+  const handleSaveCalls = () => {
+    if (!deal) return;
+    updateCallsMutation.mutate({
+      dealId: deal.id,
+      callsAnswered: editCallsAnswered,
+      callsMissed: editCallsMissed,
+    });
+  };
+
+  const handleCancelEditCalls = () => {
+    setIsEditingCalls(false);
+    setEditCallsAnswered(0);
+    setEditCallsMissed(0);
   };
 
   if (!deal) return null;
@@ -1039,6 +1116,126 @@ export function DealDetailSheet({ deal, open, onOpenChange }: DealDetailSheetPro
                     <p className="text-sm p-3 rounded-lg bg-muted/30">
                       {deal.owner?.name || "Sem responsável atribuído"}
                     </p>
+                  )}
+                </div>
+
+                <Separator />
+
+                {/* Calls Tracking Section */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold text-primary flex items-center gap-2">
+                      <Phone className="h-4 w-4" />
+                      Ligações
+                    </h4>
+                    {!isEditingCalls && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleStartEditCalls}
+                        className="h-7 px-2 text-muted-foreground hover:text-foreground"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
+                    )}
+                  </div>
+
+                  {isEditingCalls ? (
+                    <div className="space-y-3 p-3 rounded-lg border bg-muted/30">
+                      {/* Atendidas */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                            <PhoneCall className="h-4 w-4 text-green-600" />
+                          </div>
+                          <span className="text-sm font-medium">Atendidas</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={() => setEditCallsAnswered(Math.max(0, editCallsAnswered - 1))}
+                          >
+                            <Minus className="h-3 w-3" />
+                          </Button>
+                          <span className="w-8 text-center font-bold">{editCallsAnswered}</span>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={() => setEditCallsAnswered(editCallsAnswered + 1)}
+                          >
+                            <Plus className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                      {/* Perdidas */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                            <PhoneMissed className="h-4 w-4 text-red-600" />
+                          </div>
+                          <span className="text-sm font-medium">Perdidas</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={() => setEditCallsMissed(Math.max(0, editCallsMissed - 1))}
+                          >
+                            <Minus className="h-3 w-3" />
+                          </Button>
+                          <span className="w-8 text-center font-bold">{editCallsMissed}</span>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={() => setEditCallsMissed(editCallsMissed + 1)}
+                          >
+                            <Plus className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 justify-end pt-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={handleSaveCalls}
+                          disabled={updateCallsMutation.isPending}
+                          className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
+                        >
+                          <Check className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={handleCancelEditCalls}
+                          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
+                      <div className="flex items-center gap-1.5">
+                        <PhoneCall className="h-4 w-4 text-green-600" />
+                        <span className="font-semibold text-green-700">{(deal as any).calls_answered || 0}</span>
+                        <span className="text-xs text-muted-foreground">atendidas</span>
+                      </div>
+                      <div className="w-px h-4 bg-border" />
+                      <div className="flex items-center gap-1.5">
+                        <PhoneMissed className="h-4 w-4 text-red-600" />
+                        <span className="font-semibold text-red-700">{(deal as any).calls_missed || 0}</span>
+                        <span className="text-xs text-muted-foreground">perdidas</span>
+                      </div>
+                    </div>
                   )}
                 </div>
 

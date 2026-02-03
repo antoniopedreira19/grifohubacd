@@ -14,6 +14,7 @@ import { CloseSaleDialog } from "@/components/pipeline/CloseSaleDialog";
 import { NegotiationDialog } from "@/components/pipeline/NegotiationDialog";
 import { LostDealDialog } from "@/components/pipeline/LostDealDialog";
 import { DealDetailSheet } from "@/components/pipeline/DealDetailSheet";
+import { CallsTrackingDialog } from "@/components/pipeline/CallsTrackingDialog";
 import { toast } from "sonner";
 import type { Deal, Pipeline as PipelineType, PipelineStage } from "@/components/pipeline/types";
 import type { DealTag } from "@/components/pipeline/tags";
@@ -107,6 +108,11 @@ export default function Pipeline() {
     targetStageId: null,
   });
   const [followupDialog, setFollowupDialog] = useState<{
+    open: boolean;
+    deal: Deal | null;
+    targetStageId: string | null;
+  }>({ open: false, deal: null, targetStageId: null });
+  const [callsTrackingDialog, setCallsTrackingDialog] = useState<{
     open: boolean;
     deal: Deal | null;
     targetStageId: string | null;
@@ -300,6 +306,10 @@ export default function Pipeline() {
       setFollowupDialog({ open: true, deal, targetStageId });
       return;
     }
+    if (targetStage?.type === "calls_tracking" && source.droppableId !== targetStageId) {
+      setCallsTrackingDialog({ open: true, deal, targetStageId });
+      return;
+    }
 
     const sourceStage = stages.find((s) => s.id === source.droppableId);
     const isLeavingLostStage = sourceStage?.type === "lost" && targetStage?.type !== "lost";
@@ -355,6 +365,10 @@ export default function Pipeline() {
       });
     }
     setFollowupDialog({ open: false, deal: null, targetStageId: null });
+  };
+  
+  const handleCallsTrackingSuccess = () => {
+    setCallsTrackingDialog({ open: false, deal: null, targetStageId: null });
   };
 
   // Filtragem e Ordenação Otimizada
@@ -599,6 +613,15 @@ export default function Pipeline() {
           leadName={followupDialog.deal.lead?.full_name}
           currentDate={null}
           onSuccess={handleFollowupSuccess}
+        />
+      )}
+      {callsTrackingDialog.deal && (
+        <CallsTrackingDialog
+          open={callsTrackingDialog.open}
+          onOpenChange={(open) => !open && setCallsTrackingDialog((p) => ({ ...p, open: false }))}
+          deal={callsTrackingDialog.deal}
+          targetStageId={callsTrackingDialog.targetStageId}
+          onSuccess={handleCallsTrackingSuccess}
         />
       )}
       <DealDetailSheet
