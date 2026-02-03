@@ -1,11 +1,12 @@
 import { Draggable } from "@hello-pangea/dnd";
 import { cn } from "@/lib/utils";
 import { differenceInDays } from "date-fns";
-import { CalendarDays, Clock, User, TrendingUp, Phone, MapPin, Timer, UserCircle } from "lucide-react";
+import { CalendarDays, Clock, User, TrendingUp, Phone, MapPin, Timer, UserCircle, PhoneCall, PhoneMissed } from "lucide-react";
 import type { Deal } from "./types";
 import { getRegionByPhone, getRegionColor } from "@/lib/ddd-regions";
 import { TagBadge } from "./tags";
 import type { DealTag } from "./tags";
+
 interface DealCardProps {
   deal: Deal;
   index: number;
@@ -24,7 +25,14 @@ export function DealCard({ deal, index, stageType, onClick, tags = [] }: DealCar
   const priority = deal.priority || "Medium";
   const config = priorityConfig[priority] || priorityConfig.Medium;
   const isMeetingStage = stageType === "meeting";
+  const isCallsTrackingStage = stageType === "calls_tracking";
   const regionInfo = getRegionByPhone(deal.lead?.phone || null);
+  
+  // Calls tracking data
+  const callsAnswered = deal.calls_answered || 0;
+  const callsMissed = deal.calls_missed || 0;
+  const hasCalls = callsAnswered > 0 || callsMissed > 0;
+  
   // Calcula dias no estágio atual
   const daysInStage = deal.stage_entered_at
     ? differenceInDays(new Date(), new Date(deal.stage_entered_at))
@@ -164,6 +172,24 @@ export function DealCard({ deal, index, stageType, onClick, tags = [] }: DealCar
                   <span className="inline-flex items-center gap-1 rounded-md bg-purple-50 border border-purple-200 px-1.5 py-0.5 text-xs font-medium text-purple-700">
                     <User className="h-3 w-3" />
                     {deal.meeting_owner.name.split(" ")[0]}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Calls Tracking Badges */}
+            {(isCallsTrackingStage || hasCalls) && (
+              <div className="flex flex-wrap items-center gap-1.5">
+                {callsAnswered > 0 && (
+                  <span className="inline-flex items-center gap-1 rounded-md bg-green-50 border border-green-200 px-1.5 py-0.5 text-xs font-medium text-green-700">
+                    <PhoneCall className="h-3 w-3" />
+                    {callsAnswered}
+                  </span>
+                )}
+                {callsMissed > 0 && (
+                  <span className="inline-flex items-center gap-1 rounded-md bg-red-50 border border-red-200 px-1.5 py-0.5 text-xs font-medium text-red-700">
+                    <PhoneMissed className="h-3 w-3" />
+                    {callsMissed}
                   </span>
                 )}
               </div>

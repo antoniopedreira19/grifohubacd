@@ -229,6 +229,8 @@ export type Database = {
       }
       deals: {
         Row: {
+          calls_answered: number | null
+          calls_missed: number | null
           cash_value: number | null
           created_at: string | null
           followup_date: string | null
@@ -252,6 +254,8 @@ export type Database = {
           value: number | null
         }
         Insert: {
+          calls_answered?: number | null
+          calls_missed?: number | null
           cash_value?: number | null
           created_at?: string | null
           followup_date?: string | null
@@ -275,6 +279,8 @@ export type Database = {
           value?: number | null
         }
         Update: {
+          calls_answered?: number | null
+          calls_missed?: number | null
           cash_value?: number | null
           created_at?: string | null
           followup_date?: string | null

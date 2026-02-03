@@ -19,6 +19,10 @@ export interface Deal {
   meeting_owner_id?: string | null;
   owner_id?: string | null;
 
+  // Calls tracking
+  calls_answered?: number;
+  calls_missed?: number;
+
   lead?: {
     id: string;
     full_name: string;
@@ -50,7 +54,7 @@ export interface PipelineStage {
   name: string;
   pipeline_id: string;
   order_index: number;
-  type?: "default" | "meeting" | "won" | "lost" | "negotiation" | "followup";
+  type?: "default" | "meeting" | "won" | "lost" | "negotiation" | "followup" | "calls_tracking";
 }
 
 export interface Pipeline {
