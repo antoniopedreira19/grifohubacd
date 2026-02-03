@@ -784,7 +784,7 @@ export function LeadDetailSheet({ lead, open, onOpenChange }: LeadDetailSheetPro
                           <div className="flex-1">
                             <div className="flex items-center gap-3">
                               <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
-                                {deal.created_at ? format(new Date(deal.created_at), "dd/MM/yyyy") : "-"}
+                                {deal.created_at ? format(new Date(deal.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR }) : "-"}
                               </div>
                               <span className="font-semibold text-foreground">
                                 {deal.products?.name || deal.title || "Produto"}
@@ -827,7 +827,7 @@ export function LeadDetailSheet({ lead, open, onOpenChange }: LeadDetailSheetPro
                         <div className="flex-1">
                           <div className="flex items-center gap-3">
                             <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
-                              {sale.transaction_date ? format(new Date(sale.transaction_date), "dd/MM/yyyy") : "-"}
+                              {sale.transaction_date ? format(new Date(sale.transaction_date), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR }) : "-"}
                             </div>
                             <span className="font-semibold text-foreground">
                               {sale.products?.name || sale.product_name || "Produto"}
