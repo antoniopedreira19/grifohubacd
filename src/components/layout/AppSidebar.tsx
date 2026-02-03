@@ -9,6 +9,8 @@ import {
   Settings,
   CalendarDays,
   UserCheck,
+  Zap,
+  Calendar,
   LogOut,
 } from "lucide-react";
 import {
@@ -38,6 +40,8 @@ const menuItems = [
   { title: "Pipeline", url: "/pipeline", icon: GitBranch },
   { title: "Agenda", url: "/agenda", icon: CalendarDays },
   { title: "CRM", url: "/crm", icon: UserCheck },
+  { title: "Automações", url: "/automacoes", icon: Zap },
+  { title: "Eventos", url: "/eventos", icon: Calendar },
   { title: "Produtos", url: "/produtos", icon: Package },
   { title: "Marketing", url: "/marketing", icon: Megaphone },
   { title: "Templates", url: "/templates", icon: FileText },
