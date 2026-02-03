@@ -18,6 +18,8 @@ import Templates from "@/pages/Templates";
 import Configuracoes from "@/pages/Configuracoes";
 import Agenda from "@/pages/Agenda";
 import CRM from "@/pages/CRM";
+import Automacoes from "@/pages/Automacoes";
+import Eventos from "@/pages/Eventos";
 import NotFound from "@/pages/NotFound";
 import PublicPageRenderer from "@/pages/PublicPageRenderer";
 import NpsPageRenderer from "@/pages/NpsPageRenderer";
@@ -57,6 +59,8 @@ const App = () => (
                 <Route path="/configuracoes" element={<Configuracoes />} />
                 <Route path="/agenda" element={<Agenda />} />
                 <Route path="/crm" element={<CRM />} />
+                <Route path="/automacoes" element={<Automacoes />} />
+                <Route path="/eventos" element={<Eventos />} />
               </Route>
             </Route>
             
