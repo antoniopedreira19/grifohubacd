@@ -484,7 +484,7 @@ export default function Mentoria360() {
                       <Calendar className="w-4 h-4" />
                       <span className="text-sm">Próxima Turma:</span>
                     </div>
-                    <p className="font-disket text-2xl text-[#a37428]">15 DE MARÇO</p>
+                    <p className="font-disket text-2xl text-[#a37428]">MARÇO 2026</p>
                   </div>
 
                   <Button size="lg" onClick={handleCTAClick} className="w-full text-base sm:text-lg px-8 py-6 h-auto bg-[#a37428] hover:bg-[#8b6322] text-white font-semibold">
@@ -503,7 +503,7 @@ export default function Mentoria360() {
             <div className="mt-16 pt-8 border-t border-gray-200 text-center">
               <div className="flex items-center justify-center gap-2 mb-4">
                 <img src={grifoLogo} alt="Grifo" className="h-8 w-auto" />
-                <span className="font-disket text-lg tracking-widest text-[#112232]">GRIFO 360</span>
+                <span className="font-disket text-lg tracking-widest text-[#112232]">GRIFO ACADEMY</span>
               </div>
               <p className="text-gray-500 text-sm">
                 © {new Date().getFullYear()} Grifo Boutique. TRANSFORMANDO TOCADORES EM COMANDANTES.
