@@ -89,48 +89,127 @@ export default function Mentoria360() {
       </header>
 
       {/* SECTION 1: HERO - DARK NAVY */}
-      <section className="relative min-h-screen flex items-center pt-20">
-        <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{
-        backgroundImage: `url(${heroBackground})`
-      }} />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#112232] via-[#112232]/90 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#112232] via-transparent to-[#112232]/50" />
-
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="space-y-6 text-center lg:text-left order-2 lg:order-1">
-              <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#a37428]/20 border border-[#a37428]/30">
-                <Star className="w-4 h-4 text-[#a37428]" />
-                <span className="text-sm text-[#a37428] font-semibold">MENTORIA GRIFO ACADEMY</span>
+      <section className="relative min-h-screen flex flex-col pt-20">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#112232] via-[#112232] to-[#0a1520]" />
+        
+        {/* Main Hero Content */}
+        <div className="flex-1 flex items-center relative z-10">
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+              {/* Left: Text Content */}
+              <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="space-y-6 text-center lg:text-left order-2 lg:order-1">
+                <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-4 py-2 rounded border border-[#a37428]/50 bg-transparent">
+                  <span className="text-sm text-[#a37428] font-semibold tracking-wide">MENTORIA PRESENCIAL</span>
+                </motion.div>
+                
+                <motion.h1 variants={fadeInUp} className="font-disket text-3xl sm:text-4xl md:text-5xl lg:text-5xl leading-tight">
+                  GRIFO 360
+                </motion.h1>
+                
+                <motion.p variants={fadeInUp} className="text-2xl sm:text-3xl md:text-4xl text-gray-200 leading-snug font-light">
+                  Estrutura e estratégia com clareza para construtoras de{' '}
+                  <span className="text-gradient-gold italic font-normal">crescimento acelerado</span>
+                </motion.p>
+                
+                <motion.p variants={fadeInUp} className="text-base sm:text-lg text-gray-400 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                  Clareza estratégica, decisões firmes e execução para sustentar crescimento com margem.
+                </motion.p>
+                
+                <motion.div variants={fadeInUp}>
+                  <Button size="lg" onClick={handleCTAClick} className="w-full sm:w-auto text-base px-8 py-4 h-auto bg-[#a37428] hover:bg-[#8b6322] text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg">
+                    Aproveitar oportunidade
+                  </Button>
+                </motion.div>
+                
+                {/* Stats below button */}
+                <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 pt-4">
+                  <div className="flex items-center gap-3 text-gray-400 text-sm">
+                    <Users className="w-5 h-5 text-[#a37428]" />
+                    <span>Donos de Construtora com faturamento anual acima de R$ 2 milhões</span>
+                  </div>
+                  <div className="hidden sm:block w-px h-8 bg-gray-600" />
+                  <div className="flex items-center gap-3 text-gray-400 text-sm">
+                    <Users className="w-5 h-5 text-[#a37428]" />
+                    <span>Mais de 500 empresários mentorados pela Grifo</span>
+                  </div>
+                </motion.div>
               </motion.div>
-              <motion.h1 variants={fadeInUp} className="font-disket text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight">VOCÊ NÃO TEM UM PROBLEMA DE ESFORÇO.
-COMECE A COMANDAR LUCRO.<br />
-                <span className="text-gradient-gold">VOCÊ TEM UM PROBLEMA DE SISTEMA.</span>
-              </motion.h1>
-              <motion.p variants={fadeInUp} className="text-lg sm:text-xl text-gray-300 leading-relaxed max-w-xl mx-auto lg:mx-0">Instalamos a previsibilidade que sua construtora precisa para escalar sem o seu caos.</motion.p>
-              <motion.div variants={fadeInUp} className="">
-                <Button size="lg" onClick={handleCTAClick} className="w-full sm:w-auto text-base sm:text-lg px-8 py-6 h-auto bg-[#a37428] hover:bg-[#8b6322] text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
-                  QUERO ME TORNAR UM COMANDANTE
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
+              
+              {/* Right: Mentor Image */}
+              <motion.div 
+                initial={{ opacity: 0, x: 24 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                transition={{ duration: 0.55 }} 
+                className="flex justify-center lg:justify-end order-1 lg:order-2"
+              >
+                <div className="relative">
+                  {/* Subtle glow effect */}
+                  <div className="absolute -inset-4 bg-gradient-to-br from-[#a37428]/20 to-transparent rounded-full blur-3xl" />
+                  <img 
+                    src={danielGedeon} 
+                    alt="Daniel Gedeon" 
+                    loading="eager" 
+                    fetchPriority="high" 
+                    className="relative z-10 w-72 h-96 sm:w-80 sm:h-[450px] lg:w-[420px] lg:h-[520px] object-cover object-top" 
+                    style={{ 
+                      maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
+                      WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)'
+                    }}
+                  />
+                </div>
               </motion.div>
-            </motion.div>
-            <motion.div initial={{
-            opacity: 0,
-            x: 24
-          }} animate={{
-            opacity: 1,
-            x: 0
-          }} transition={{
-            duration: 0.55
-          }} className="flex justify-center lg:justify-end order-1 lg:order-2">
-              <div className="relative">
-                <div className="absolute -inset-4 bg-gradient-to-br from-[#a37428]/30 to-transparent rounded-3xl blur-2xl" />
-                <img src={danielGedeon} alt="Daniel Gedeon" loading="eager" fetchPriority="high" className="relative z-10 w-64 h-80 sm:w-80 sm:h-[400px] lg:w-[400px] lg:h-[500px] object-cover object-top rounded-2xl shadow-2xl border border-[#a37428]/20" />
-              </div>
-            </motion.div>
+            </div>
           </div>
         </div>
+        
+        {/* Bottom Info Bar */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="relative z-10 border-t border-white/10 bg-[#0a1520]/80 backdrop-blur-sm"
+        >
+          <div className="container mx-auto px-4 sm:px-6 py-6">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-4">
+              <div className="flex items-center gap-3">
+                <Calendar className="w-6 h-6 text-[#a37428]" />
+                <div>
+                  <p className="text-xs text-gray-400">Próxima Turma:</p>
+                  <p className="text-sm text-white font-medium">15 de Março</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Target className="w-6 h-6 text-[#a37428]" />
+                <div>
+                  <p className="text-xs text-gray-400">Formato:</p>
+                  <p className="text-sm text-white font-medium">Híbrido</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Settings className="w-6 h-6 text-[#a37428]" />
+                <div>
+                  <p className="text-xs text-gray-400">Duração:</p>
+                  <p className="text-sm text-white font-medium">12 meses</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <LayoutDashboard className="w-6 h-6 text-[#a37428]" />
+                <div>
+                  <p className="text-xs text-gray-400">Acesso à Plataforma:</p>
+                  <p className="text-sm text-white font-medium">1 Ano</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Star className="w-6 h-6 text-[#a37428]" />
+                <div>
+                  <p className="text-xs text-gray-400">NPS:</p>
+                  <p className="text-sm text-white font-medium">95 de 100</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </section>
 
       {/* SECTION 2: VÍDEO - DARK NAVY */}
