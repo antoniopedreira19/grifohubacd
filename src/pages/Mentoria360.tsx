@@ -327,7 +327,7 @@ O resultado? Mais dor de cabeça, mais funcionários e menos margem.<br /> CONST
               text: "Pare de brigar por migalhas. Aprenda a se posicionar como autoridade."
             }].map((module, idx) => <motion.div key={idx} variants={fadeInUp} className="p-6 rounded-2xl bg-gray-50 border border-gray-200 hover:border-[#a37428]/50 transition-colors">
                   <module.icon className="w-10 h-10 text-[#a37428] mb-4" />
-                  <p className="text-[#a37428] font-semibold mb-1 text-2xl">{module.sub}</p>
+                  <p className="text-sm text-[#a37428] font-semibold mb-1">{module.sub}</p>
                   <h3 className="font-disket text-lg mb-3">{module.title}</h3>
                   <p className="text-gray-600">{module.text}</p>
                 </motion.div>)}
