@@ -100,7 +100,7 @@ export default function Mentoria360() {
               {/* Left: Text Content */}
               <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="space-y-6 text-center lg:text-left order-2 lg:order-1">
                 <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-4 py-2 rounded border border-[#a37428]/50 bg-transparent">
-                  <span className="text-sm text-[#a37428] font-semibold tracking-wide">MENTORIA PRESENCIAL</span>
+                  <span className="text-sm text-[#a37428] font-semibold tracking-wide">MENTORIA GRIFO ACADEMY</span>
                 </motion.div>
                 
                 <motion.h1 variants={fadeInUp} className="font-disket text-3xl sm:text-4xl md:text-5xl lg:text-5xl leading-tight">
@@ -137,26 +137,22 @@ export default function Mentoria360() {
               </motion.div>
               
               {/* Right: Mentor Image */}
-              <motion.div 
-                initial={{ opacity: 0, x: 24 }} 
-                animate={{ opacity: 1, x: 0 }} 
-                transition={{ duration: 0.55 }} 
-                className="flex justify-center lg:justify-end order-1 lg:order-2"
-              >
+              <motion.div initial={{
+              opacity: 0,
+              x: 24
+            }} animate={{
+              opacity: 1,
+              x: 0
+            }} transition={{
+              duration: 0.55
+            }} className="flex justify-center lg:justify-end order-1 lg:order-2">
                 <div className="relative">
                   {/* Subtle glow effect */}
                   <div className="absolute -inset-4 bg-gradient-to-br from-[#a37428]/20 to-transparent rounded-full blur-3xl" />
-                  <img 
-                    src={danielGedeon} 
-                    alt="Daniel Gedeon" 
-                    loading="eager" 
-                    fetchPriority="high" 
-                    className="relative z-10 w-72 h-96 sm:w-80 sm:h-[450px] lg:w-[420px] lg:h-[520px] object-cover object-top" 
-                    style={{ 
-                      maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
-                      WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)'
-                    }}
-                  />
+                  <img src={danielGedeon} alt="Daniel Gedeon" loading="eager" fetchPriority="high" className="relative z-10 w-72 h-96 sm:w-80 sm:h-[450px] lg:w-[420px] lg:h-[520px] object-cover object-top" style={{
+                  maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)'
+                }} />
                 </div>
               </motion.div>
             </div>
@@ -164,12 +160,16 @@ export default function Mentoria360() {
         </div>
         
         {/* Bottom Info Bar */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="relative z-10 border-t border-white/10 bg-[#0a1520]/80 backdrop-blur-sm"
-        >
+        <motion.div initial={{
+        opacity: 0,
+        y: 20
+      }} animate={{
+        opacity: 1,
+        y: 0
+      }} transition={{
+        duration: 0.5,
+        delay: 0.3
+      }} className="relative z-10 border-t border-white/10 bg-[#0a1520]/80 backdrop-blur-sm">
           <div className="container mx-auto px-4 sm:px-6 py-6">
             <div className="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-4">
               <div className="flex items-center gap-3">
