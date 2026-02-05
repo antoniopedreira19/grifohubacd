@@ -184,67 +184,56 @@ export function PipelineFunnel() {
             </div>
 
             {/* Funnel visualization */}
-            <div className="relative space-y-1">
+            <div className="relative space-y-1.5">
               {funnelData.map((stage, index) => {
-                const maxCount = Math.max(...funnelData.map((s) => s.count), 1);
-                const widthPercent = Math.max((stage.count / maxCount) * 100, 25);
+                const total = funnelData.length;
+                // Fixed decreasing width: first = 100%, last = 30%, linear interpolation
+                const widthPercent = total > 1
+                  ? 100 - ((index / (total - 1)) * 70)
+                  : 100;
                 const color = FUNNEL_COLORS[index % FUNNEL_COLORS.length];
                 const nextStage = funnelData[index + 1];
 
                 return (
-                  <div key={stage.name} className="flex items-center gap-3">
-                    {/* Funnel bar (left side) */}
-                    <div className="flex-1 flex justify-center">
+                  <div key={stage.name} className="flex items-stretch gap-0">
+                    {/* Funnel bar (left) - only colored bar, no text inside */}
+                    <div className="flex-1 flex justify-center items-center">
                       <div
-                        className="relative transition-all duration-500 ease-out w-full"
-                        style={{ maxWidth: `${widthPercent}%`, minWidth: "100px" }}
+                        className="h-10 rounded-lg overflow-hidden group hover:scale-[1.02] transition-transform cursor-default relative"
+                        style={{
+                          width: `${widthPercent}%`,
+                          background: `linear-gradient(135deg, ${color} 0%, ${color}cc 100%)`,
+                        }}
                       >
-                        <div
-                          className="relative flex items-center justify-between px-4 py-3 rounded-lg overflow-hidden group hover:scale-[1.02] transition-transform cursor-default"
-                          style={{
-                            background: `linear-gradient(135deg, ${color} 0%, ${color}dd 100%)`,
-                          }}
-                        >
-                          {/* Shine effect */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                          {/* Stage name and count */}
-                          <div className="flex items-center gap-2 z-10 min-w-0">
-                            <span className="font-semibold text-white text-sm whitespace-nowrap">
-                              {stage.name}
-                            </span>
-                            <Badge className="bg-white/20 text-white border-0 text-xs shrink-0">
-                              {stage.count}
-                            </Badge>
-                          </div>
-
-                          {/* Value */}
-                          <span className="font-bold text-white text-sm z-10 whitespace-nowrap ml-2">
-                            {formatCurrency(stage.value)}
-                          </span>
-                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                     </div>
 
-                    {/* Pass rate on the right side with arrow */}
-                    <div className="w-[72px] shrink-0 flex flex-col items-center justify-center">
-                      {nextStage && nextStage.passRate !== null ? (
-                        <div className="flex flex-col items-center">
-                          <span className="text-xs font-bold text-[#A47428]">
-                            {nextStage.passRate.toFixed(0)}%
+                    {/* Right side: name, count, value, pass rate */}
+                    <div className="w-[160px] shrink-0 flex items-center pl-3">
+                      <div className="flex flex-col">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-sm font-semibold text-white whitespace-nowrap">
+                            {stage.name}
                           </span>
-                          <svg
-                            className="w-4 h-4 text-[#A47428]/60"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                          </svg>
+                          <span className="text-[10px] text-[#E1D8CF]/50">
+                            ({stage.count})
+                          </span>
                         </div>
-                      ) : (
-                        <span className="text-[10px] text-[#E1D8CF]/30">—</span>
-                      )}
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-[#A47428] whitespace-nowrap">
+                            {formatCurrency(stage.value)}
+                          </span>
+                          {nextStage && nextStage.passRate !== null && (
+                            <span className="text-[10px] text-[#E1D8CF]/40 flex items-center gap-0.5">
+                              →{" "}
+                              <span className="text-[#A47428] font-semibold">
+                                {nextStage.passRate.toFixed(0)}%
+                              </span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 );
