@@ -185,10 +185,9 @@ export function PipelineFunnel() {
             </div>
 
             {/* Funnel visualization */}
-            <div className="relative space-y-1.5">
+            <div className="relative">
               {funnelData.map((stage, index) => {
                 const total = funnelData.length;
-                // Fixed decreasing width: first = 100%, last = 30%, linear interpolation
                 const widthPercent = total > 1
                   ? 100 - ((index / (total - 1)) * 70)
                   : 100;
@@ -196,46 +195,64 @@ export function PipelineFunnel() {
                 const nextStage = funnelData[index + 1];
 
                 return (
-                  <div key={stage.name} className="flex items-stretch gap-0">
-                    {/* Funnel bar (left) - only colored bar, no text inside */}
-                    <div className="flex-1 flex justify-center items-center">
-                      <div
-                        className="h-10 rounded-lg overflow-hidden group hover:scale-[1.02] transition-transform cursor-default relative"
-                        style={{
-                          width: `${widthPercent}%`,
-                          background: `linear-gradient(135deg, ${color} 0%, ${color}cc 100%)`,
-                        }}
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
-                    </div>
-
-                    {/* Right side: name, count, value, pass rate */}
-                    <div className="w-[160px] shrink-0 flex items-center pl-3">
-                      <div className="flex flex-col">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-sm font-semibold text-white whitespace-nowrap">
-                            {stage.name}
-                          </span>
-                          <span className="text-[10px] text-[#E1D8CF]/50">
-                            ({stage.count})
-                          </span>
+                  <div key={stage.name}>
+                    {/* Stage row */}
+                    <div className="flex items-center gap-0">
+                      {/* Funnel bar */}
+                      <div className="flex-1 flex justify-center items-center">
+                        <div
+                          className="h-10 rounded-lg overflow-hidden group hover:scale-[1.02] transition-transform cursor-default relative"
+                          style={{
+                            width: `${widthPercent}%`,
+                            background: `linear-gradient(135deg, ${color} 0%, ${color}cc 100%)`,
+                          }}
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
-                        <div className="flex items-center gap-2">
+                      </div>
+
+                      {/* Right side: name, count, value */}
+                      <div className="w-[160px] shrink-0 flex items-center pl-3">
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-sm font-semibold text-white whitespace-nowrap">
+                              {stage.name}
+                            </span>
+                            <span className="text-[10px] text-[#E1D8CF]/50">
+                              ({stage.count})
+                            </span>
+                          </div>
                           <span className="text-xs font-bold text-[#A47428] whitespace-nowrap">
                             {formatCurrency(stage.value)}
                           </span>
-                          {nextStage && nextStage.passRate !== null && (
-                            <span className="text-[10px] text-[#E1D8CF]/40 flex items-center gap-0.5">
-                              →{" "}
-                              <span className="text-[#A47428] font-semibold">
-                                {nextStage.passRate.toFixed(0)}%
-                              </span>
-                            </span>
-                          )}
                         </div>
                       </div>
                     </div>
+
+                    {/* Arrow with pass rate between stages */}
+                    {nextStage && nextStage.passRate !== null && (
+                      <div className="flex items-center gap-0">
+                        {/* Spacer matching funnel area */}
+                        <div className="flex-1" />
+                        {/* Arrow + rate aligned with info column */}
+                        <div className="w-[160px] shrink-0 flex items-center pl-3 py-0.5">
+                          <div className="flex items-center gap-1.5 text-[#A47428]">
+                            <svg width="16" height="20" viewBox="0 0 16 20" fill="none" className="shrink-0">
+                              <path d="M8 0 L8 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                              <path d="M3 10 L8 16 L13 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                            </svg>
+                            <span className="text-xs font-bold">
+                              {nextStage.passRate.toFixed(0)}%
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Small gap when no pass rate */}
+                    {(!nextStage || nextStage.passRate === null) && index < total - 1 && (
+                      <div className="h-1.5" />
+                    )}
                   </div>
                 );
               })}
