@@ -70,9 +70,11 @@ export function SalesMetricsPanel() {
   }, []);
 
   const metrics = useMemo(() => {
+    // Exclude orphan deals (pipeline_id = null) from all views
+    const withPipeline = allDeals.filter((d) => d.pipeline_id !== null);
     const filtered = selectedPipeline === "all"
-      ? allDeals
-      : allDeals.filter((d) => d.pipeline_id === selectedPipeline);
+      ? withPipeline
+      : withPipeline.filter((d) => d.pipeline_id === selectedPipeline);
 
     const callsAnswered = filtered.reduce((sum, d) => sum + (d.calls_answered || 0), 0);
     const callsMissed = filtered.reduce((sum, d) => sum + (d.calls_missed || 0), 0);
