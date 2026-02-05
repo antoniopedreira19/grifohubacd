@@ -108,8 +108,8 @@ export default function Mentoria360() {
                 </motion.h1>
                 
                 <motion.p variants={fadeInUp} className="text-2xl sm:text-3xl md:text-4xl text-gray-200 leading-snug font-light">
-                  Estrutura e estratégia com clareza para construtoras de{' '}
-                  <span className="text-gradient-gold italic font-normal">crescimento acelerado</span>
+                  Você não tem um problema de esforço. Você tem um problema de{' '}
+                  <span className="text-gradient-gold italic font-normal">sistema</span>.
                 </motion.p>
                 
                 <motion.p variants={fadeInUp} className="text-base sm:text-lg text-gray-400 leading-relaxed max-w-xl mx-auto lg:mx-0">
