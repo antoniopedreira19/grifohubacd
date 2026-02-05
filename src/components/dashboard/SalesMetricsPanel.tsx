@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Phone, PhoneOff, Calendar, Trophy, XCircle, Activity, Filter } from "lucide-react";
+import { Phone, PhoneOff, Calendar, Trophy, XCircle, Activity, Filter, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { subDays } from "date-fns";
 
 interface Pipeline {
   id: string;
@@ -15,7 +16,10 @@ interface DealRow {
   status: string | null;
   meeting_date: string | null;
   pipeline_id: string | null;
+  created_at: string | null;
 }
+
+type PeriodFilter = "7" | "15" | "30";
 
 function MetricRow({
   icon: Icon,
@@ -47,6 +51,7 @@ export function SalesMetricsPanel() {
   const [pipelines, setPipelines] = useState<Pipeline[]>([]);
   const [allDeals, setAllDeals] = useState<DealRow[]>([]);
   const [selectedPipeline, setSelectedPipeline] = useState<string>("all");
+  const [selectedPeriod, setSelectedPeriod] = useState<PeriodFilter>("30");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -54,7 +59,7 @@ export function SalesMetricsPanel() {
       try {
         const [{ data: pipelinesData }, { data: dealsData }] = await Promise.all([
           supabase.from("pipelines").select("id, name").eq("archived", false),
-          supabase.from("deals").select("calls_answered, calls_missed, status, meeting_date, pipeline_id"),
+          supabase.from("deals").select("calls_answered, calls_missed, status, meeting_date, pipeline_id, created_at"),
         ]);
 
         setPipelines(pipelinesData || []);
@@ -70,8 +75,11 @@ export function SalesMetricsPanel() {
   }, []);
 
   const metrics = useMemo(() => {
-    // Exclude orphan deals (pipeline_id = null) from all views
-    const withPipeline = allDeals.filter((d) => d.pipeline_id !== null);
+    const cutoff = subDays(new Date(), Number(selectedPeriod)).toISOString();
+    // Exclude orphan deals (pipeline_id = null) and filter by period
+    const withPipeline = allDeals.filter(
+      (d) => d.pipeline_id !== null && d.created_at && d.created_at >= cutoff
+    );
     const filtered = selectedPipeline === "all"
       ? withPipeline
       : withPipeline.filter((d) => d.pipeline_id === selectedPipeline);
@@ -84,7 +92,7 @@ export function SalesMetricsPanel() {
     const dealsLost = filtered.filter((d) => d.status === "lost").length;
 
     return { callsAnswered, callsMissed, meetingsScheduled, meetingsSent, dealsWon, dealsLost };
-  }, [allDeals, selectedPipeline]);
+  }, [allDeals, selectedPipeline, selectedPeriod]);
 
   const totalCalls = metrics.callsAnswered + metrics.callsMissed;
   const callRate = totalCalls > 0 ? ((metrics.callsAnswered / totalCalls) * 100).toFixed(0) : "0";
@@ -116,20 +124,34 @@ export function SalesMetricsPanel() {
             </CardDescription>
           </div>
 
-          <Select value={selectedPipeline} onValueChange={setSelectedPipeline}>
-            <SelectTrigger className="w-[180px] bg-[#112232] border-[#A47428]/20 text-white">
-              <Filter className="w-4 h-4 mr-2 text-[#A47428]" />
-              <SelectValue placeholder="Pipeline" />
-            </SelectTrigger>
-            <SelectContent className="bg-[#112232] border-[#A47428]/20">
-              <SelectItem value="all" className="text-white">Todos os Pipelines</SelectItem>
-              {pipelines.map((p) => (
-                <SelectItem key={p.id} value={p.id} className="text-white">
-                  {p.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex flex-wrap items-center gap-2">
+            <Select value={selectedPeriod} onValueChange={(v) => setSelectedPeriod(v as PeriodFilter)}>
+              <SelectTrigger className="w-[140px] bg-[#112232] border-[#A47428]/20 text-white">
+                <Clock className="w-4 h-4 mr-2 text-[#A47428]" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-[#112232] border-[#A47428]/20">
+                <SelectItem value="7" className="text-white">Últimos 7 dias</SelectItem>
+                <SelectItem value="15" className="text-white">Últimos 15 dias</SelectItem>
+                <SelectItem value="30" className="text-white">Últimos 30 dias</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={selectedPipeline} onValueChange={setSelectedPipeline}>
+              <SelectTrigger className="w-[180px] bg-[#112232] border-[#A47428]/20 text-white">
+                <Filter className="w-4 h-4 mr-2 text-[#A47428]" />
+                <SelectValue placeholder="Pipeline" />
+              </SelectTrigger>
+              <SelectContent className="bg-[#112232] border-[#A47428]/20">
+                <SelectItem value="all" className="text-white">Todos os Pipelines</SelectItem>
+                {pipelines.map((p) => (
+                  <SelectItem key={p.id} value={p.id} className="text-white">
+                    {p.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </CardHeader>
 

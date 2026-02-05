@@ -2,8 +2,9 @@ import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { ThumbsDown, Filter } from "lucide-react";
+import { ThumbsDown, Filter, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { subDays } from "date-fns";
 import {
   BarChart,
   Bar,
@@ -25,12 +26,14 @@ interface LossReasonData {
   count: number;
 }
 
+type PeriodFilter = "7" | "15" | "30";
+
 const BAR_COLORS = [
-  "#EF4444", // red
-  "#F97316", // orange
-  "#EAB308", // yellow
-  "#A47428", // gold
-  "#78909C", // gray
+  "#EF4444",
+  "#F97316",
+  "#EAB308",
+  "#A47428",
+  "#78909C",
   "#607D8B",
   "#546E7A",
   "#455A64",
@@ -53,7 +56,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 export function LossReasonsChart() {
   const [pipelines, setPipelines] = useState<Pipeline[]>([]);
   const [selectedPipeline, setSelectedPipeline] = useState<string>("all");
-  const [lostDeals, setLostDeals] = useState<{ loss_reason: string | null; pipeline_id: string | null }[]>([]);
+  const [selectedPeriod, setSelectedPeriod] = useState<PeriodFilter>("30");
+  const [lostDeals, setLostDeals] = useState<{ loss_reason: string | null; pipeline_id: string | null; created_at: string | null }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -61,7 +65,7 @@ export function LossReasonsChart() {
       try {
         const [{ data: pipelinesData }, { data: dealsData }] = await Promise.all([
           supabase.from("pipelines").select("id, name").eq("archived", false),
-          supabase.from("deals").select("loss_reason, pipeline_id").eq("status", "lost"),
+          supabase.from("deals").select("loss_reason, pipeline_id, created_at").eq("status", "lost"),
         ]);
 
         setPipelines(pipelinesData || []);
@@ -77,9 +81,11 @@ export function LossReasonsChart() {
   }, []);
 
   const chartData = useMemo((): LossReasonData[] => {
+    const cutoff = subDays(new Date(), Number(selectedPeriod)).toISOString();
+    const byPeriod = lostDeals.filter((d) => d.created_at && d.created_at >= cutoff);
     const filtered = selectedPipeline === "all"
-      ? lostDeals
-      : lostDeals.filter((d) => d.pipeline_id === selectedPipeline);
+      ? byPeriod
+      : byPeriod.filter((d) => d.pipeline_id === selectedPipeline);
 
     const reasonMap = new Map<string, number>();
     filtered.forEach((deal) => {
@@ -91,7 +97,7 @@ export function LossReasonsChart() {
       .map(([reason, count]) => ({ reason, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 8);
-  }, [lostDeals, selectedPipeline]);
+  }, [lostDeals, selectedPipeline, selectedPeriod]);
 
   const totalLost = chartData.reduce((sum, d) => sum + d.count, 0);
 
@@ -119,20 +125,34 @@ export function LossReasonsChart() {
             </CardDescription>
           </div>
 
-          <Select value={selectedPipeline} onValueChange={setSelectedPipeline}>
-            <SelectTrigger className="w-[180px] bg-[#112232] border-[#A47428]/20 text-white">
-              <Filter className="w-4 h-4 mr-2 text-[#A47428]" />
-              <SelectValue placeholder="Pipeline" />
-            </SelectTrigger>
-            <SelectContent className="bg-[#112232] border-[#A47428]/20">
-              <SelectItem value="all" className="text-white">Todos os Pipelines</SelectItem>
-              {pipelines.map((p) => (
-                <SelectItem key={p.id} value={p.id} className="text-white">
-                  {p.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex flex-wrap items-center gap-2">
+            <Select value={selectedPeriod} onValueChange={(v) => setSelectedPeriod(v as PeriodFilter)}>
+              <SelectTrigger className="w-[140px] bg-[#112232] border-[#A47428]/20 text-white">
+                <Clock className="w-4 h-4 mr-2 text-[#A47428]" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-[#112232] border-[#A47428]/20">
+                <SelectItem value="7" className="text-white">Últimos 7 dias</SelectItem>
+                <SelectItem value="15" className="text-white">Últimos 15 dias</SelectItem>
+                <SelectItem value="30" className="text-white">Últimos 30 dias</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={selectedPipeline} onValueChange={setSelectedPipeline}>
+              <SelectTrigger className="w-[180px] bg-[#112232] border-[#A47428]/20 text-white">
+                <Filter className="w-4 h-4 mr-2 text-[#A47428]" />
+                <SelectValue placeholder="Pipeline" />
+              </SelectTrigger>
+              <SelectContent className="bg-[#112232] border-[#A47428]/20">
+                <SelectItem value="all" className="text-white">Todos os Pipelines</SelectItem>
+                {pipelines.map((p) => (
+                  <SelectItem key={p.id} value={p.id} className="text-white">
+                    {p.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </CardHeader>
 
