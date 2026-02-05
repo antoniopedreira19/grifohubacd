@@ -112,9 +112,7 @@ export default function Mentoria360() {
                   <span className="text-gradient-gold italic font-normal">sistema</span>.
                 </motion.p>
                 
-                <motion.p variants={fadeInUp} className="text-base sm:text-lg text-gray-400 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                  Clareza estratégica, decisões firmes e execução para sustentar crescimento com margem.
-                </motion.p>
+                <motion.p variants={fadeInUp} className="text-base sm:text-lg text-gray-400 leading-relaxed max-w-xl mx-auto lg:mx-0">Instalamos a previsibilidade que sua construtora precisa para escalar sem o seu caos.</motion.p>
                 
                 <motion.div variants={fadeInUp}>
                   <Button size="lg" onClick={handleCTAClick} className="w-full sm:w-auto text-base px-8 py-4 h-auto bg-[#a37428] hover:bg-[#8b6322] text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg">
