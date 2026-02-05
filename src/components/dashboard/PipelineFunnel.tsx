@@ -15,6 +15,7 @@ interface PipelineStage {
   name: string;
   order_index: number;
   pipeline_id: string;
+  type: string | null;
 }
 
 interface Deal {
@@ -56,7 +57,7 @@ export function PipelineFunnel() {
       try {
         const [{ data: pipelinesData }, { data: stagesData }, { data: dealsData }] = await Promise.all([
           supabase.from("pipelines").select("id, name").eq("archived", false),
-          supabase.from("pipeline_stages").select("id, name, order_index, pipeline_id"),
+          supabase.from("pipeline_stages").select("id, name, order_index, pipeline_id, type"),
           supabase.from("deals").select("id, stage_id, value, status, pipeline_id"),
         ]);
 
@@ -81,9 +82,9 @@ export function PipelineFunnel() {
   const funnelData = useMemo((): FunnelStage[] => {
     if (!selectedPipeline) return [];
 
-    // Get stages for selected pipeline
+    // Get stages for selected pipeline (exclude "lost" type stages)
     const pipelineStages = stages
-      .filter((s) => s.pipeline_id === selectedPipeline)
+      .filter((s) => s.pipeline_id === selectedPipeline && s.type !== "lost")
       .sort((a, b) => a.order_index - b.order_index);
 
     // Get active deals for selected pipeline
