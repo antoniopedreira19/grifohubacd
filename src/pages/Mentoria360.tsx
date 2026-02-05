@@ -531,7 +531,7 @@ export default function Mentoria360() {
                 },
                 {
                   q: "Já fiz outros cursos e não tive resultado.",
-                  a: "Cursos ensinam teoria. A Grifo 360 é implementação. Nós não entregamos aulas, entregamos o Setup na sua Obra com um especialista no seu projeto.",
+                  a: "Sua empresa não precisa de mais aulas, precisa da solução certa para agora. Enquanto cursos focam na teoria, a Grifo 360 ajusta o foco no seu momento atual. Entregamos o setup na sua obra e o acompanhamento técnico necessário para resolver seus gargalos e acelerar seus resultados.",
                 },
                 {
                   q: "O investimento é adequado para mim?",
