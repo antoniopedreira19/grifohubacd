@@ -216,9 +216,8 @@ export default function Mentoria360() {
           <motion.div initial="hidden" whileInView="visible" viewport={{
           once: true
         }} variants={staggerContainer} className="max-w-4xl mx-auto text-center space-y-8">
-            <motion.h2 variants={fadeInUp} className="font-disket text-2xl sm:text-3xl md:text-4xl text-white">
-              DESCUBRA COMO SAIR DO CAOS OPERACIONAL EM 90 DIAS         
-            </motion.h2>
+            <motion.h2 variants={fadeInUp} className="font-disket text-2xl sm:text-3xl md:text-4xl text-white font-mono">DESCUBRA COMO SAIR DO 
+CAOS OPERACIONAL EM 90 DIAS</motion.h2>
             <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/10 shadow-2xl cursor-pointer group">
               <div className="absolute inset-0 bg-gradient-to-t from-[#112232] to-transparent" />
               <div className="absolute inset-0 bg-[#0a1520] flex items-center justify-center">
@@ -242,12 +241,10 @@ export default function Mentoria360() {
           <motion.div initial="hidden" whileInView="visible" viewport={{
           once: true
         }} variants={staggerContainer} className="max-w-4xl mx-auto text-center space-y-8">
-            <motion.h2 variants={fadeInUp} className="font-disket text-2xl sm:text-3xl md:text-4xl leading-tight">
-              A VERDADE QUE NINGUÉM TE CONTA SOBRE <br /> CONSTRUIR COM LUCRO.
+            <motion.h2 variants={fadeInUp} className="font-disket text-2xl sm:text-3xl md:text-4xl leading-tight">Muitos engenheiros acreditam que para ganhar dinheiro precisam de "mais obras". 
+O resultado? Mais dor de cabeça, mais funcionários e menos margem.<br /> CONSTRUIR COM LUCRO.
             </motion.h2>
-            <motion.p variants={fadeInUp} className="text-lg sm:text-xl text-gray-600 leading-relaxed">
-              Muitos engenheiros acreditam que para ganhar dinheiro precisam de "mais obras". O resultado? Mais dor de cabeça, mais funcionários e menos margem.
-            </motion.p>
+            <motion.p variants={fadeInUp} className="text-lg sm:text-xl text-gray-600 leading-relaxed">"A Grifo 360 é pra quem sente que tudo depende dele, que a empresa não tem previsibilidade, e que no fim do mês ele não sabe se ganhou dinheiro ou só girou caixa."</motion.p>
             <motion.blockquote variants={fadeInUp} className="text-xl sm:text-2xl font-medium text-[#a37428] italic border-l-4 border-[#a37428] pl-6 text-left">
               "A Grifo 360 não é para quem quer aprender a construir casas, é para quem quer aprender a CONSTRUIR UMA EMPRESA que constrói casas."
             </motion.blockquote>
