@@ -624,10 +624,12 @@ export default function Mentoria360() {
                 <div className="space-y-4">
                   {[
                     "Acesso à Plataforma Grifo 360 (1 Ano)",
+                    "6 encontros ao vivo online no Meet",
                     "Setup na Sua Obra (Consultoria Individual)",
-                    "Comunidade Exclusiva de Comandantes",
+                    "Acesso ao GrifoBoard (1 ano)",
                     "Pack de Planilhas e Dashboards de Gestão",
-                    "Encontros Estratégicos ao Vivo Quinzenais",
+                    "Acompanhamento de 3 meses no grupo do Whatsapp",
+                    "Acesso a um encontro presencial no Grifo Hub SP",
                   ].map((item, idx) => (
                     <div key={idx} className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-200">
                       <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
