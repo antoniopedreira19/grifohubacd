@@ -252,8 +252,7 @@ export default function Mentoria360() {
               cabeça, mais funcionários e menos margem.
             </motion.p>
             <motion.blockquote variants={fadeInUp} className="text-xl sm:text-2xl font-medium text-[#a37428] italic border-l-4 border-[#a37428] pl-6 text-left">
-              "A Grifo 360 não é para quem quer aprender a construir casas, é para quem quer aprender a CONSTRUIR UMA
-              EMPRESA que constrói casas."
+              "A Grifo 360 é pra quem sente que tudo depende dele, que a empresa não tem previsibilidade, e que no fim do mês ele não sabe se ganhou dinheiro ou só girou caixa."
             </motion.blockquote>
           </motion.div>
         </div>
