@@ -417,14 +417,14 @@ export default function Mentoria360() {
                 },
                 {
                   icon: ShieldCheck,
-                  title: "O PLACAR",
-                  sub: "Gestão por Dados",
+                  title: "PRAZO, CUSTO E ROTINA",
+                  sub: "Gestão de Obras",
                   text: "Gerir por grito é amadorismo. Instale indicadores onde o lucro está escorrendo.",
                 },
                 {
                   icon: BarChart3,
-                  title: "LUCRO NO BOLSO",
-                  sub: "Engenharia Financeira",
+                  title: "MARGEM REAL",
+                  sub: "Financeiro",
                   text: "Separe o CPF do CNPJ e garanta previsibilidade de caixa de 90 dias.",
                 },
                 {
@@ -435,8 +435,8 @@ export default function Mentoria360() {
                 },
                 {
                   icon: Users,
-                  title: "MÁQUINA COMERCIAL",
-                  sub: "Venda de Valor",
+                  title: "FIM DA GUERRA POR PREÇO",
+                  sub: "Comercial e Marketing",
                   text: "Pare de brigar por migalhas. Aprenda a se posicionar como autoridade.",
                 },
               ].map((module, idx) => (
