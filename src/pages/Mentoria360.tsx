@@ -303,7 +303,7 @@ O resultado? Mais dor de cabeça, mais funcionários e menos margem.<br /> CONST
               {[{
               icon: Target,
               title: "PREVISIBILIDADE",
-              sub: "Planejamento",
+              sub: "Planejamento Estratégico",
               text: "Saia do cronograma bonito que não funciona. Implemente travas de segurança reais."
             }, {
               icon: ShieldCheck,
