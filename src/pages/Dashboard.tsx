@@ -14,6 +14,8 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { PipelineFunnel } from "@/components/dashboard/PipelineFunnel";
+import { LossReasonsChart } from "@/components/dashboard/LossReasonsChart";
+import { SalesMetricsPanel } from "@/components/dashboard/SalesMetricsPanel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -572,6 +574,12 @@ export default function Dashboard() {
             )}
           </CardContent>
         </Card>
+      </div>
+
+      {/* --- MOTIVOS DE PERDA & PAINEL COMERCIAL --- */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+        <LossReasonsChart />
+        <SalesMetricsPanel />
       </div>
     </div>
   );
