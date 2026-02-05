@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   DollarSign,
   TrendingUp,
@@ -36,8 +36,16 @@ import {
   Cell,
   Legend,
 } from "recharts";
-import { format, parseISO, startOfMonth } from "date-fns";
+import { format, parseISO, startOfMonth, subDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
+
+function periodToDays(period: string): number | null {
+  if (period === "7d") return 7;
+  if (period === "15d") return 15;
+  if (period === "30d") return 30;
+  if (period === "90d") return 90;
+  return null; // "all"
+}
 
 // --- TYPES ---
 interface DealWithRelations {
@@ -119,17 +127,12 @@ export default function Dashboard() {
   const [timeRange, setTimeRange] = useState("all");
   const [greeting, setGreeting] = useState("");
 
-  const [data, setData] = useState<DashboardData>({
-    totalRevenue: 0,
-    ticketMedio: 0,
-    conversionRate: 0,
-    inNegotiation: 0,
-    totalLeads: 0,
-    monthlyRevenue: [],
-    salesByProduct: [],
-    dealsByStage: [],
-    topCustomers: [],
-  });
+  // Raw data from Supabase (fetched once)
+  const [rawDeals, setRawDeals] = useState<any[]>([]);
+  const [rawSales, setRawSales] = useState<any[]>([]);
+  const [rawProducts, setRawProducts] = useState<any[]>([]);
+  const [rawStages, setRawStages] = useState<any[]>([]);
+  const [totalLeadsCount, setTotalLeadsCount] = useState(0);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -148,134 +151,11 @@ export default function Dashboard() {
             supabase.from("pipeline_stages").select("id, name, order_index"),
           ]);
 
-        // 1. KPIs FINANCEIROS
-        const totalRevenue = (allSales || []).reduce((sum, s) => sum + (Number(s.amount) || 0), 0);
-        const totalSalesCount = allSales?.length || 0;
-        const ticketMedio = totalSalesCount > 0 ? totalRevenue / totalSalesCount : 0;
-
-        // 2. TAXA DE CONVERSÃO REAL (Win Rate do Pipeline Manual)
-        const autoSaleDealIds = (allSales || []).filter((s) => s.origin === "lastlink_auto").map((s) => s.deal_id);
-
-        const manualPipelineDeals = (allDeals || []).filter(
-          (deal) => deal.status !== "abandoned" && !autoSaleDealIds.includes(deal.id),
-        );
-
-        const manualWonDeals = manualPipelineDeals.filter((d) => d.status === "won").length;
-        const totalManualDeals = manualPipelineDeals.length;
-
-        const conversionRate = totalManualDeals > 0 ? (manualWonDeals / totalManualDeals) * 100 : 0;
-
-        // 3. PIPELINE ATIVO
-        const inNegotiationDeals = (allDeals || []).filter(
-          (d) => d.status !== "won" && d.status !== "lost" && d.status !== "abandoned",
-        );
-        const inNegotiation = inNegotiationDeals.reduce((sum, d) => sum + (Number(d.value) || 0), 0);
-
-        // 4. FUNIL DE VENDAS
-        const dealsByStageMap = new Map<string, { count: number; value: number; index: number }>();
-        (allStages || []).forEach((stage) => {
-          dealsByStageMap.set(stage.name, { count: 0, value: 0, index: stage.order_index });
-        });
-
-        inNegotiationDeals.forEach((deal) => {
-          const stageName = allStages?.find((s) => s.id === deal.stage_id)?.name || "Outros";
-          const current = dealsByStageMap.get(stageName) || { count: 0, value: 0, index: 999 };
-          dealsByStageMap.set(stageName, {
-            count: current.count + 1,
-            value: current.value + (Number(deal.value) || 0),
-            index: current.index,
-          });
-        });
-
-        const dealsByStage = Array.from(dealsByStageMap.entries())
-          .map(([name, data]) => ({ name, ...data }))
-          .sort((a, b) => a.index - b.index)
-          .filter((s) => s.count > 0);
-
-        // 5. EVOLUÇÃO MENSAL
-        const monthlyMap = new Map<string, { value: number; count: number }>();
-        (allSales || []).forEach((sale) => {
-          if (sale.transaction_date) {
-            const monthKey = format(startOfMonth(parseISO(sale.transaction_date)), "yyyy-MM");
-            const current = monthlyMap.get(monthKey) || { value: 0, count: 0 };
-            monthlyMap.set(monthKey, {
-              value: current.value + (Number(sale.amount) || 0),
-              count: current.count + 1,
-            });
-          }
-        });
-
-        const sortedMonths = Array.from(monthlyMap.entries())
-          .sort(([a], [b]) => a.localeCompare(b))
-          .slice(-6)
-          .map(([month, data]) => ({
-            month: format(parseISO(`${month}-01`), "MMM", { locale: ptBR }),
-            value: data.value,
-            count: data.count,
-          }));
-
-        // 6. PRODUTOS
-        const productMap = new Map<string, number>();
-        const productNames = new Map<string, string>();
-        (products || []).forEach((p) => productNames.set(p.id, p.name));
-
-        (allSales || []).forEach((sale) => {
-          const productName =
-            sale.products?.name ||
-            (sale.product_id ? productNames.get(sale.product_id) : null) ||
-            sale.product_name ||
-            "Outros";
-          productMap.set(productName, (productMap.get(productName) || 0) + (Number(sale.amount) || 0));
-        });
-
-        const salesByProduct = Array.from(productMap.entries())
-          .map(([name, value]) => ({ name, value }))
-          .sort((a, b) => b.value - a.value)
-          .slice(0, 5);
-
-        // 7. TOP CLIENTES (LTV RANKING)
-        const customerMap = new Map<string, TopCustomer>();
-
-        (allSales || []).forEach((sale) => {
-          if (!sale.lead_id) return;
-
-          const existing = customerMap.get(sale.lead_id);
-          const amount = Number(sale.amount) || 0;
-          const date = sale.transaction_date || "";
-
-          if (existing) {
-            customerMap.set(sale.lead_id, {
-              ...existing,
-              totalSpent: existing.totalSpent + amount,
-              salesCount: existing.salesCount + 1,
-              lastPurchaseDate: date > existing.lastPurchaseDate ? date : existing.lastPurchaseDate,
-            });
-          } else {
-            customerMap.set(sale.lead_id, {
-              id: sale.lead_id,
-              name: sale.leads?.full_name || "Cliente Sem Nome",
-              totalSpent: amount,
-              salesCount: 1,
-              lastPurchaseDate: date,
-            });
-          }
-        });
-
-        const topCustomers = Array.from(customerMap.values())
-          .sort((a, b) => b.totalSpent - a.totalSpent)
-          .slice(0, 5);
-
-        setData({
-          totalRevenue,
-          ticketMedio,
-          conversionRate,
-          inNegotiation,
-          totalLeads: leadsCount || 0,
-          monthlyRevenue: sortedMonths,
-          salesByProduct,
-          dealsByStage,
-          topCustomers,
-        });
+        setRawDeals(allDeals || []);
+        setRawSales(allSales || []);
+        setRawProducts(products || []);
+        setRawStages(allStages || []);
+        setTotalLeadsCount(leadsCount || 0);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       } finally {
@@ -285,6 +165,137 @@ export default function Dashboard() {
 
     fetchDashboardData();
   }, []);
+
+  // Compute all dashboard data filtered by timeRange
+  const data = useMemo((): DashboardData => {
+    const days = periodToDays(timeRange);
+    const cutoff = days ? subDays(new Date(), days).toISOString() : null;
+
+    // Filter deals and sales by period
+    const allDeals = cutoff
+      ? rawDeals.filter((d) => d.created_at && d.created_at >= cutoff)
+      : rawDeals;
+    const allSales = cutoff
+      ? rawSales.filter((s) => (s.transaction_date || s.created_at) && (s.transaction_date || s.created_at) >= cutoff)
+      : rawSales;
+
+    // 1. KPIs FINANCEIROS
+    const totalRevenue = allSales.reduce((sum, s) => sum + (Number(s.amount) || 0), 0);
+    const totalSalesCount = allSales.length;
+    const ticketMedio = totalSalesCount > 0 ? totalRevenue / totalSalesCount : 0;
+
+    // 2. TAXA DE CONVERSÃO REAL (Win Rate do Pipeline Manual)
+    const autoSaleDealIds = allSales.filter((s) => s.origin === "lastlink_auto").map((s) => s.deal_id);
+    const manualPipelineDeals = allDeals.filter(
+      (deal) => deal.status !== "abandoned" && !autoSaleDealIds.includes(deal.id),
+    );
+    const manualWonDeals = manualPipelineDeals.filter((d) => d.status === "won").length;
+    const totalManualDeals = manualPipelineDeals.length;
+    const conversionRate = totalManualDeals > 0 ? (manualWonDeals / totalManualDeals) * 100 : 0;
+
+    // 3. PIPELINE ATIVO
+    const inNegotiationDeals = allDeals.filter(
+      (d) => d.status !== "won" && d.status !== "lost" && d.status !== "abandoned",
+    );
+    const inNegotiation = inNegotiationDeals.reduce((sum, d) => sum + (Number(d.value) || 0), 0);
+
+    // 4. FUNIL DE VENDAS
+    const dealsByStageMap = new Map<string, { count: number; value: number; index: number }>();
+    rawStages.forEach((stage) => {
+      dealsByStageMap.set(stage.name, { count: 0, value: 0, index: stage.order_index });
+    });
+    inNegotiationDeals.forEach((deal) => {
+      const stageName = rawStages.find((s) => s.id === deal.stage_id)?.name || "Outros";
+      const current = dealsByStageMap.get(stageName) || { count: 0, value: 0, index: 999 };
+      dealsByStageMap.set(stageName, {
+        count: current.count + 1,
+        value: current.value + (Number(deal.value) || 0),
+        index: current.index,
+      });
+    });
+    const dealsByStage = Array.from(dealsByStageMap.entries())
+      .map(([name, d]) => ({ name, ...d }))
+      .sort((a, b) => a.index - b.index)
+      .filter((s) => s.count > 0);
+
+    // 5. EVOLUÇÃO MENSAL
+    const monthlyMap = new Map<string, { value: number; count: number }>();
+    allSales.forEach((sale) => {
+      if (sale.transaction_date) {
+        const monthKey = format(startOfMonth(parseISO(sale.transaction_date)), "yyyy-MM");
+        const current = monthlyMap.get(monthKey) || { value: 0, count: 0 };
+        monthlyMap.set(monthKey, {
+          value: current.value + (Number(sale.amount) || 0),
+          count: current.count + 1,
+        });
+      }
+    });
+    const sortedMonths = Array.from(monthlyMap.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .slice(-6)
+      .map(([month, d]) => ({
+        month: format(parseISO(`${month}-01`), "MMM", { locale: ptBR }),
+        value: d.value,
+        count: d.count,
+      }));
+
+    // 6. PRODUTOS
+    const productMap = new Map<string, number>();
+    const productNames = new Map<string, string>();
+    rawProducts.forEach((p) => productNames.set(p.id, p.name));
+    allSales.forEach((sale) => {
+      const productName =
+        sale.products?.name ||
+        (sale.product_id ? productNames.get(sale.product_id) : null) ||
+        sale.product_name ||
+        "Outros";
+      productMap.set(productName, (productMap.get(productName) || 0) + (Number(sale.amount) || 0));
+    });
+    const salesByProduct = Array.from(productMap.entries())
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 5);
+
+    // 7. TOP CLIENTES (LTV RANKING)
+    const customerMap = new Map<string, TopCustomer>();
+    allSales.forEach((sale) => {
+      if (!sale.lead_id) return;
+      const existing = customerMap.get(sale.lead_id);
+      const amount = Number(sale.amount) || 0;
+      const date = sale.transaction_date || "";
+      if (existing) {
+        customerMap.set(sale.lead_id, {
+          ...existing,
+          totalSpent: existing.totalSpent + amount,
+          salesCount: existing.salesCount + 1,
+          lastPurchaseDate: date > existing.lastPurchaseDate ? date : existing.lastPurchaseDate,
+        });
+      } else {
+        customerMap.set(sale.lead_id, {
+          id: sale.lead_id,
+          name: sale.leads?.full_name || "Cliente Sem Nome",
+          totalSpent: amount,
+          salesCount: 1,
+          lastPurchaseDate: date,
+        });
+      }
+    });
+    const topCustomers = Array.from(customerMap.values())
+      .sort((a, b) => b.totalSpent - a.totalSpent)
+      .slice(0, 5);
+
+    return {
+      totalRevenue,
+      ticketMedio,
+      conversionRate,
+      inNegotiation,
+      totalLeads: totalLeadsCount,
+      monthlyRevenue: sortedMonths,
+      salesByProduct,
+      dealsByStage,
+      topCustomers,
+    };
+  }, [rawDeals, rawSales, rawProducts, rawStages, totalLeadsCount, timeRange]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(
@@ -510,7 +521,7 @@ export default function Dashboard() {
       {/* --- GARGALOS E TOP CLIENTES (LEVEL 3) --- */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
         {/* GRÁFICO 3: FUNIL DE VENDAS */}
-        <PipelineFunnel />
+        <PipelineFunnel globalPeriod={timeRange} />
 
         {/* LISTA: TOP CLIENTES (RANKING LTV) */}
         <Card className="shadow-sm border-[#A47428]/20 bg-[#1E3A50]/50 hover:shadow-md transition-shadow">
