@@ -114,11 +114,7 @@ export default function Mentoria360() {
                 
                 <motion.p variants={fadeInUp} className="text-base sm:text-lg text-gray-400 leading-relaxed max-w-xl mx-auto lg:mx-0">Instalamos a previsibilidade que sua construtora precisa para escalar sem o seu caos.</motion.p>
                 
-                <motion.div variants={fadeInUp}>
-                  <Button size="lg" onClick={handleCTAClick} className="w-full sm:w-auto text-base px-8 py-4 h-auto bg-[#a37428] hover:bg-[#8b6322] text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg">
-                    Aproveitar oportunidade
-                  </Button>
-                </motion.div>
+                
                 
                 {/* Stats below button */}
                 <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 pt-4">
@@ -129,7 +125,7 @@ export default function Mentoria360() {
                   <div className="hidden sm:block w-px h-8 bg-gray-600" />
                   <div className="flex items-center gap-3 text-gray-400 text-sm">
                     <Users className="w-5 h-5 text-[#a37428]" />
-                    <span>Mais de 500 empresários mentorados pela Grifo</span>
+                    <span>Mais de R$600 milhões faturados com a metodologia da Grifo </span>
                   </div>
                 </motion.div>
               </motion.div>
@@ -174,7 +170,7 @@ export default function Mentoria360() {
                 <Calendar className="w-6 h-6 text-[#a37428]" />
                 <div>
                   <p className="text-xs text-gray-400">Próxima Turma:</p>
-                  <p className="text-sm text-white font-medium">15 de Março</p>
+                  <p className="text-sm text-white font-medium">Março 2026</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -188,7 +184,7 @@ export default function Mentoria360() {
                 <Settings className="w-6 h-6 text-[#a37428]" />
                 <div>
                   <p className="text-xs text-gray-400">Duração:</p>
-                  <p className="text-sm text-white font-medium">12 meses</p>
+                  <p className="text-sm text-white font-medium">3 meses</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
