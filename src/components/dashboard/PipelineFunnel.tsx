@@ -4,6 +4,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { TrendingDown, Filter } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { subDays } from "date-fns";
+
+function periodToDays(period: string): number | null {
+  if (period === "7d") return 7;
+  if (period === "15d") return 15;
+  if (period === "30d") return 30;
+  if (period === "90d") return 90;
+  return null;
+}
+
+interface PipelineFunnelProps {
+  globalPeriod?: string;
+}
 
 interface Pipeline {
   id: string;
@@ -24,6 +37,7 @@ interface Deal {
   value: number | null;
   status: string | null;
   pipeline_id: string | null;
+  created_at: string | null;
 }
 
 interface FunnelStage {
@@ -45,7 +59,7 @@ const FUNNEL_COLORS = [
   "#546E7A",
 ];
 
-export function PipelineFunnel() {
+export function PipelineFunnel({ globalPeriod = "all" }: PipelineFunnelProps) {
   const [pipelines, setPipelines] = useState<Pipeline[]>([]);
   const [stages, setStages] = useState<PipelineStage[]>([]);
   const [deals, setDeals] = useState<Deal[]>([]);
@@ -58,7 +72,7 @@ export function PipelineFunnel() {
         const [{ data: pipelinesData }, { data: stagesData }, { data: dealsData }] = await Promise.all([
           supabase.from("pipelines").select("id, name").eq("archived", false),
           supabase.from("pipeline_stages").select("id, name, order_index, pipeline_id, type"),
-          supabase.from("deals").select("id, stage_id, value, status, pipeline_id"),
+          supabase.from("deals").select("id, stage_id, value, status, pipeline_id, created_at"),
         ]);
 
         setPipelines(pipelinesData || []);
@@ -87,9 +101,12 @@ export function PipelineFunnel() {
       .filter((s) => s.pipeline_id === selectedPipeline && s.type !== "lost")
       .sort((a, b) => a.order_index - b.order_index);
 
-    // Get active deals for selected pipeline
+    // Get active deals for selected pipeline, filtered by period
+    const days = periodToDays(globalPeriod);
+    const cutoff = days ? subDays(new Date(), days).toISOString() : null;
     const pipelineDeals = deals.filter(
       (d) => d.pipeline_id === selectedPipeline && d.status !== "lost" && d.status !== "abandoned"
+        && (!cutoff || (d.created_at && d.created_at >= cutoff))
     );
 
     // Calculate raw counts per stage
@@ -126,7 +143,7 @@ export function PipelineFunnel() {
     }
 
     return stageData;
-  }, [selectedPipeline, stages, deals]);
+  }, [selectedPipeline, stages, deals, globalPeriod]);
 
   const formatCurrency = (value: number) => {
     if (value >= 1000000) {
