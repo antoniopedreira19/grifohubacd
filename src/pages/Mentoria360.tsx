@@ -221,18 +221,16 @@ export default function Mentoria360() {
             <motion.h2 variants={fadeInUp} className="font-disket text-2xl sm:text-3xl md:text-4xl text-white font-mono">
               DESCUBRA COMO SAIR DO CAOS OPERACIONAL EM 90 DIAS
             </motion.h2>
-            <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/10 shadow-2xl cursor-pointer group">
-              <div className="absolute inset-0 bg-gradient-to-t from-[#112232] to-transparent" />
-              <div className="absolute inset-0 bg-[#0a1520] flex items-center justify-center">
-                <div className="text-center space-y-4">
-                  <div className="w-20 h-20 mx-auto rounded-full bg-[#a37428] flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-[#a37428]/30">
-                    <Play className="w-8 h-8 text-white ml-1" />
-                  </div>
-                  <p className="text-gray-300 text-lg sm:text-xl font-medium px-4">
-                    DESCUBRA COMO SAIR DO CAOS OPERACIONAL EM 90 DIAS
-                  </p>
-                </div>
-              </div>
+            <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+              <iframe 
+                className="w-full h-full"
+                src="https://www.youtube.com/embed/80GKMBz39Lg?si=w7vbmTfUT3Wd76LP" 
+                title="YouTube video player" 
+                frameBorder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerPolicy="strict-origin-when-cross-origin" 
+                allowFullScreen
+              />
             </div>
           </motion.div>
         </div>
