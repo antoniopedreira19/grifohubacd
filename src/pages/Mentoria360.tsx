@@ -129,7 +129,7 @@ export default function Mentoria360() {
                   <div className="hidden sm:block w-px h-8 bg-gray-600" />
                   <div className="flex items-center gap-3 text-gray-400 text-sm">
                     <Users className="w-5 h-5 text-[#a37428]" />
-                    <span>Mais de 500 empresários mentorados pela Grifo</span>
+                    <span>Mais de R$600 milhões faturados com a metodologia da Grifo</span>
                   </div>
                 </motion.div>
               </motion.div>
@@ -174,7 +174,7 @@ export default function Mentoria360() {
                 <Calendar className="w-6 h-6 text-[#a37428]" />
                 <div>
                   <p className="text-xs text-gray-400">Próxima Turma:</p>
-                  <p className="text-sm text-white font-medium">15 de Março</p>
+                  <p className="text-sm text-white font-medium">Março 2026</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -188,7 +188,7 @@ export default function Mentoria360() {
                 <Settings className="w-6 h-6 text-[#a37428]" />
                 <div>
                   <p className="text-xs text-gray-400">Duração:</p>
-                  <p className="text-sm text-white font-medium">12 meses</p>
+                  <p className="text-sm text-white font-medium">3 meses</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -202,7 +202,7 @@ export default function Mentoria360() {
                 <Star className="w-6 h-6 text-[#a37428]" />
                 <div>
                   <p className="text-xs text-gray-400">NPS:</p>
-                  <p className="text-sm text-white font-medium">95 de 100</p>
+                  <p className="text-sm text-white font-medium">97 de 100</p>
                 </div>
               </div>
             </div>
