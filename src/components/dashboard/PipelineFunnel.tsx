@@ -184,63 +184,67 @@ export function PipelineFunnel() {
             </div>
 
             {/* Funnel visualization */}
-            <div className="relative">
+            <div className="relative space-y-1">
               {funnelData.map((stage, index) => {
-                // Calculate width percentage (first stage = 100%, decreasing)
                 const maxCount = Math.max(...funnelData.map((s) => s.count), 1);
-                const widthPercent = Math.max((stage.count / maxCount) * 100, 20);
+                const widthPercent = Math.max((stage.count / maxCount) * 100, 25);
                 const color = FUNNEL_COLORS[index % FUNNEL_COLORS.length];
+                const nextStage = funnelData[index + 1];
 
                 return (
-                  <div key={stage.name} className="relative">
-                    {/* Pass rate indicator between stages */}
-                    {index > 0 && stage.passRate !== null && (
-                      <div className="flex items-center justify-center py-1">
-                        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[#112232] border border-[#A47428]/20">
+                  <div key={stage.name} className="flex items-center gap-3">
+                    {/* Funnel bar (left side) */}
+                    <div className="flex-1 flex justify-center">
+                      <div
+                        className="relative transition-all duration-500 ease-out w-full"
+                        style={{ maxWidth: `${widthPercent}%`, minWidth: "100px" }}
+                      >
+                        <div
+                          className="relative flex items-center justify-between px-4 py-3 rounded-lg overflow-hidden group hover:scale-[1.02] transition-transform cursor-default"
+                          style={{
+                            background: `linear-gradient(135deg, ${color} 0%, ${color}dd 100%)`,
+                          }}
+                        >
+                          {/* Shine effect */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                          {/* Stage name and count */}
+                          <div className="flex items-center gap-2 z-10 min-w-0">
+                            <span className="font-semibold text-white text-sm whitespace-nowrap">
+                              {stage.name}
+                            </span>
+                            <Badge className="bg-white/20 text-white border-0 text-xs shrink-0">
+                              {stage.count}
+                            </Badge>
+                          </div>
+
+                          {/* Value */}
+                          <span className="font-bold text-white text-sm z-10 whitespace-nowrap ml-2">
+                            {formatCurrency(stage.value)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Pass rate on the right side with arrow */}
+                    <div className="w-[72px] shrink-0 flex flex-col items-center justify-center">
+                      {nextStage && nextStage.passRate !== null ? (
+                        <div className="flex flex-col items-center">
+                          <span className="text-xs font-bold text-[#A47428]">
+                            {nextStage.passRate.toFixed(0)}%
+                          </span>
                           <svg
-                            className="w-3 h-3 text-[#A47428]"
+                            className="w-4 h-4 text-[#A47428]/60"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
                           >
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                           </svg>
-                          <span className="text-xs font-medium text-[#A47428]">
-                            {stage.passRate.toFixed(0)}%
-                          </span>
                         </div>
-                      </div>
-                    )}
-
-                    {/* Stage bar */}
-                    <div
-                      className="relative mx-auto transition-all duration-500 ease-out"
-                      style={{ width: `${widthPercent}%` }}
-                    >
-                      <div
-                        className="relative flex items-center justify-between px-4 py-3 rounded-lg mb-1 overflow-hidden group hover:scale-[1.02] transition-transform cursor-default"
-                        style={{
-                          background: `linear-gradient(135deg, ${color} 0%, ${color}dd 100%)`,
-                        }}
-                      >
-                        {/* Shine effect */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                        {/* Stage name and count */}
-                        <div className="flex items-center gap-2 z-10">
-                          <span className="font-semibold text-white text-sm truncate max-w-[120px]">
-                            {stage.name}
-                          </span>
-                          <Badge className="bg-white/20 text-white border-0 text-xs">
-                            {stage.count}
-                          </Badge>
-                        </div>
-
-                        {/* Value */}
-                        <span className="font-bold text-white text-sm z-10 whitespace-nowrap">
-                          {formatCurrency(stage.value)}
-                        </span>
-                      </div>
+                      ) : (
+                        <span className="text-[10px] text-[#E1D8CF]/30">—</span>
+                      )}
                     </div>
                   </div>
                 );
