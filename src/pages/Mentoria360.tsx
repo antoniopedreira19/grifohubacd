@@ -425,13 +425,13 @@ export default function Mentoria360() {
                   icon: BarChart3,
                   title: "MARGEM REAL",
                   sub: "Financeiro",
-                  text: "Separe o CPF do CNPJ e garanta previsibilidade de caixa de 90 dias.",
+                  text: "Pare de confundir caixa com lucro e comece a tomar decisões com clareza.",
                 },
                 {
                   icon: TrendingUp,
                   title: "MODO CEO",
                   sub: "Gestão Empresarial",
-                  text: "Sua empresa vai rodar sem depender da sua presença física no canteiro.",
+                  text: "Pare de apagar incêndio e tome decisões que vão mover o ponteiro da sua empresa.",
                 },
                 {
                   icon: Users,
