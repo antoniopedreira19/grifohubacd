@@ -92,19 +92,31 @@ export function PipelineFunnel() {
       (d) => d.pipeline_id === selectedPipeline && d.status !== "lost" && d.status !== "abandoned"
     );
 
-    // Calculate counts and values per stage
-    const stageData = pipelineStages.map((stage) => {
+    // Calculate raw counts per stage
+    const rawCounts = pipelineStages.map((stage) => {
       const stageDeals = pipelineDeals.filter((d) => d.stage_id === stage.id);
       return {
         name: stage.name,
-        count: stageDeals.length,
+        rawCount: stageDeals.length,
         value: stageDeals.reduce((sum, d) => sum + (Number(d.value) || 0), 0),
+        order_index: stage.order_index,
+      };
+    });
+
+    // Cumulative count: a deal in stage N has "passed through" all stages 0..N
+    // So cumulative[i] = sum of rawCounts[i..last]
+    const stageData = rawCounts.map((stage, i) => {
+      const cumulativeCount = rawCounts.slice(i).reduce((sum, s) => sum + s.rawCount, 0);
+      return {
+        name: stage.name,
+        count: cumulativeCount,
+        value: stage.value,
         passRate: null as number | null,
         order_index: stage.order_index,
       };
     });
 
-    // Calculate pass rates (from previous stage to current)
+    // Pass rate = cumulative of current / cumulative of previous
     for (let i = 1; i < stageData.length; i++) {
       const prevCount = stageData[i - 1].count;
       const currCount = stageData[i].count;
