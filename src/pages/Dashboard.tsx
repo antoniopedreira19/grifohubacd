@@ -333,6 +333,8 @@ export default function Dashboard() {
             </SelectTrigger>
             <SelectContent className="bg-[#112232] border-[#A47428]/20 text-white">
               <SelectItem value="all">Todo o Período</SelectItem>
+              <SelectItem value="7d">Últimos 7 dias</SelectItem>
+              <SelectItem value="15d">Últimos 15 dias</SelectItem>
               <SelectItem value="30d">Últimos 30 dias</SelectItem>
               <SelectItem value="90d">Último Trimestre</SelectItem>
             </SelectContent>
@@ -578,8 +580,8 @@ export default function Dashboard() {
 
       {/* --- MOTIVOS DE PERDA & PAINEL COMERCIAL --- */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-        <LossReasonsChart />
-        <SalesMetricsPanel />
+        <LossReasonsChart globalPeriod={timeRange} />
+        <SalesMetricsPanel globalPeriod={timeRange} />
       </div>
     </div>
   );

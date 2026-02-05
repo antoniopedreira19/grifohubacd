@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Phone, PhoneOff, Calendar, Trophy, XCircle, Activity, Filter, Clock } from "lucide-react";
+import { Phone, PhoneOff, Calendar, Trophy, XCircle, Activity, Filter } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { subDays } from "date-fns";
 
@@ -19,7 +19,17 @@ interface DealRow {
   created_at: string | null;
 }
 
-type PeriodFilter = "7" | "15" | "30";
+interface SalesMetricsPanelProps {
+  globalPeriod?: string;
+}
+
+function periodToDays(period: string): number | null {
+  if (period === "7d") return 7;
+  if (period === "15d") return 15;
+  if (period === "30d") return 30;
+  if (period === "90d") return 90;
+  return null;
+}
 
 function MetricRow({
   icon: Icon,
@@ -47,11 +57,10 @@ function MetricRow({
   );
 }
 
-export function SalesMetricsPanel() {
+export function SalesMetricsPanel({ globalPeriod = "all" }: SalesMetricsPanelProps) {
   const [pipelines, setPipelines] = useState<Pipeline[]>([]);
   const [allDeals, setAllDeals] = useState<DealRow[]>([]);
   const [selectedPipeline, setSelectedPipeline] = useState<string>("all");
-  const [selectedPeriod, setSelectedPeriod] = useState<PeriodFilter>("30");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -75,11 +84,10 @@ export function SalesMetricsPanel() {
   }, []);
 
   const metrics = useMemo(() => {
-    const cutoff = subDays(new Date(), Number(selectedPeriod)).toISOString();
-    // Exclude orphan deals (pipeline_id = null) and filter by period
-    const withPipeline = allDeals.filter(
-      (d) => d.pipeline_id !== null && d.created_at && d.created_at >= cutoff
-    );
+    const days = periodToDays(globalPeriod);
+    const withPipeline = days
+      ? allDeals.filter((d) => d.pipeline_id !== null && d.created_at && d.created_at >= subDays(new Date(), days).toISOString())
+      : allDeals.filter((d) => d.pipeline_id !== null);
     const filtered = selectedPipeline === "all"
       ? withPipeline
       : withPipeline.filter((d) => d.pipeline_id === selectedPipeline);
@@ -92,7 +100,7 @@ export function SalesMetricsPanel() {
     const dealsLost = filtered.filter((d) => d.status === "lost").length;
 
     return { callsAnswered, callsMissed, meetingsScheduled, meetingsSent, dealsWon, dealsLost };
-  }, [allDeals, selectedPipeline, selectedPeriod]);
+  }, [allDeals, selectedPipeline, globalPeriod]);
 
   const totalCalls = metrics.callsAnswered + metrics.callsMissed;
   const callRate = totalCalls > 0 ? ((metrics.callsAnswered / totalCalls) * 100).toFixed(0) : "0";
@@ -125,18 +133,6 @@ export function SalesMetricsPanel() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Select value={selectedPeriod} onValueChange={(v) => setSelectedPeriod(v as PeriodFilter)}>
-              <SelectTrigger className="w-[140px] bg-[#112232] border-[#A47428]/20 text-white">
-                <Clock className="w-4 h-4 mr-2 text-[#A47428]" />
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-[#112232] border-[#A47428]/20">
-                <SelectItem value="7" className="text-white">Últimos 7 dias</SelectItem>
-                <SelectItem value="15" className="text-white">Últimos 15 dias</SelectItem>
-                <SelectItem value="30" className="text-white">Últimos 30 dias</SelectItem>
-              </SelectContent>
-            </Select>
-
             <Select value={selectedPipeline} onValueChange={setSelectedPipeline}>
               <SelectTrigger className="w-[180px] bg-[#112232] border-[#A47428]/20 text-white">
                 <Filter className="w-4 h-4 mr-2 text-[#A47428]" />

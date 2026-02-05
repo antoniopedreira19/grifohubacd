@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { ThumbsDown, Filter, Clock } from "lucide-react";
+import { ThumbsDown, Filter } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { subDays } from "date-fns";
 import {
@@ -26,7 +26,17 @@ interface LossReasonData {
   count: number;
 }
 
-type PeriodFilter = "7" | "15" | "30";
+interface LossReasonsChartProps {
+  globalPeriod?: string;
+}
+
+function periodToDays(period: string): number | null {
+  if (period === "7d") return 7;
+  if (period === "15d") return 15;
+  if (period === "30d") return 30;
+  if (period === "90d") return 90;
+  return null; // "all"
+}
 
 const BAR_COLORS = [
   "#EF4444",
@@ -53,10 +63,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export function LossReasonsChart() {
+export function LossReasonsChart({ globalPeriod = "all" }: LossReasonsChartProps) {
   const [pipelines, setPipelines] = useState<Pipeline[]>([]);
   const [selectedPipeline, setSelectedPipeline] = useState<string>("all");
-  const [selectedPeriod, setSelectedPeriod] = useState<PeriodFilter>("30");
   const [lostDeals, setLostDeals] = useState<{ loss_reason: string | null; pipeline_id: string | null; created_at: string | null }[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -81,8 +90,10 @@ export function LossReasonsChart() {
   }, []);
 
   const chartData = useMemo((): LossReasonData[] => {
-    const cutoff = subDays(new Date(), Number(selectedPeriod)).toISOString();
-    const byPeriod = lostDeals.filter((d) => d.created_at && d.created_at >= cutoff);
+    const days = periodToDays(globalPeriod);
+    const byPeriod = days
+      ? lostDeals.filter((d) => d.created_at && d.created_at >= subDays(new Date(), days).toISOString())
+      : lostDeals;
     const filtered = selectedPipeline === "all"
       ? byPeriod
       : byPeriod.filter((d) => d.pipeline_id === selectedPipeline);
@@ -97,7 +108,7 @@ export function LossReasonsChart() {
       .map(([reason, count]) => ({ reason, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 8);
-  }, [lostDeals, selectedPipeline, selectedPeriod]);
+  }, [lostDeals, selectedPipeline, globalPeriod]);
 
   const totalLost = chartData.reduce((sum, d) => sum + d.count, 0);
 
@@ -126,18 +137,6 @@ export function LossReasonsChart() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Select value={selectedPeriod} onValueChange={(v) => setSelectedPeriod(v as PeriodFilter)}>
-              <SelectTrigger className="w-[140px] bg-[#112232] border-[#A47428]/20 text-white">
-                <Clock className="w-4 h-4 mr-2 text-[#A47428]" />
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-[#112232] border-[#A47428]/20">
-                <SelectItem value="7" className="text-white">Últimos 7 dias</SelectItem>
-                <SelectItem value="15" className="text-white">Últimos 15 dias</SelectItem>
-                <SelectItem value="30" className="text-white">Últimos 30 dias</SelectItem>
-              </SelectContent>
-            </Select>
-
             <Select value={selectedPipeline} onValueChange={setSelectedPipeline}>
               <SelectTrigger className="w-[180px] bg-[#112232] border-[#A47428]/20 text-white">
                 <Filter className="w-4 h-4 mr-2 text-[#A47428]" />
