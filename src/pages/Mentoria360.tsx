@@ -298,9 +298,7 @@ O resultado? Mais dor de cabeça, mais funcionários e menos margem.<br /> CONST
           <motion.div initial="hidden" whileInView="visible" viewport={{
           once: true
         }} variants={staggerContainer} className="space-y-12">
-            <motion.h2 variants={fadeInUp} className="font-disket text-2xl sm:text-3xl md:text-4xl text-center">
-              OS 5 PILARES DA REESTRUTURAÇÃO
-            </motion.h2>
+            <motion.h2 variants={fadeInUp} className="font-disket text-2xl sm:text-3xl md:text-4xl text-center">OS 5 PILARES DO SISTEMA GRIFO</motion.h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               {[{
               icon: Target,
