@@ -472,7 +472,7 @@ export default function Mentoria360() {
               {/* Direita: Card Urgente */}
               <motion.div variants={fadeInUp} className="relative p-6 sm:p-8 rounded-2xl bg-[#112232] text-white">
                 <div className="ping-urgent rounded-2xl" />
-                <div className="relative z-10 text-center space-y-6">
+                <div className="relative z-10 text-center space-y-6 py-[50px]">
                   <h3 className="font-disket text-2xl sm:text-3xl leading-tight">AONDE VOCÊ GOSTARIA DE ESTAR EM 3 MESES?<br /> ÚLTIMO AVISO.
                   </h3>
                   <p className="text-gray-300">Vagas limitadas para garantir a qualidade do Setup.</p>
