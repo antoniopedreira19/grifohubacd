@@ -581,8 +581,11 @@ export default function Mentoria360() {
               <p className="text-[#a37428] font-semibold">O Fundador</p>
               <h2 className="font-disket text-3xl sm:text-4xl">DANIEL GEDEON</h2>
               <p className="text-lg text-gray-300 leading-relaxed">
-                Engenheiro e Empresário. Daniel Gedeon transformou a gestão de obras em ciência. Ele lidera com uma
-                visão clara: transformar "tocadores de obra" em Comandantes.
+                Daniel Gedeon é engenheiro civil e fundador da Grifo Engenharia, empresa referência na entrega rápida e
+                eficiente de obras por meio do método Fast Construction. Com espírito empreendedor, iniciou a empresa
+                com apenas R$ 500 e transformou desafios em oportunidades, revolucionando o mercado com inovação, gestão
+                ágil e compromisso com a qualidade. Apaixonado por otimização de processos, acredita que cada minuto
+                importa na construção e no crescimento dos negócios.
               </p>
               <div className="flex flex-wrap justify-center lg:justify-start gap-4">
                 <div className="px-4 py-3 rounded-xl bg-white/5 border border-white/10">
