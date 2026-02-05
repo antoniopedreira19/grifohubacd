@@ -60,7 +60,6 @@ export default function Mentoria360() {
         fbq('track', 'PageView');
       `;
       document.head.appendChild(script);
-
       const noscript = document.createElement("noscript");
       noscript.innerHTML = `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1" />`;
       document.head.appendChild(noscript);
@@ -251,15 +250,7 @@ export default function Mentoria360() {
               DESCUBRA COMO SAIR DO CAOS OPERACIONAL EM 90 DIAS
             </motion.h2>
             <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-              <iframe 
-                className="w-full h-full"
-                src="https://www.youtube.com/embed/80GKMBz39Lg?si=w7vbmTfUT3Wd76LP" 
-                title="YouTube video player" 
-                frameBorder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                referrerPolicy="strict-origin-when-cross-origin" 
-                allowFullScreen
-              />
+              <iframe className="w-full h-full" src="https://www.youtube.com/embed/80GKMBz39Lg?si=w7vbmTfUT3Wd76LP" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen />
             </div>
           </motion.div>
         </div>
@@ -331,9 +322,7 @@ export default function Mentoria360() {
           <motion.div initial="hidden" whileInView="visible" viewport={{
           once: true
         }} variants={staggerContainer} className="space-y-12">
-            <motion.h2 variants={fadeInUp} className="font-disket text-2xl sm:text-3xl md:text-4xl text-center">
-              OS 5 PILARES DA REESTRUTURAÇÃO
-            </motion.h2>
+            <motion.h2 variants={fadeInUp} className="font-disket text-2xl sm:text-3xl md:text-4xl text-center">OS 5 PILARES DA GRIFO 360</motion.h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               {[{
               icon: Target,
