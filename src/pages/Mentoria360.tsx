@@ -1,61 +1,49 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { 
-  Calendar, 
-  BarChart3, 
-  Settings, 
-  Target, 
-  TrendingUp, 
-  Users,
-  Play,
-  ArrowRight,
-  CheckCircle2,
-  XCircle,
-  ShieldCheck,
-  Zap,
-  Lock,
-  MessageSquare,
-  Layers,
-  LayoutDashboard,
-  Star
-} from "lucide-react";
+import { Calendar, BarChart3, Settings, Target, TrendingUp, Users, Play, ArrowRight, CheckCircle2, XCircle, ShieldCheck, Zap, Lock, MessageSquare, Layers, LayoutDashboard, Star } from "lucide-react";
 import heroBackground from "@/assets/mentoria-360-hero-bg.jpg";
 import solutionBackground from "@/assets/mentoria-360-solution-bg.jpg";
 import setupBackground from "@/assets/mentoria-360-setup-bg.jpg";
 import danielGedeon from "@/assets/daniel-gedeon.jpg";
 import grifoLogo from "@/assets/grifo-logo.png";
-
 const CTA_URL = "https://www.grifocrm.com.br/p/mentoria-grifo-360";
-
 const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
+  hidden: {
+    opacity: 0,
+    y: 20
+  },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.1 }
+    y: 0,
+    transition: {
+      duration: 0.5
+    }
   }
 };
-
+const staggerContainer = {
+  hidden: {
+    opacity: 0
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
 export default function Mentoria360() {
   useEffect(() => {
     const imagesToPreload = [heroBackground, solutionBackground, setupBackground, danielGedeon];
-    imagesToPreload.forEach((src) => {
+    imagesToPreload.forEach(src => {
       const img = new Image();
       img.src = src;
     });
   }, []);
-
   const handleCTAClick = () => {
     window.open(CTA_URL, "_blank");
   };
-
-  return (
-    <div className="min-h-screen bg-[#112232] text-white overflow-x-hidden">
+  return <div className="min-h-screen bg-[#112232] text-white overflow-x-hidden">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
         @font-face {
@@ -89,17 +77,12 @@ export default function Mentoria360() {
         <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img src={grifoLogo} alt="Grifo" className="h-8 sm:h-10 w-auto" />
-            <span className="font-disket text-lg sm:text-xl tracking-widest text-white">
-              GRIFO 360
-            </span>
+            <span className="font-disket text-lg sm:text-xl tracking-widest text-white">GRIFO ACADEMY</span>
           </div>
           <div className="flex items-center gap-4">
             <div className="hidden sm:block w-2 h-2 rounded-full bg-[#a37428] animate-pulse" />
-            <button 
-              onClick={handleCTAClick}
-              className="font-disket text-xs sm:text-sm tracking-wider bg-[#a37428] hover:bg-[#8b6322] text-white px-4 sm:px-6 py-2 sm:py-3 rounded transition-colors"
-            >
-              APLICAR AGORA
+            <button onClick={handleCTAClick} className="font-disket text-xs sm:text-sm tracking-wider bg-[#a37428] hover:bg-[#8b6322] text-white px-4 sm:px-6 py-2 sm:py-3 rounded transition-colors">
+              ​Se inscreva agora  
             </button>
           </div>
         </div>
@@ -107,67 +90,43 @@ export default function Mentoria360() {
 
       {/* SECTION 1: HERO - DARK NAVY */}
       <section className="relative min-h-screen flex items-center pt-20">
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-30"
-          style={{ backgroundImage: `url(${heroBackground})` }}
-        />
+        <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{
+        backgroundImage: `url(${heroBackground})`
+      }} />
         <div className="absolute inset-0 bg-gradient-to-r from-[#112232] via-[#112232]/90 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#112232] via-transparent to-[#112232]/50" />
 
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={staggerContainer}
-              className="space-y-6 text-center lg:text-left order-2 lg:order-1"
-            >
-              <motion.div 
-                variants={fadeInUp}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#a37428]/20 border border-[#a37428]/30"
-              >
+            <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="space-y-6 text-center lg:text-left order-2 lg:order-1">
+              <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#a37428]/20 border border-[#a37428]/30">
                 <Star className="w-4 h-4 text-[#a37428]" />
-                <span className="text-sm text-[#a37428] font-semibold">Mentoria de Alto Ticket</span>
+                <span className="text-sm text-[#a37428] font-semibold">MENTORIA GRIFO ACADEMY</span>
               </motion.div>
-              <motion.h1 
-                variants={fadeInUp}
-                className="font-disket text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight"
-              >
-                PARE DE TOCAR OBRAS. <br/>
-                <span className="text-gradient-gold">COMECE A COMANDAR LUCRO.</span>
+              <motion.h1 variants={fadeInUp} className="font-disket text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight">VOCÊ NÃO TEM UM PROBLEMA DE ESFORÇO.
+COMECE A COMANDAR LUCRO.<br />
+                <span className="text-gradient-gold">VOCÊ TEM UM PROBLEMA DE SISTEMA.</span>
               </motion.h1>
-              <motion.p 
-                variants={fadeInUp}
-                className="text-lg sm:text-xl text-gray-300 leading-relaxed max-w-xl mx-auto lg:mx-0"
-              >
-                Você não tem um problema de esforço. Você tem um problema de sistema. Instalamos a previsibilidade que sua construtora precisa para escalar sem o seu caos.
-              </motion.p>
-              <motion.div variants={fadeInUp}>
-                <Button 
-                  size="lg" 
-                  onClick={handleCTAClick}
-                  className="w-full sm:w-auto text-base sm:text-lg px-8 py-6 h-auto bg-[#a37428] hover:bg-[#8b6322] text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-                >
+              <motion.p variants={fadeInUp} className="text-lg sm:text-xl text-gray-300 leading-relaxed max-w-xl mx-auto lg:mx-0">Instalamos a previsibilidade que sua construtora precisa para escalar sem o seu caos.</motion.p>
+              <motion.div variants={fadeInUp} className="">
+                <Button size="lg" onClick={handleCTAClick} className="w-full sm:w-auto text-base sm:text-lg px-8 py-6 h-auto bg-[#a37428] hover:bg-[#8b6322] text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
                   QUERO ME TORNAR UM COMANDANTE
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </motion.div>
             </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 24 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.55 }}
-              className="flex justify-center lg:justify-end order-1 lg:order-2"
-            >
+            <motion.div initial={{
+            opacity: 0,
+            x: 24
+          }} animate={{
+            opacity: 1,
+            x: 0
+          }} transition={{
+            duration: 0.55
+          }} className="flex justify-center lg:justify-end order-1 lg:order-2">
               <div className="relative">
                 <div className="absolute -inset-4 bg-gradient-to-br from-[#a37428]/30 to-transparent rounded-3xl blur-2xl" />
-                <img 
-                  src={danielGedeon} 
-                  alt="Daniel Gedeon" 
-                  loading="eager"
-                  fetchPriority="high"
-                  className="relative z-10 w-64 h-80 sm:w-80 sm:h-[400px] lg:w-[400px] lg:h-[500px] object-cover object-top rounded-2xl shadow-2xl border border-[#a37428]/20"
-                />
+                <img src={danielGedeon} alt="Daniel Gedeon" loading="eager" fetchPriority="high" className="relative z-10 w-64 h-80 sm:w-80 sm:h-[400px] lg:w-[400px] lg:h-[500px] object-cover object-top rounded-2xl shadow-2xl border border-[#a37428]/20" />
               </div>
             </motion.div>
           </div>
@@ -177,13 +136,9 @@ export default function Mentoria360() {
       {/* SECTION 2: VÍDEO - DARK NAVY */}
       <section className="py-16 sm:py-20 lg:py-24 bg-[#112232]">
         <div className="container mx-auto px-4 sm:px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeInUp}
-            className="max-w-4xl mx-auto"
-          >
+          <motion.div initial="hidden" whileInView="visible" viewport={{
+          once: true
+        }} variants={fadeInUp} className="max-w-4xl mx-auto">
             <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/10 shadow-2xl cursor-pointer group">
               <div className="absolute inset-0 bg-gradient-to-t from-[#112232] to-transparent" />
               <div className="absolute inset-0 bg-[#0a1520] flex items-center justify-center">
@@ -204,29 +159,16 @@ export default function Mentoria360() {
       {/* SECTION 3: MANIFESTO - WHITE */}
       <section className="py-16 sm:py-20 lg:py-24 bg-white text-[#112232]">
         <div className="container mx-auto px-4 sm:px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="max-w-4xl mx-auto text-center space-y-8"
-          >
-            <motion.h2 
-              variants={fadeInUp}
-              className="font-disket text-2xl sm:text-3xl md:text-4xl leading-tight"
-            >
-              A VERDADE QUE NINGUÉM TE CONTA SOBRE <br/> CONSTRUIR COM LUCRO.
+          <motion.div initial="hidden" whileInView="visible" viewport={{
+          once: true
+        }} variants={staggerContainer} className="max-w-4xl mx-auto text-center space-y-8">
+            <motion.h2 variants={fadeInUp} className="font-disket text-2xl sm:text-3xl md:text-4xl leading-tight">
+              A VERDADE QUE NINGUÉM TE CONTA SOBRE <br /> CONSTRUIR COM LUCRO.
             </motion.h2>
-            <motion.p 
-              variants={fadeInUp}
-              className="text-lg sm:text-xl text-gray-600 leading-relaxed"
-            >
+            <motion.p variants={fadeInUp} className="text-lg sm:text-xl text-gray-600 leading-relaxed">
               Muitos engenheiros acreditam que para ganhar dinheiro precisam de "mais obras". O resultado? Mais dor de cabeça, mais funcionários e menos margem.
             </motion.p>
-            <motion.blockquote 
-              variants={fadeInUp}
-              className="text-xl sm:text-2xl font-medium text-[#a37428] italic border-l-4 border-[#a37428] pl-6 text-left"
-            >
+            <motion.blockquote variants={fadeInUp} className="text-xl sm:text-2xl font-medium text-[#a37428] italic border-l-4 border-[#a37428] pl-6 text-left">
               "A Grifo 360 não é para quem quer aprender a construir casas, é para quem quer aprender a CONSTRUIR UMA EMPRESA que constrói casas."
             </motion.blockquote>
           </motion.div>
@@ -236,27 +178,16 @@ export default function Mentoria360() {
       {/* SECTION 4: FILTRO - DARK NAVY */}
       <section className="py-16 sm:py-20 lg:py-24 bg-[#112232]">
         <div className="container mx-auto px-4 sm:px-6">
-          <motion.h2 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeInUp}
-            className="font-disket text-2xl sm:text-3xl md:text-4xl text-center mb-12"
-          >
+          <motion.h2 initial="hidden" whileInView="visible" viewport={{
+          once: true
+        }} variants={fadeInUp} className="font-disket text-2xl sm:text-3xl md:text-4xl text-center mb-12">
             ESTA MENTORIA É PARA VOCÊ?
           </motion.h2>
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto"
-          >
+          <motion.div initial="hidden" whileInView="visible" viewport={{
+          once: true
+        }} variants={staggerContainer} className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto">
             {/* NÃO É PARA */}
-            <motion.div 
-              variants={fadeInUp}
-              className="p-6 sm:p-8 rounded-2xl border border-red-500/30 bg-red-500/5"
-            >
+            <motion.div variants={fadeInUp} className="p-6 sm:p-8 rounded-2xl border border-red-500/30 bg-red-500/5">
               <div className="flex items-center gap-3 mb-6">
                 <XCircle className="w-8 h-8 text-red-500" />
                 <span className="font-disket text-lg text-red-400">NÃO É PARA:</span>
@@ -269,10 +200,7 @@ export default function Mentoria360() {
             </motion.div>
 
             {/* É PARA VOCÊ */}
-            <motion.div 
-              variants={fadeInUp}
-              className="p-6 sm:p-8 rounded-2xl border border-green-500/30 bg-green-500/5"
-            >
+            <motion.div variants={fadeInUp} className="p-6 sm:p-8 rounded-2xl border border-green-500/30 bg-green-500/5">
               <div className="flex items-center gap-3 mb-6">
                 <CheckCircle2 className="w-8 h-8 text-green-500" />
                 <span className="font-disket text-lg text-green-400">É PARA VOCÊ:</span>
@@ -290,47 +218,47 @@ export default function Mentoria360() {
       {/* SECTION 5: 5 PILARES - WHITE */}
       <section className="py-16 sm:py-20 lg:py-24 bg-white text-[#112232]">
         <div className="container mx-auto px-4 sm:px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="space-y-12"
-          >
-            <motion.h2 
-              variants={fadeInUp}
-              className="font-disket text-2xl sm:text-3xl md:text-4xl text-center"
-            >
+          <motion.div initial="hidden" whileInView="visible" viewport={{
+          once: true
+        }} variants={staggerContainer} className="space-y-12">
+            <motion.h2 variants={fadeInUp} className="font-disket text-2xl sm:text-3xl md:text-4xl text-center">
               OS 5 PILARES DA REESTRUTURAÇÃO
             </motion.h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {[
-                { icon: Target, title: "PREVISIBILIDADE", sub: "Planejamento Estratégico", text: "Saia do cronograma bonito que não funciona. Implemente travas de segurança reais." },
-                { icon: ShieldCheck, title: "O PLACAR", sub: "Gestão por Dados", text: "Gerir por grito é amadorismo. Instale indicadores onde o lucro está escorrendo." },
-                { icon: BarChart3, title: "LUCRO NO BOLSO", sub: "Engenharia Financeira", text: "Separe o CPF do CNPJ e garanta previsibilidade de caixa de 90 dias." },
-                { icon: TrendingUp, title: "MODO CEO", sub: "Gestão Empresarial", text: "Sua empresa vai rodar sem depender da sua presença física no canteiro." },
-                { icon: Users, title: "MÁQUINA COMERCIAL", sub: "Venda de Valor", text: "Pare de brigar por migalhas. Aprenda a se posicionar como autoridade." }
-              ].map((module, idx) => (
-                <motion.div 
-                  key={idx}
-                  variants={fadeInUp}
-                  className="p-6 rounded-2xl bg-gray-50 border border-gray-200 hover:border-[#a37428]/50 transition-colors"
-                >
+              {[{
+              icon: Target,
+              title: "PREVISIBILIDADE",
+              sub: "Planejamento Estratégico",
+              text: "Saia do cronograma bonito que não funciona. Implemente travas de segurança reais."
+            }, {
+              icon: ShieldCheck,
+              title: "O PLACAR",
+              sub: "Gestão por Dados",
+              text: "Gerir por grito é amadorismo. Instale indicadores onde o lucro está escorrendo."
+            }, {
+              icon: BarChart3,
+              title: "LUCRO NO BOLSO",
+              sub: "Engenharia Financeira",
+              text: "Separe o CPF do CNPJ e garanta previsibilidade de caixa de 90 dias."
+            }, {
+              icon: TrendingUp,
+              title: "MODO CEO",
+              sub: "Gestão Empresarial",
+              text: "Sua empresa vai rodar sem depender da sua presença física no canteiro."
+            }, {
+              icon: Users,
+              title: "MÁQUINA COMERCIAL",
+              sub: "Venda de Valor",
+              text: "Pare de brigar por migalhas. Aprenda a se posicionar como autoridade."
+            }].map((module, idx) => <motion.div key={idx} variants={fadeInUp} className="p-6 rounded-2xl bg-gray-50 border border-gray-200 hover:border-[#a37428]/50 transition-colors">
                   <module.icon className="w-10 h-10 text-[#a37428] mb-4" />
                   <p className="text-sm text-[#a37428] font-semibold mb-1">{module.sub}</p>
                   <h3 className="font-disket text-lg mb-3">{module.title}</h3>
                   <p className="text-gray-600">{module.text}</p>
-                </motion.div>
-              ))}
-              <motion.div 
-                variants={fadeInUp}
-                className="p-6 rounded-2xl bg-[#112232] text-white flex flex-col justify-center items-center text-center"
-              >
+                </motion.div>)}
+              <motion.div variants={fadeInUp} className="p-6 rounded-2xl bg-[#112232] text-white flex flex-col justify-center items-center text-center">
                 <p className="text-[#a37428] font-semibold mb-2">Mais de 40h de conteúdo</p>
-                <Button 
-                  onClick={handleCTAClick}
-                  className="bg-[#a37428] hover:bg-[#8b6322] text-white"
-                >
+                <Button onClick={handleCTAClick} className="bg-[#a37428] hover:bg-[#8b6322] text-white">
                   QUERO ME INSCREVER
                 </Button>
               </motion.div>
@@ -341,19 +269,14 @@ export default function Mentoria360() {
 
       {/* SECTION 6: SETUP - DARK NAVY (IMPACT SECTION) */}
       <section className="py-16 sm:py-20 lg:py-24 relative overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{ backgroundImage: `url(${setupBackground})` }}
-        />
+        <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{
+        backgroundImage: `url(${setupBackground})`
+      }} />
         <div className="absolute inset-0 bg-[#112232]/90" />
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeInUp}
-            className="max-w-3xl mx-auto text-center space-y-6"
-          >
+          <motion.div initial="hidden" whileInView="visible" viewport={{
+          once: true
+        }} variants={fadeInUp} className="max-w-3xl mx-auto text-center space-y-6">
             <p className="text-[#a37428] font-semibold text-lg">SETUP NA SUA OBRA</p>
             <h2 className="font-disket text-2xl sm:text-3xl md:text-4xl">
               O DIFERENCIAL QUE MUDA O JOGO
@@ -362,12 +285,10 @@ export default function Mentoria360() {
               Um mentor especialista da Grifo vai estruturar o Planejamento de Elite de uma obra sua (até R$ 20M), montando o primeiro ciclo de controle junto com seu time.
             </p>
             <div className="flex flex-wrap justify-center gap-4 pt-4">
-              {["Cronograma de Ataque", "Mapa de Suprimentos", "Ritual de Gestão"].map((item, i) => (
-                <div key={i} className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#a37428]/20 border border-[#a37428]/30">
+              {["Cronograma de Ataque", "Mapa de Suprimentos", "Ritual de Gestão"].map((item, i) => <div key={i} className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#a37428]/20 border border-[#a37428]/30">
                   <CheckCircle2 className="w-4 h-4 text-[#a37428]" />
                   <span className="text-white text-sm">{item}</span>
-                </div>
-              ))}
+                </div>)}
             </div>
           </motion.div>
         </div>
@@ -376,43 +297,32 @@ export default function Mentoria360() {
       {/* SECTION 7: FAQ - WHITE */}
       <section className="py-16 sm:py-20 lg:py-24 bg-white text-[#112232]">
         <div className="container mx-auto px-4 sm:px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="max-w-4xl mx-auto"
-          >
+          <motion.div initial="hidden" whileInView="visible" viewport={{
+          once: true
+        }} variants={staggerContainer} className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <motion.h2 
-                variants={fadeInUp}
-                className="font-disket text-2xl sm:text-3xl md:text-4xl"
-              >
-                O QUE TODOS FALAM ANTES DE <br/> ENTRAR NA MENTORIA
+              <motion.h2 variants={fadeInUp} className="font-disket text-2xl sm:text-3xl md:text-4xl">
+                O QUE TODOS FALAM ANTES DE <br /> ENTRAR NA MENTORIA
               </motion.h2>
-              <motion.div 
-                variants={fadeInUp}
-                className="w-20 h-1 bg-[#a37428] mx-auto mt-4"
-              />
+              <motion.div variants={fadeInUp} className="w-20 h-1 bg-[#a37428] mx-auto mt-4" />
             </div>
             <div className="space-y-6">
-              {[
-                { q: "Não tenho tempo para fazer a mentoria agora.", a: "Sua falta de tempo é o sintoma da ausência de um sistema. Se você não tem 2h por semana para salvar seu negócio, você não tem uma empresa, tem um subemprego de luxo." },
-                { q: "Já fiz outros cursos e não tive resultado.", a: "Cursos ensinam teoria. A Grifo 360 é implementação. Nós não entregamos aulas, entregamos o Setup na sua Obra com um especialista no seu projeto." },
-                { q: "O investimento é adequado para mim?", a: "Quanto custa um erro de planejamento ou um retrabalho de R$ 50 mil? O investimento na mentoria é irrisório perto do vazamento financeiro que o caos gera hoje." }
-              ].map((faq, idx) => (
-                <motion.div 
-                  key={idx}
-                  variants={fadeInUp}
-                  className="flex gap-4 p-6 rounded-2xl bg-gray-50 border border-gray-200"
-                >
+              {[{
+              q: "Não tenho tempo para fazer a mentoria agora.",
+              a: "Sua falta de tempo é o sintoma da ausência de um sistema. Se você não tem 2h por semana para salvar seu negócio, você não tem uma empresa, tem um subemprego de luxo."
+            }, {
+              q: "Já fiz outros cursos e não tive resultado.",
+              a: "Cursos ensinam teoria. A Grifo 360 é implementação. Nós não entregamos aulas, entregamos o Setup na sua Obra com um especialista no seu projeto."
+            }, {
+              q: "O investimento é adequado para mim?",
+              a: "Quanto custa um erro de planejamento ou um retrabalho de R$ 50 mil? O investimento na mentoria é irrisório perto do vazamento financeiro que o caos gera hoje."
+            }].map((faq, idx) => <motion.div key={idx} variants={fadeInUp} className="flex gap-4 p-6 rounded-2xl bg-gray-50 border border-gray-200">
                   <MessageSquare className="w-6 h-6 text-[#a37428] flex-shrink-0 mt-1" />
                   <div>
                     <h3 className="font-semibold text-lg mb-2">{faq.q}</h3>
                     <p className="text-gray-600">{faq.a}</p>
                   </div>
-                </motion.div>
-              ))}
+                </motion.div>)}
             </div>
           </motion.div>
         </div>
@@ -421,21 +331,13 @@ export default function Mentoria360() {
       {/* SECTION 8: MENTOR - DARK NAVY */}
       <section className="py-16 sm:py-20 lg:py-24 bg-[#112232]">
         <div className="container mx-auto px-4 sm:px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center max-w-5xl mx-auto"
-          >
+          <motion.div initial="hidden" whileInView="visible" viewport={{
+          once: true
+        }} variants={staggerContainer} className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center max-w-5xl mx-auto">
             <motion.div variants={fadeInUp} className="flex justify-center">
               <div className="relative">
                 <div className="absolute -inset-4 bg-gradient-to-br from-[#a37428]/30 to-transparent rounded-full blur-2xl" />
-                <img 
-                  src={danielGedeon} 
-                  alt="Daniel Gedeon" 
-                  className="relative z-10 w-64 h-64 sm:w-80 sm:h-80 object-cover object-top rounded-full border-4 border-[#a37428]/30 shadow-2xl"
-                />
+                <img src={danielGedeon} alt="Daniel Gedeon" className="relative z-10 w-64 h-64 sm:w-80 sm:h-80 object-cover object-top rounded-full border-4 border-[#a37428]/30 shadow-2xl" />
               </div>
             </motion.div>
             <motion.div variants={fadeInUp} className="space-y-6 text-center lg:text-left">
@@ -462,13 +364,9 @@ export default function Mentoria360() {
       {/* SECTION 9: FINAL CTA - WHITE */}
       <section className="py-16 sm:py-20 lg:py-24 bg-white text-[#112232]">
         <div className="container mx-auto px-4 sm:px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="max-w-6xl mx-auto"
-          >
+          <motion.div initial="hidden" whileInView="visible" viewport={{
+          once: true
+        }} variants={staggerContainer} className="max-w-6xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
               {/* Esquerda: Entregáveis */}
               <motion.div variants={fadeInUp} className="space-y-6">
@@ -477,18 +375,10 @@ export default function Mentoria360() {
                   <p className="font-disket text-lg">O QUE VOCÊ LEVA:</p>
                 </div>
                 <div className="space-y-4">
-                  {[
-                    "Acesso à Plataforma Grifo 360 (1 Ano)",
-                    "Setup na Sua Obra (Consultoria Individual)",
-                    "Comunidade Exclusiva de Comandantes",
-                    "Pack de Planilhas e Dashboards de Gestão",
-                    "Encontros Estratégicos ao Vivo Quinzenais"
-                  ].map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-200">
+                  {["Acesso à Plataforma Grifo 360 (1 Ano)", "Setup na Sua Obra (Consultoria Individual)", "Comunidade Exclusiva de Comandantes", "Pack de Planilhas e Dashboards de Gestão", "Encontros Estratégicos ao Vivo Quinzenais"].map((item, idx) => <div key={idx} className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-200">
                       <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
                       <span>{item}</span>
-                    </div>
-                  ))}
+                    </div>)}
                 </div>
                 <div className="flex items-start gap-3 p-4 rounded-xl bg-[#a37428]/10 border border-[#a37428]/30">
                   <Zap className="w-5 h-5 text-[#a37428] flex-shrink-0 mt-0.5" />
@@ -499,14 +389,11 @@ export default function Mentoria360() {
               </motion.div>
 
               {/* Direita: Card Urgente */}
-              <motion.div 
-                variants={fadeInUp}
-                className="relative p-6 sm:p-8 rounded-2xl bg-[#112232] text-white"
-              >
+              <motion.div variants={fadeInUp} className="relative p-6 sm:p-8 rounded-2xl bg-[#112232] text-white">
                 <div className="ping-urgent rounded-2xl" />
                 <div className="relative z-10 text-center space-y-6">
                   <h3 className="font-disket text-2xl sm:text-3xl leading-tight">
-                    ESTE É O SEU <br/> ÚLTIMO AVISO.
+                    ESTE É O SEU <br /> ÚLTIMO AVISO.
                   </h3>
                   <p className="text-gray-300">Vagas limitadas para garantir a qualidade do Setup.</p>
 
@@ -518,11 +405,7 @@ export default function Mentoria360() {
                     <p className="font-disket text-2xl text-[#a37428]">15 DE MARÇO</p>
                   </div>
 
-                  <Button 
-                    size="lg"
-                    onClick={handleCTAClick}
-                    className="w-full text-base sm:text-lg px-8 py-6 h-auto bg-[#a37428] hover:bg-[#8b6322] text-white font-semibold"
-                  >
+                  <Button size="lg" onClick={handleCTAClick} className="w-full text-base sm:text-lg px-8 py-6 h-auto bg-[#a37428] hover:bg-[#8b6322] text-white font-semibold">
                     APLICAR PARA A MENTORIA
                   </Button>
 
@@ -549,6 +432,5 @@ export default function Mentoria360() {
           </motion.div>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 }
