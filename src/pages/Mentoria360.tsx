@@ -216,8 +216,7 @@ export default function Mentoria360() {
           <motion.div initial="hidden" whileInView="visible" viewport={{
           once: true
         }} variants={staggerContainer} className="max-w-4xl mx-auto text-center space-y-8">
-            <motion.h2 variants={fadeInUp} className="font-disket text-2xl sm:text-3xl md:text-4xl text-white font-mono">DESCUBRA COMO SAIR DO 
-CAOS OPERACIONAL EM 90 DIAS</motion.h2>
+            <motion.h2 variants={fadeInUp} className="font-disket text-2xl sm:text-3xl md:text-4xl text-white font-mono">DESCUBRA COMO SAIR DO CAOS OPERACIONAL EM 90 DIAS</motion.h2>
             <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/10 shadow-2xl cursor-pointer group">
               <div className="absolute inset-0 bg-gradient-to-t from-[#112232] to-transparent" />
               <div className="absolute inset-0 bg-[#0a1520] flex items-center justify-center">
