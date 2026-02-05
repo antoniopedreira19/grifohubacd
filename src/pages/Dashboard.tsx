@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import {
   DollarSign,
-  Users,
   TrendingUp,
   Package,
   Loader2,
@@ -14,6 +13,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { PipelineFunnel } from "@/components/dashboard/PipelineFunnel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -505,47 +505,8 @@ export default function Dashboard() {
 
       {/* --- GARGALOS E TOP CLIENTES (LEVEL 3) --- */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-        {/* GRÁFICO 3: GARGALOS DO FUNIL */}
-        <Card className="shadow-sm border-[#A47428]/20 bg-[#1E3A50]/50 hover:shadow-md transition-shadow">
-          <CardHeader>
-            <CardTitle className="text-white">Saúde do Pipeline</CardTitle>
-            <CardDescription className="text-[#E1D8CF]/60">Volume financeiro travado em cada etapa</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {data.dealsByStage.length > 0 ? (
-              <div className="h-[300px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={data.dealsByStage}
-                    layout="vertical"
-                    margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
-                  >
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      horizontal={true}
-                      vertical={false}
-                      stroke="rgba(255,255,255,0.05)"
-                    />
-                    <XAxis type="number" hide />
-                    <YAxis
-                      dataKey="name"
-                      type="category"
-                      axisLine={false}
-                      tickLine={false}
-                      width={100}
-                      // Texto branco para contraste
-                      tick={{ fill: "#FFFFFF", fontSize: 11, fontWeight: 500 }}
-                    />
-                    <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(164, 116, 40, 0.1)" }} />
-                    <Bar dataKey="value" name="Volume" fill={BRAND_COLORS.gold} radius={[0, 4, 4, 0]} barSize={24} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            ) : (
-              <EmptyState icon={BarChart3} message="Pipeline vazio." />
-            )}
-          </CardContent>
-        </Card>
+        {/* GRÁFICO 3: FUNIL DE VENDAS */}
+        <PipelineFunnel />
 
         {/* LISTA: TOP CLIENTES (RANKING LTV) */}
         <Card className="shadow-sm border-[#A47428]/20 bg-[#1E3A50]/50 hover:shadow-md transition-shadow">
