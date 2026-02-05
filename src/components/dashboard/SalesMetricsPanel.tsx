@@ -1,15 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Phone, PhoneOff, Calendar, Trophy, XCircle, Activity } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Phone, PhoneOff, Calendar, Trophy, XCircle, Activity, Filter } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-interface Metrics {
-  callsAnswered: number;
-  callsMissed: number;
-  meetingsScheduled: number;
-  meetingsSent: number;
-  dealsWon: number;
-  dealsLost: number;
+interface Pipeline {
+  id: string;
+  name: string;
+}
+
+interface DealRow {
+  calls_answered: number | null;
+  calls_missed: number | null;
+  status: string | null;
+  meeting_date: string | null;
+  pipeline_id: string | null;
 }
 
 function MetricRow({
@@ -39,46 +44,21 @@ function MetricRow({
 }
 
 export function SalesMetricsPanel() {
-  const [metrics, setMetrics] = useState<Metrics>({
-    callsAnswered: 0,
-    callsMissed: 0,
-    meetingsScheduled: 0,
-    meetingsSent: 0,
-    dealsWon: 0,
-    dealsLost: 0,
-  });
+  const [pipelines, setPipelines] = useState<Pipeline[]>([]);
+  const [allDeals, setAllDeals] = useState<DealRow[]>([]);
+  const [selectedPipeline, setSelectedPipeline] = useState<string>("all");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchMetrics = async () => {
+    const fetchData = async () => {
       try {
-        const { data: deals } = await supabase
-          .from("deals")
-          .select("calls_answered, calls_missed, status, meeting_date, stage_id");
+        const [{ data: pipelinesData }, { data: dealsData }] = await Promise.all([
+          supabase.from("pipelines").select("id, name").eq("archived", false),
+          supabase.from("deals").select("calls_answered, calls_missed, status, meeting_date, pipeline_id"),
+        ]);
 
-        if (!deals) return;
-
-        const callsAnswered = deals.reduce((sum, d) => sum + (d.calls_answered || 0), 0);
-        const callsMissed = deals.reduce((sum, d) => sum + (d.calls_missed || 0), 0);
-
-        // Meetings scheduled = deals that have a meeting_date set
-        const meetingsScheduled = deals.filter((d) => d.meeting_date).length;
-
-        // Meetings "sent" = deals in meeting-type stages (we count deals with meeting_date that are not open anymore or just all with meeting_date)
-        // For simplicity, meetingsSent = same as meetingsScheduled (can be refined later)
-        const meetingsSent = meetingsScheduled;
-
-        const dealsWon = deals.filter((d) => d.status === "won").length;
-        const dealsLost = deals.filter((d) => d.status === "lost").length;
-
-        setMetrics({
-          callsAnswered,
-          callsMissed,
-          meetingsScheduled,
-          meetingsSent,
-          dealsWon,
-          dealsLost,
-        });
+        setPipelines(pipelinesData || []);
+        setAllDeals(dealsData || []);
       } catch (error) {
         console.error("Error fetching sales metrics:", error);
       } finally {
@@ -86,8 +66,23 @@ export function SalesMetricsPanel() {
       }
     };
 
-    fetchMetrics();
+    fetchData();
   }, []);
+
+  const metrics = useMemo(() => {
+    const filtered = selectedPipeline === "all"
+      ? allDeals
+      : allDeals.filter((d) => d.pipeline_id === selectedPipeline);
+
+    const callsAnswered = filtered.reduce((sum, d) => sum + (d.calls_answered || 0), 0);
+    const callsMissed = filtered.reduce((sum, d) => sum + (d.calls_missed || 0), 0);
+    const meetingsScheduled = filtered.filter((d) => d.meeting_date).length;
+    const meetingsSent = meetingsScheduled;
+    const dealsWon = filtered.filter((d) => d.status === "won").length;
+    const dealsLost = filtered.filter((d) => d.status === "lost").length;
+
+    return { callsAnswered, callsMissed, meetingsScheduled, meetingsSent, dealsWon, dealsLost };
+  }, [allDeals, selectedPipeline]);
 
   const totalCalls = metrics.callsAnswered + metrics.callsMissed;
   const callRate = totalCalls > 0 ? ((metrics.callsAnswered / totalCalls) * 100).toFixed(0) : "0";
@@ -108,13 +103,32 @@ export function SalesMetricsPanel() {
   return (
     <Card className="shadow-sm border-[#A47428]/20 bg-[#1E3A50]/50 hover:shadow-md transition-shadow">
       <CardHeader className="pb-4">
-        <CardTitle className="text-white flex items-center gap-2">
-          <Activity className="h-5 w-5 text-[#A47428]" />
-          Painel Comercial
-        </CardTitle>
-        <CardDescription className="text-[#E1D8CF]/60">
-          Indicadores de atividade do time
-        </CardDescription>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Activity className="h-5 w-5 text-[#A47428]" />
+              Painel Comercial
+            </CardTitle>
+            <CardDescription className="text-[#E1D8CF]/60">
+              Indicadores de atividade do time
+            </CardDescription>
+          </div>
+
+          <Select value={selectedPipeline} onValueChange={setSelectedPipeline}>
+            <SelectTrigger className="w-[180px] bg-[#112232] border-[#A47428]/20 text-white">
+              <Filter className="w-4 h-4 mr-2 text-[#A47428]" />
+              <SelectValue placeholder="Pipeline" />
+            </SelectTrigger>
+            <SelectContent className="bg-[#112232] border-[#A47428]/20">
+              <SelectItem value="all" className="text-white">Todos os Pipelines</SelectItem>
+              {pipelines.map((p) => (
+                <SelectItem key={p.id} value={p.id} className="text-white">
+                  {p.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </CardHeader>
 
       <CardContent className="space-y-5">
