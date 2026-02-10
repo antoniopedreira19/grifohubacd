@@ -19,6 +19,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { CountryCodeSelect } from "@/components/ui/country-code-select";
 import { useMetaPixel } from "@/hooks/useMetaPixel";
+import { usePartialLeadCapture } from "@/hooks/usePartialLeadCapture";
 
 // --- FUNÇÃO AUXILIAR PARA LER COOKIES ---
 const getCookie = (name: string) => {
@@ -69,6 +70,9 @@ export function FormConstruction({ productId, productSlug, onSubmitSuccess }: Fo
   // Inicializa o Meta Pixel do produto
   useMetaPixel(productId);
 
+  // Captura progressiva de leads
+  const { savePartial, getPartialLeadId } = usePartialLeadCapture("Formulário Construção");
+
   useEffect(() => {
     setTimeout(() => {
       if (inputRef.current) inputRef.current.focus();
@@ -80,6 +84,15 @@ export function FormConstruction({ productId, productSlug, onSubmitSuccess }: Fo
 
   const handleNext = () => {
     if (!validateStep()) return;
+    // Save partial lead silently (fire-and-forget)
+    if (currentStep === 0) {
+      savePartial({ full_name: formData.full_name });
+    } else if (currentStep === 1) {
+      const fullPhone = `${formData.countryCode}${formData.phone.replace(/\D/g, "")}`;
+      savePartial({ phone: fullPhone });
+    } else if (currentStep === 2) {
+      savePartial({ email: formData.email });
+    }
     setCurrentStep((prev) => prev + 1);
   };
 
@@ -148,54 +161,67 @@ export function FormConstruction({ productId, productSlug, onSubmitSuccess }: Fo
       const fbpCookie = getCookie("_fbp");
       const fbcCookie = getCookie("_fbc");
 
-      // 1. Criar ou atualizar Lead
-      const { data: existingLead } = await supabase.from("leads").select("id").eq("email", finalData.email).single();
-
+      const partialId = getPartialLeadId();
       let lead: { id: string };
 
-      if (existingLead) {
-        // Update existing lead
+      if (partialId) {
+        // Update partial lead created during progressive capture
         const updateData: Record<string, unknown> = {
           full_name: finalData.full_name,
+          email: finalData.email,
           phone: fullPhone,
-          // Atualiza cookies
+          status: "Novo",
           fbp: fbpCookie,
           fbc: fbcCookie,
         };
         if (companyRevenue !== null) {
           updateData.company_revenue = companyRevenue;
         }
-        await supabase.from("leads").update(updateData).eq("id", existingLead.id);
-        lead = existingLead;
+        await supabase.from("leads").update(updateData).eq("id", partialId);
+        lead = { id: partialId };
       } else {
-        // Fetch product's lead_origin setting
-        let leadOrigin: string | null = null;
-        if (productId) {
-          const { data: productConfig } = await supabase
-            .from("products")
-            .select("lead_origin, name")
-            .eq("id", productId)
-            .single();
-          leadOrigin = productConfig?.lead_origin || productConfig?.name || null;
-        }
+        // Fallback: check if lead exists by email
+        const { data: existingLead } = await supabase.from("leads").select("id").eq("email", finalData.email).single();
 
-        // Create new lead
-        const insertData: Record<string, unknown> = {
-          full_name: finalData.full_name,
-          email: finalData.email,
-          phone: fullPhone,
-          status: "Novo",
-          origin: leadOrigin,
-          // Salva cookies
-          fbp: fbpCookie,
-          fbc: fbcCookie,
-        };
-        if (companyRevenue !== null) {
-          insertData.company_revenue = companyRevenue;
+        if (existingLead) {
+          const updateData: Record<string, unknown> = {
+            full_name: finalData.full_name,
+            phone: fullPhone,
+            fbp: fbpCookie,
+            fbc: fbcCookie,
+          };
+          if (companyRevenue !== null) {
+            updateData.company_revenue = companyRevenue;
+          }
+          await supabase.from("leads").update(updateData).eq("id", existingLead.id);
+          lead = existingLead;
+        } else {
+          let leadOrigin: string | null = null;
+          if (productId) {
+            const { data: productConfig } = await supabase
+              .from("products")
+              .select("lead_origin, name")
+              .eq("id", productId)
+              .single();
+            leadOrigin = productConfig?.lead_origin || productConfig?.name || null;
+          }
+
+          const insertData: Record<string, unknown> = {
+            full_name: finalData.full_name,
+            email: finalData.email,
+            phone: fullPhone,
+            status: "Novo",
+            origin: leadOrigin,
+            fbp: fbpCookie,
+            fbc: fbcCookie,
+          };
+          if (companyRevenue !== null) {
+            insertData.company_revenue = companyRevenue;
+          }
+          const { data: newLead, error: leadError } = await supabase.from("leads").insert(insertData).select().single();
+          if (leadError) throw leadError;
+          lead = newLead;
         }
-        const { data: newLead, error: leadError } = await supabase.from("leads").insert(insertData).select().single();
-        if (leadError) throw leadError;
-        lead = newLead;
       }
 
       // 2. Salvar Respostas
