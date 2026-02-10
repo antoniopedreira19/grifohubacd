@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { CountryCodeSelect } from "@/components/ui/country-code-select";
 import { useMetaPixel } from "@/hooks/useMetaPixel";
+import { usePartialLeadCapture } from "@/hooks/usePartialLeadCapture";
 
 // --- CORES DA MARCA ---
 // Principal (Fundo): #112232
@@ -45,6 +46,9 @@ export default function FormGrifoTalk({ productId, productSlug, onSubmitSuccess 
   // Inicializa o Meta Pixel do produto
   useMetaPixel(productId);
 
+  // Captura progressiva de leads
+  const { savePartial, getPartialLeadId } = usePartialLeadCapture("Grifo Talks");
+
   useEffect(() => {
     setTimeout(() => {
       if (inputRef.current) inputRef.current.focus();
@@ -58,6 +62,15 @@ export default function FormGrifoTalk({ productId, productSlug, onSubmitSuccess 
 
   const handleNext = () => {
     if (!validateStep()) return;
+    // Save partial lead silently (fire-and-forget)
+    if (currentStep === 0) {
+      savePartial({ full_name: formData.full_name });
+    } else if (currentStep === 1) {
+      savePartial({ email: formData.email });
+    } else if (currentStep === 2) {
+      const fullPhone = `${formData.countryCode}${formData.phone.replace(/\D/g, "")}`;
+      savePartial({ phone: fullPhone });
+    }
     setCurrentStep((prev) => prev + 1);
   };
 
@@ -105,45 +118,71 @@ export default function FormGrifoTalk({ productId, productSlug, onSubmitSuccess 
 
       const fullPhone = `${finalData.countryCode}${finalData.phone.replace(/\D/g, "")}`;
 
-      // Fetch product's lead_origin setting
-      let leadOrigin: string | null = "Grifo Talks";
-      if (productId) {
-        const { data: productConfig } = await supabase
-          .from("products")
-          .select("lead_origin, name")
-          .eq("id", productId)
-          .single();
-        leadOrigin = productConfig?.lead_origin || productConfig?.name || "Grifo Talks";
-      }
-
-      // 1. Criar ou atualizar Lead principal
-      const { data: existingLead } = await supabase.from("leads").select("id").eq("email", finalData.email).single();
-
+      const partialId = getPartialLeadId();
       let lead: { id: string };
 
-      if (existingLead) {
+      if (partialId) {
+        // Update partial lead created during progressive capture
+        // Fetch product's lead_origin setting
+        let leadOrigin: string | null = "Grifo Talks";
+        if (productId) {
+          const { data: productConfig } = await supabase
+            .from("products")
+            .select("lead_origin, name")
+            .eq("id", productId)
+            .single();
+          leadOrigin = productConfig?.lead_origin || productConfig?.name || "Grifo Talks";
+        }
+
         await supabase
           .from("leads")
           .update({
-            full_name: finalData.full_name,
-            phone: fullPhone,
-          })
-          .eq("id", existingLead.id);
-        lead = existingLead;
-      } else {
-        const { data: newLead, error: leadError } = await supabase
-          .from("leads")
-          .insert({
             full_name: finalData.full_name,
             email: finalData.email,
             phone: fullPhone,
             status: "Novo",
             origin: leadOrigin,
           })
-          .select()
-          .single();
-        if (leadError) throw leadError;
-        lead = newLead;
+          .eq("id", partialId);
+        lead = { id: partialId };
+      } else {
+        // Fallback: check if lead exists by email
+        let leadOrigin: string | null = "Grifo Talks";
+        if (productId) {
+          const { data: productConfig } = await supabase
+            .from("products")
+            .select("lead_origin, name")
+            .eq("id", productId)
+            .single();
+          leadOrigin = productConfig?.lead_origin || productConfig?.name || "Grifo Talks";
+        }
+
+        const { data: existingLead } = await supabase.from("leads").select("id").eq("email", finalData.email).single();
+
+        if (existingLead) {
+          await supabase
+            .from("leads")
+            .update({
+              full_name: finalData.full_name,
+              phone: fullPhone,
+            })
+            .eq("id", existingLead.id);
+          lead = existingLead;
+        } else {
+          const { data: newLead, error: leadError } = await supabase
+            .from("leads")
+            .insert({
+              full_name: finalData.full_name,
+              email: finalData.email,
+              phone: fullPhone,
+              status: "Novo",
+              origin: leadOrigin,
+            })
+            .select()
+            .single();
+          if (leadError) throw leadError;
+          lead = newLead;
+        }
       }
 
       // 2. Salvar respostas (Sem dados de convidado)

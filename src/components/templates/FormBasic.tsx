@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import type { Json } from "@/integrations/supabase/types";
 import { useMetaPixel } from "@/hooks/useMetaPixel";
+import { usePartialLeadCapture } from "@/hooks/usePartialLeadCapture";
 
 interface FormBasicProps {
   product: {
@@ -42,6 +43,10 @@ export default function FormBasic({ product }: FormBasicProps) {
   // Inicializa o Meta Pixel do produto
   useMetaPixel(product.id);
 
+  // Captura progressiva de leads
+  const leadOrigin = product.lead_origin || product.name;
+  const { savePartial, getPartialLeadId } = usePartialLeadCapture(leadOrigin);
+
   const formatWhatsApp = (value: string) => {
     const numbers = value.replace(/\D/g, "").slice(0, 16);
     if (numbers.length <= 2) return numbers;
@@ -60,42 +65,54 @@ export default function FormBasic({ product }: FormBasicProps) {
 
   const submitMutation = useMutation({
     mutationFn: async () => {
-      // Check if lead already exists by email
-      const { data: existingLead } = await supabase
-        .from("leads")
-        .select("id")
-        .eq("email", formData.email)
-        .single();
-
+      const partialId = getPartialLeadId();
       let leadId: string;
 
-      if (existingLead) {
-        leadId = existingLead.id;
-        // Update lead info
+      if (partialId) {
+        // Update the partial lead created during progressive capture
+        leadId = partialId;
         await supabase
           .from("leads")
           .update({
             full_name: formData.nome,
+            email: formData.email,
             phone: formData.whatsapp,
+            status: "Novo",
           })
           .eq("id", leadId);
       } else {
-        // Create new lead - use lead_origin if configured, fallback to product name
-        const leadOrigin = product.lead_origin || product.name;
-        const { data: newLead, error: leadError } = await supabase
+        // Fallback: check if lead already exists by email
+        const { data: existingLead } = await supabase
           .from("leads")
-          .insert({
-            email: formData.email,
-            full_name: formData.nome,
-            phone: formData.whatsapp,
-            origin: leadOrigin,
-            status: "Novo",
-          })
-          .select()
+          .select("id")
+          .eq("email", formData.email)
           .single();
 
-        if (leadError) throw leadError;
-        leadId = newLead.id;
+        if (existingLead) {
+          leadId = existingLead.id;
+          await supabase
+            .from("leads")
+            .update({
+              full_name: formData.nome,
+              phone: formData.whatsapp,
+            })
+            .eq("id", leadId);
+        } else {
+          const { data: newLead, error: leadError } = await supabase
+            .from("leads")
+            .insert({
+              email: formData.email,
+              full_name: formData.nome,
+              phone: formData.whatsapp,
+              origin: leadOrigin,
+              status: "Novo",
+            })
+            .select()
+            .single();
+
+          if (leadError) throw leadError;
+          leadId = newLead.id;
+        }
       }
 
       // Save form submission
@@ -156,6 +173,10 @@ export default function FormBasic({ product }: FormBasicProps) {
 
   const nextStep = () => {
     if (currentStep < totalSteps - 1) {
+      // Save partial lead silently (fire-and-forget)
+      if (currentStep === 0) {
+        savePartial({ full_name: formData.nome });
+      }
       setCurrentStep((prev) => prev + 1);
     } else {
       submitMutation.mutate();
