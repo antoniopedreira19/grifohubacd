@@ -1,97 +1,69 @@
 
-## Plano: Filtro por Região + Exportação XLSX na Base de Leads
 
-### Resumo
-Adicionar um filtro de região baseado no DDD do telefone dos leads e permitir exportar os dados filtrados para arquivo XLSX com as colunas: Nome, Email, Telefone, Região e LTV.
+# Captura Progressiva de Leads nos Formularios
 
----
+## Objetivo
+Salvar os dados do lead silenciosamente a cada troca de etapa ("Continuar"), sem esperar o submit final. Assim, mesmo que o lead abandone o formulario no meio, voce ja tera os dados que ele preencheu ate aquele ponto.
 
-### 1. Novo Filtro por Região
+## Como vai funcionar
 
-Será adicionado um dropdown ao lado do filtro de produtos com as opções:
-- **Todas as regiões** (padrão)
-- Sudeste
-- Sul  
-- Nordeste
-- Norte
-- Centro-Oeste
-- Internacional
+1. Quando o lead clica "Continuar" em qualquer etapa, antes de avancar para a proxima tela, o sistema salva os dados coletados ate ali no banco de dados (Supabase), em segundo plano.
+2. O lead nao ve nenhum indicador de salvamento -- sem toasts, sem loading. A navegacao entre etapas continua instantanea.
+3. Se o salvamento em segundo plano falhar, nada acontece para o lead. Ele continua preenchendo normalmente.
+4. No submit final, o sistema atualiza o lead existente (ja criado nas etapas anteriores) em vez de criar um novo.
 
-A filtragem usará a função `getRegionByPhone()` já existente em `ddd-regions.ts` para determinar a região de cada lead baseado no telefone.
-
----
-
-### 2. Exportação XLSX
-
-**Nova dependência**: Será instalado o pacote `xlsx` (SheetJS) para gerar arquivos Excel nativos.
-
-**Colunas do arquivo exportado**:
-| Nome | Email | Telefone | Região | LTV |
-|------|-------|----------|--------|-----|
-
-O botão atual "CSV" será substituído por "XLSX" e exportará apenas os leads visíveis após aplicação de todos os filtros (busca, produto e região).
-
----
-
-### Detalhes Técnicos
-
-**Arquivo**: `src/pages/Leads.tsx`
-
-**Alterações**:
-
-1. **Novo estado** para o filtro de região:
-   ```typescript
-   const [regionFilter, setRegionFilter] = useState("all");
-   ```
-
-2. **Novo Select** com as 6 opções de região + "Todas"
-
-3. **Lógica de filtragem** atualizada para considerar a região:
-   ```typescript
-   const matchesRegion = regionFilter === "all" || 
-     getRegionByPhone(lead.phone)?.region === regionFilter;
-   ```
-
-4. **Nova função de exportação XLSX**:
-   ```typescript
-   import * as XLSX from 'xlsx';
-   
-   const handleExportXLSX = () => {
-     const data = filteredAndSortedLeads.map(lead => {
-       const regionInfo = getRegionByPhone(lead.phone);
-       return {
-         Nome: lead.full_name || "",
-         Email: lead.email || "",
-         Telefone: lead.phone || "",
-         Região: regionInfo?.region || "-",
-         LTV: lead.ltv || 0
-       };
-     });
-     
-     const worksheet = XLSX.utils.json_to_sheet(data);
-     const workbook = XLSX.utils.book_new();
-     XLSX.utils.book_append_sheet(workbook, worksheet, "Leads");
-     XLSX.writeFile(workbook, `leads_${format(new Date(), "yyyy-MM-dd")}.xlsx`);
-   };
-   ```
-
-**Nova dependência**: `xlsx` (SheetJS Community Edition)
-
----
-
-### Layout Final dos Filtros
+## Fluxo do usuario (nao muda nada visualmente)
 
 ```text
-┌─────────────────────────┬──────────────────┬──────────────────┬────────┬────────────┐
-│ 🔍 Buscar por nome...   │ Filtrar produto  │ Filtrar região   │  XLSX  │ Novo Lead  │
-└─────────────────────────┴──────────────────┴──────────────────┴────────┴────────────┘
+Etapa 1: Digita nome -> Clica "Continuar"
+         [silenciosamente: cria lead parcial no banco com status "Parcial"]
+         
+Etapa 2: Digita email + whatsapp -> Clica "Continuar" ou "Enviar"
+         [silenciosamente: atualiza o lead com email e telefone]
+         
+Submit final: Cria form_submission, deal (se configurado), e muda status para "Novo"
 ```
 
----
+## Detalhes Tecnicos
 
-### Arquivos Modificados
+### Arquivos que serao modificados
 
-| Arquivo | Ação |
-|---------|------|
-| `package.json` | Adicionar dependência `xlsx` |
-| `src/pages/Leads.tsx` | Adicionar filtro de região e exportação XLSX |
+**1. `src/components/templates/FormBasic.tsx`**
+- Adicionar um `useRef` para guardar o `leadId` parcial criado na primeira etapa.
+- Modificar a funcao `nextStep` para chamar uma funcao `savePartialLead()` silenciosamente (fire-and-forget) antes de avancar.
+- `savePartialLead()`:
+  - **Etapa 0 -> 1**: Faz `upsert` na tabela `leads` com `full_name`, `origin`, `status: "Parcial"`. Guarda o `leadId` no ref.
+  - **Etapa 1 -> submit**: Ja tem o `leadId`. Faz `update` com `email` e `phone`.
+- No `submitMutation` final: Usa o `leadId` do ref (se existir) para atualizar em vez de criar. Muda `status` de "Parcial" para "Novo". Cria `form_submission` e `deal` normalmente.
+- Todas as chamadas parciais usam `.then().catch()` (fire-and-forget), sem `await`, para nao bloquear a UI.
+
+**2. `src/components/templates/FormHighTicket.tsx`**
+- Mesma logica, mas com mais etapas:
+  - Etapa 0 -> 1: Cria lead parcial com `full_name`
+  - Etapa 1 -> 2: Atualiza com `email`, `phone`
+  - Etapa 2 -> 3: Atualiza `answers` parciais (empresa, cargo)
+  - Etapa 3 -> 4: Atualiza `answers` parciais (nicho, volume)
+  - Etapa 4 -> submit: Fluxo final completo
+
+**3. Outros formularios** (`FormConstruction.tsx`, `FormGrifoTalk.tsx`)
+- Mesma logica aplicada, adaptada ao numero de etapas de cada um.
+
+### Estrategia de salvamento
+
+- Usar `useRef<string | null>(null)` para o `partialLeadId` -- refs nao causam re-render.
+- A funcao `savePartialLead` e chamada dentro de `nextStep`, mas sem `await` -- ela roda em background.
+- No primeiro save (sem leadId), cria o lead e salva o id no ref.
+- Nos saves seguintes, faz update usando o id do ref.
+- No submit final, verifica se ja existe `partialLeadId` para fazer update em vez de insert.
+- O status "Parcial" permite diferenciar leads que completaram o formulario dos que abandonaram.
+
+### Tratamento de erros
+
+- Se o save parcial falhar, o erro e silenciosamente logado no console (sem toast).
+- O submit final continua funcionando normalmente mesmo se nenhum save parcial teve sucesso (fallback para o fluxo atual de criar lead do zero).
+
+### Impacto no banco de dados
+
+- Nenhuma alteracao de schema necessaria. O campo `status` da tabela `leads` ja aceita texto livre, entao "Parcial" funciona sem migracao.
+- Leads parciais (abandonados) ficam com `status = "Parcial"` para facil identificacao e filtragem.
+
