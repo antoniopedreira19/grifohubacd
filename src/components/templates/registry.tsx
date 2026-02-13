@@ -20,6 +20,9 @@ const LpStandard = lazy(() => import("./LpStandard").then((m) => ({ default: m.L
 // LpWebinarCultura - Landing Page de Vendas de Webinar
 const LpWebinarCultura = lazy(() => import("./LpWebinarCultura").then((m) => ({ default: m.LpWebinarCultura })));
 
+// LpWebinarNovoPadrao - Landing Page de Vendas Webinar Novo Padrão
+const LpWebinarNovoPadrao = lazy(() => import("./LpWebinarNovoPadrao").then((m) => ({ default: m.LpWebinarNovoPadrao })));
+
 // FormConstruction - adaptador: o sistema manda 'product', mas o componente quer 'productId'
 const FormConstruction = lazy(() =>
   import("./FormConstruction").then((m) => ({
@@ -58,6 +61,7 @@ export const templateRegistry: Record<string, ComponentType<TemplateComponentPro
   form_basic: FormBasic,
   lp_standard: LpStandard,
   lp_webinar_cultura: LpWebinarCultura,
+  lp_webinar_novo_padrao: LpWebinarNovoPadrao,
   form_construction: FormConstruction,
   form_grifo_talk: FormGrifoTalk,
 };
