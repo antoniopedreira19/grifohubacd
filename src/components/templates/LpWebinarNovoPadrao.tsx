@@ -291,15 +291,12 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
             </div>
           </div>
           <div className="hidden md:flex justify-center items-center">
-            <div className="relative w-full aspect-[3/4] max-h-[480px] rounded-2xl overflow-hidden border border-[#a47428]/20 shadow-2xl shadow-black/40">
-              <img
-                src={webinarHeroDuo}
-                alt="Daniel Gedeon e Estevão Farkasvölgyi"
-                className="w-full h-full object-cover object-[center_35%]"
-                loading="eager"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0b1c2e]/60 via-transparent to-transparent" />
-            </div>
+            <img
+              src={webinarHeroDuo}
+              alt="Daniel Gedeon e Estevão Farkasvölgyi"
+              className="rounded-2xl shadow-2xl shadow-black/40 w-full object-contain border border-[#a47428]/20"
+              loading="eager"
+            />
           </div>
           </div>
         </div>
