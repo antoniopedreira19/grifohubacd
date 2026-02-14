@@ -230,7 +230,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
       </div>
 
       {/* ════════ HERO ════════ */}
-      <section className="relative min-h-[90vh] flex items-center px-4 pt-8 pb-12 md:py-0">
+      <section className="relative min-h-[70vh] flex items-center px-4 py-12 md:py-16">
         {/* BG gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#0b1c2e] via-[#112232] to-[#0b1c2e]" />
         <div className="absolute inset-0 opacity-5 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNhNDc0MjgiIG9wYWNpdHk9IjAuNCI+PHBhdGggZD0iTTM2IDM0aDItdjJoLTJ6TTAgMzRoMnYtMkgwek0zNiAwaDJ2MmgtMnpNMCAwaDF2MkgweiIvPjwvZz48L2c+PC9zdmc+')]" />
@@ -290,11 +290,11 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
               </div>
             </div>
           </div>
-          <div className="hidden md:flex justify-center">
+          <div className="hidden md:flex justify-center items-center">
             <img
               src={webinarHeroDuo}
               alt="Daniel Gedeon e Estevão Farkasvölgyi"
-              className="rounded-2xl shadow-2xl shadow-black/40 max-h-[500px] object-cover border border-[#a47428]/20"
+              className="rounded-2xl shadow-2xl shadow-black/40 w-full max-h-[420px] object-cover object-[center_20%] border border-[#a47428]/20"
               loading="eager"
             />
           </div>
@@ -614,8 +614,8 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
         <div className="grid md:grid-cols-2 gap-8">
           {/* Daniel */}
           <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
-            <div className="bg-[#0b1c2e] h-64 overflow-hidden">
-              <img src={danielGedeonImg} alt="Daniel Gedeon" className="w-full h-full object-cover object-top" loading="lazy" />
+            <div className="bg-[#0b1c2e] h-72 overflow-hidden">
+              <img src={danielGedeonImg} alt="Daniel Gedeon" className="w-full h-full object-cover object-[center_30%]" loading="lazy" />
             </div>
             <div className="p-6">
               <h3 className="font-bold text-[#0b1c2e] text-xl mb-1">
@@ -634,8 +634,8 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
 
           {/* Estevão */}
           <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
-            <div className="bg-[#0b1c2e] h-64 overflow-hidden">
-              <img src={estevaoImg} alt="Estevão Farkasvölgyi" className="w-full h-full object-cover object-top" loading="lazy" />
+            <div className="bg-[#0b1c2e] h-72 overflow-hidden">
+              <img src={estevaoImg} alt="Estevão Farkasvölgyi" className="w-full h-full object-cover object-[center_25%]" loading="lazy" />
             </div>
             <div className="p-6">
               <h3 className="font-bold text-[#0b1c2e] text-xl mb-1">
