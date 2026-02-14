@@ -291,12 +291,15 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
             </div>
           </div>
           <div className="hidden md:flex justify-center items-center">
-            <img
-              src={webinarHeroDuo}
-              alt="Daniel Gedeon e Estevão Farkasvölgyi"
-              className="rounded-2xl shadow-2xl shadow-black/40 w-full max-h-[480px] object-contain border border-[#a47428]/20"
-              loading="eager"
-            />
+            <div className="relative w-full aspect-[3/4] max-h-[480px] rounded-2xl overflow-hidden border border-[#a47428]/20 shadow-2xl shadow-black/40">
+              <img
+                src={webinarHeroDuo}
+                alt="Daniel Gedeon e Estevão Farkasvölgyi"
+                className="w-full h-full object-cover object-[center_35%]"
+                loading="eager"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0b1c2e]/60 via-transparent to-transparent" />
+            </div>
           </div>
           </div>
         </div>
@@ -602,10 +605,10 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
       </Section>
 
       {/* ════════ SPEAKERS ════════ */}
-      <Section dark={false}>
+      <Section>
         <div className="text-center mb-12">
           <SectionTag>Quem apresenta</SectionTag>
-          <GoldHeading className="text-[#0b1c2e]">
+          <GoldHeading className="text-white">
             Dois dos maiores nomes da{" "}
             <span className="text-[#a47428]">construção brasileira</span>
           </GoldHeading>
@@ -613,18 +616,18 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* Daniel */}
-          <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
-            <div className="bg-[#0b1c2e] overflow-hidden flex items-center justify-center p-4">
-              <img src={danielGedeonImg} alt="Daniel Gedeon" className="w-full max-h-[400px] object-contain rounded-lg" loading="lazy" />
+          <div className="bg-[#112232] rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group border border-[#a47428]/10">
+            <div className="aspect-[4/5] overflow-hidden">
+              <img src={danielGedeonImg} alt="Daniel Gedeon" className="w-full h-full object-cover object-[center_20%] group-hover:scale-105 transition-transform duration-500" loading="lazy" />
             </div>
             <div className="p-6">
-              <h3 className="font-bold text-[#0b1c2e] text-xl mb-1">
+              <h3 className="font-bold text-white text-xl mb-1">
                 Daniel Gedeon
               </h3>
               <p className="text-[#a47428] text-sm font-medium mb-4">
                 Grifo · Fast Construction · Grifo Academy
               </p>
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <p className="text-gray-400 text-sm leading-relaxed">
                 Referência em obras comerciais e criador do Método Fast
                 Construction — gestão, performance, velocidade com padrão e
                 processos que funcionam na prática. (inserir métricas reais)
@@ -633,18 +636,18 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           </div>
 
           {/* Estevão */}
-          <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
-            <div className="bg-[#0b1c2e] overflow-hidden flex items-center justify-center p-4">
-              <img src={estevaoImg} alt="Estevão Farkasvölgyi" className="w-full max-h-[400px] object-contain rounded-lg" loading="lazy" />
+          <div className="bg-[#112232] rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group border border-[#a47428]/10">
+            <div className="aspect-[4/5] overflow-hidden">
+              <img src={estevaoImg} alt="Estevão Farkasvölgyi" className="w-full h-full object-cover object-[center_15%] group-hover:scale-105 transition-transform duration-500" loading="lazy" />
             </div>
             <div className="p-6">
-              <h3 className="font-bold text-[#0b1c2e] text-xl mb-1">
+              <h3 className="font-bold text-white text-xl mb-1">
                 Estevão Farkasvölgyi
               </h3>
               <p className="text-[#a47428] text-sm font-medium mb-4">
                 Boutique Construtora
               </p>
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <p className="text-gray-400 text-sm leading-relaxed">
                 Referência em obras residenciais de altíssimo padrão. DNA de
                 organização, excelência e respeito. Metodologia com
                 modularidade e foco total na satisfação do cliente. (inserir métricas reais)
