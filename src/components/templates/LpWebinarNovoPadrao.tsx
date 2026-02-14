@@ -27,6 +27,9 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { useMetaPixel } from "@/hooks/useMetaPixel";
+import webinarHeroDuo from "@/assets/webinar-hero-duo.jpg";
+import danielGedeonImg from "@/assets/daniel-gedeon-obra.jpg";
+import estevaoImg from "@/assets/estevao-farkasvolgyi.jpg";
 
 interface LpWebinarNovoPadraoProps {
   product: {
@@ -233,7 +236,8 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
         <div className="absolute inset-0 opacity-5 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNhNDc0MjgiIG9wYWNpdHk9IjAuNCI+PHBhdGggZD0iTTM2IDM0aDItdjJoLTJ6TTAgMzRoMnYtMkgwek0zNiAwaDJ2MmgtMnpNMCAwaDF2MkgweiIvPjwvZz48L2c+PC9zdmc+')]" />
 
         <div className="relative z-10 max-w-6xl mx-auto w-full">
-          <div className="max-w-3xl">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div>
             <SectionTag>Webinar ao vivo · 18 de março de 2026</SectionTag>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase leading-[1.1] mb-6">
@@ -285,6 +289,15 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
                 <span>Daniel Gedeon + Estevão Farkasvölgyi</span>
               </div>
             </div>
+          </div>
+          <div className="hidden md:flex justify-center">
+            <img
+              src={webinarHeroDuo}
+              alt="Daniel Gedeon e Estevão Farkasvölgyi"
+              className="rounded-2xl shadow-2xl shadow-black/40 max-h-[500px] object-cover border border-[#a47428]/20"
+              loading="eager"
+            />
+          </div>
           </div>
         </div>
       </section>
@@ -601,10 +614,8 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
         <div className="grid md:grid-cols-2 gap-8">
           {/* Daniel */}
           <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
-            <div className="bg-[#0b1c2e] h-48 flex items-center justify-center">
-              <div className="w-32 h-32 rounded-full bg-[#a47428]/20 border-2 border-[#a47428]/40 flex items-center justify-center text-[#a47428] text-4xl font-black">
-                DG
-              </div>
+            <div className="bg-[#0b1c2e] h-64 overflow-hidden">
+              <img src={danielGedeonImg} alt="Daniel Gedeon" className="w-full h-full object-cover object-top" loading="lazy" />
             </div>
             <div className="p-6">
               <h3 className="font-bold text-[#0b1c2e] text-xl mb-1">
@@ -623,10 +634,8 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
 
           {/* Estevão */}
           <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
-            <div className="bg-[#0b1c2e] h-48 flex items-center justify-center">
-              <div className="w-32 h-32 rounded-full bg-[#a47428]/20 border-2 border-[#a47428]/40 flex items-center justify-center text-[#a47428] text-4xl font-black">
-                EF
-              </div>
+            <div className="bg-[#0b1c2e] h-64 overflow-hidden">
+              <img src={estevaoImg} alt="Estevão Farkasvölgyi" className="w-full h-full object-cover object-top" loading="lazy" />
             </div>
             <div className="p-6">
               <h3 className="font-bold text-[#0b1c2e] text-xl mb-1">
@@ -987,11 +996,10 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           <p className="text-gray-600 text-sm leading-relaxed">
             Se até 7 dias antes do evento (11/03/2026) você decidir que não é
             para você, basta enviar um e-mail para{" "}
-            <span className="text-[#a47428] font-medium">
-              [INSERIR EMAIL DE SUPORTE]
-            </span>{" "}
+            <a href="mailto:contato@grifoacademy.com.br" className="text-[#a47428] font-medium hover:underline">
+              contato@grifoacademy.com.br
+            </a>{" "}
             e devolvemos 100% do valor pago. Sem perguntas, sem burocracia.
-            [DEFINIR POLÍTICA EXATA COM O TIME]
           </p>
         </div>
       </Section>
