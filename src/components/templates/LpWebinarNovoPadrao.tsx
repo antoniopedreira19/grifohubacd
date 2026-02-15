@@ -113,9 +113,9 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
   const [dismissedSticky, setDismissedSticky] = useState(false);
 
   // Checkout links — product.checkout_url as fallback
-  const checkoutComum = "[LINK_CHECKOUT_COMUM]";
-  const checkoutVip = "[LINK_CHECKOUT_VIP]";
-  const checkoutDiamond = "[LINK_CHECKOUT_DIAMOND]";
+  const checkoutComum = "https://lastlink.com/p/CD0192154/checkout-payment/";
+  const checkoutVip = "https://lastlink.com/p/C7B5A39A7/checkout-payment";
+  const checkoutDiamond = "https://lastlink.com/p/C3E82971A/checkout-payment";
   const ctaFallback = product.checkout_url || "#pricing-section";
 
   useEffect(() => {
@@ -133,6 +133,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
   const TicketCard = ({
     tier,
     price,
+    installment,
     highlighted = false,
     features,
     cta,
@@ -141,6 +142,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
   }: {
     tier: string;
     price: string;
+    installment?: string;
     highlighted?: boolean;
     features: string[];
     cta: string;
@@ -167,10 +169,16 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
         <h3 className="text-lg font-bold text-white uppercase tracking-wide mb-1">
           {tier}
         </h3>
-        <div className="flex items-baseline gap-1 mb-6">
+        <div className="flex items-baseline gap-1 mb-1">
           <span className="text-xs text-gray-400">R$</span>
           <span className="text-4xl md:text-5xl font-black text-white">{price}</span>
         </div>
+        {installment && (
+          <p className="text-xs text-gray-400 mb-6">
+            Em até 12x de <span className="text-white font-semibold">R$ {installment}</span>
+          </p>
+        )}
+        {!installment && <div className="mb-6" />}
         <ul className="space-y-3 flex-1 mb-8">
           {features.map((f, i) => (
             <li key={i} className="flex items-start gap-3 text-sm text-gray-300">
@@ -671,6 +679,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           <TicketCard
             tier="Comum"
             price="97"
+            installment="10,33"
             link={checkoutComum}
             cta="Garantir ingresso"
             features={[
@@ -683,6 +692,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           <TicketCard
             tier="VIP"
             price="297"
+            installment="31,63"
             highlighted
             badge="Mais escolhido"
             link={checkoutVip}
@@ -699,6 +709,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           <TicketCard
             tier="Diamond"
             price="2.997"
+            installment="319,15"
             link={checkoutDiamond}
             badge="Alto impacto"
             cta="Quero o Diagnóstico"
