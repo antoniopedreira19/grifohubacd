@@ -295,9 +295,9 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
               </div>
             </div>
           </div>
-          <div className="hidden md:flex justify-center items-center">
+          <div className="flex justify-center items-center">
             <img
-              src="/images/webinar-hero-duo.jpg"
+              src="https://naroalxhbrvmosbqzhrb.supabase.co/storage/v1/object/public/photos-wallpapers/WhatsApp%20Image%202026-02-16%20at%205.38.48%20PM%20(2).jpeg"
               alt="Daniel Gedeon e Estevão Farkasvölgyi"
               className="rounded-2xl shadow-2xl shadow-black/40 w-full object-contain border border-[#a47428]/20"
               fetchPriority="high"
