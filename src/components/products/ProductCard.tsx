@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, Trash2, Loader2, Pencil, Zap, BarChart3, Users } from "lucide-react";
+import { Eye, Trash2, Loader2, Pencil, Zap, BarChart3, Users, Copy } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -85,6 +85,26 @@ export function ProductCard({ product }: ProductCardProps) {
       window.open(`/p/${product.slug}`, "_blank");
     }
   };
+
+  const duplicateProduct = useMutation({
+    mutationFn: async () => {
+      const { id, created_at, ...rest } = product;
+      const { data, error } = await supabase
+        .from("products")
+        .insert({ ...rest, name: `${product.name} (cópia)`, slug: product.slug ? `${product.slug}-copia` : null })
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      toast.success("Produto duplicado com sucesso!");
+    },
+    onError: (error) => {
+      toast.error("Erro ao duplicar: " + error.message);
+    },
+  });
 
   const deleteProduct = useMutation({
     mutationFn: async () => {
@@ -228,6 +248,21 @@ export function ProductCard({ product }: ProductCardProps) {
                 <TooltipContent>Ver resultados NPS</TooltipContent>
               </Tooltip>
             )}
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => duplicateProduct.mutate()}
+                  disabled={duplicateProduct.isPending}
+                  className="border-muted-foreground/30 text-muted-foreground hover:bg-muted"
+                >
+                  {duplicateProduct.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Copy className="h-4 w-4" />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Duplicar produto</TooltipContent>
+            </Tooltip>
 
             <Tooltip>
               <TooltipTrigger asChild>
