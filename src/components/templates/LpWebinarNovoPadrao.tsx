@@ -830,6 +830,52 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
         </div>
       </Section>
 
+      {/* ════════ TESTIMONIALS ════════ */}
+      <Section dark={false}>
+        <div className="text-center mb-12">
+          <SectionTag>Prova social</SectionTag>
+          <GoldHeading className="text-[#0b1c2e]">
+            Quem já passou pelo{" "}
+            <span className="text-[#a47428]">Ecossistema Grifo</span>
+          </GoldHeading>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {[
+            {
+              name: "Jamille Irineo de Sousa",
+              text: "Gente sem palavras. 👏😍 Que noite sensacional e de grande aprendizado. Parabéns a todos os envolvidos.",
+            },
+            {
+              name: "Daniel Fabre",
+              text: "Que aula meu amigo. Só tenho a agradecer!!",
+            },
+            {
+              name: "Vinícius Iglesias",
+              text: "Fantástico. Bom demais 👏👏👏",
+            },
+          ].map((t, i) => (
+            <div
+              key={i}
+              className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-[#0b1c2e] flex items-center justify-center text-white font-bold text-sm">
+                  {t.name.charAt(0)}
+                </div>
+                <span className="font-bold text-[#0b1c2e]">{t.name}</span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">"{t.text}"</p>
+              <div className="flex gap-0.5">
+                {Array.from({ length: 5 }).map((_, j) => (
+                  <Star key={j} className="w-4 h-4 fill-[#a47428] text-[#a47428]" />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
       {/* ════════ OBJECTIONS ════════ */}
       <Section>
         <div className="text-center mb-12">
