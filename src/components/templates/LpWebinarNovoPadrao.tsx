@@ -171,12 +171,9 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           <span className="text-4xl md:text-5xl font-black text-white">{price}</span>
         </div>
         {installment && (
-          <div className="mb-6 mt-1">
-            <p className="text-sm md:text-base text-[#A47428] font-bold">
-              12x de R$ {installment}
-            </p>
-            <p className="text-[10px] text-gray-500 mt-0.5">ou R$ {price} à vista</p>
-          </div>
+          <p className="text-sm md:text-base text-[#A47428] font-bold mb-6">
+            12x de R$ {installment}
+          </p>
         )}
         {!installment && <div className="mb-6" />}
         <ul className="space-y-3 flex-1 mb-8">
