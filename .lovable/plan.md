@@ -1,69 +1,48 @@
 
+# Otimizar carregamento da Landing Page do Webinar
 
-# Captura Progressiva de Leads nos Formularios
+## Problema
+A landing page demora para carregar por varias razoes:
 
-## Objetivo
-Salvar os dados do lead silenciosamente a cada troca de etapa ("Continuar"), sem esperar o submit final. Assim, mesmo que o lead abandone o formulario no meio, voce ja tera os dados que ele preencheu ate aquele ponto.
+1. **Imagens pesadas embutidas no bundle** - As 3 fotos (hero, Daniel, Estevao) sao importadas como `import from "@/assets/..."`, o que faz o Vite incluir elas diretamente no bundle JavaScript ou gerar assets grandes sem otimizacao.
 
-## Como vai funcionar
+2. **Rotas nao usam lazy loading** - No `App.tsx`, todas as paginas (Dashboard, Pipeline, Leads, etc.) sao importadas de forma eagera. Quando alguem acessa `/p/slug`, o navegador ainda precisa baixar o codigo de TODAS as paginas administrativas antes de mostrar a landing page.
 
-1. Quando o lead clica "Continuar" em qualquer etapa, antes de avancar para a proxima tela, o sistema salva os dados coletados ate ali no banco de dados (Supabase), em segundo plano.
-2. O lead nao ve nenhum indicador de salvamento -- sem toasts, sem loading. A navegacao entre etapas continua instantanea.
-3. Se o salvamento em segundo plano falhar, nada acontece para o lead. Ele continua preenchendo normalmente.
-4. No submit final, o sistema atualiza o lead existente (ja criado nas etapas anteriores) em vez de criar um novo.
+3. **Imagens sem lazy loading nativo** - As 3 imagens da LP carregam todas de uma vez, mesmo as que estao fora da tela (mentores la embaixo).
 
-## Fluxo do usuario (nao muda nada visualmente)
+## Solucao
 
-```text
-Etapa 1: Digita nome -> Clica "Continuar"
-         [silenciosamente: cria lead parcial no banco com status "Parcial"]
-         
-Etapa 2: Digita email + whatsapp -> Clica "Continuar" ou "Enviar"
-         [silenciosamente: atualiza o lead com email e telefone]
-         
-Submit final: Cria form_submission, deal (se configurado), e muda status para "Novo"
-```
+### 1. Lazy loading das rotas no App.tsx
+Usar `React.lazy()` para todas as paginas, especialmente as administrativas. Assim, quem acessar `/p/slug` so baixa o codigo da landing page, nao o CRM inteiro.
+
+### 2. Mover imagens para /public e adicionar loading="lazy"
+- Mover as 3 imagens JPG de `src/assets/` para `public/images/`
+- Referenciar via URL string (`/images/webinar-hero-duo.jpg`) em vez de import
+- Adicionar `loading="lazy"` nas imagens dos mentores (que ficam abaixo da dobra)
+- Manter a imagem hero sem lazy (ela precisa carregar rapido)
+
+### 3. Adicionar atributos de performance nas imagens
+- `decoding="async"` em todas as imagens
+- `width` e `height` explicitos para evitar layout shift
+- `fetchPriority="high"` na imagem hero
+
+---
 
 ## Detalhes Tecnicos
 
-### Arquivos que serao modificados
+### Arquivos modificados
 
-**1. `src/components/templates/FormBasic.tsx`**
-- Adicionar um `useRef` para guardar o `leadId` parcial criado na primeira etapa.
-- Modificar a funcao `nextStep` para chamar uma funcao `savePartialLead()` silenciosamente (fire-and-forget) antes de avancar.
-- `savePartialLead()`:
-  - **Etapa 0 -> 1**: Faz `upsert` na tabela `leads` com `full_name`, `origin`, `status: "Parcial"`. Guarda o `leadId` no ref.
-  - **Etapa 1 -> submit**: Ja tem o `leadId`. Faz `update` com `email` e `phone`.
-- No `submitMutation` final: Usa o `leadId` do ref (se existir) para atualizar em vez de criar. Muda `status` de "Parcial" para "Novo". Cria `form_submission` e `deal` normalmente.
-- Todas as chamadas parciais usam `.then().catch()` (fire-and-forget), sem `await`, para nao bloquear a UI.
+**`src/App.tsx`**
+- Substituir imports diretos por `React.lazy()` para todas as paginas
+- Envolver as rotas em `<Suspense>` com fallback de loading
 
-**2. `src/components/templates/FormHighTicket.tsx`**
-- Mesma logica, mas com mais etapas:
-  - Etapa 0 -> 1: Cria lead parcial com `full_name`
-  - Etapa 1 -> 2: Atualiza com `email`, `phone`
-  - Etapa 2 -> 3: Atualiza `answers` parciais (empresa, cargo)
-  - Etapa 3 -> 4: Atualiza `answers` parciais (nicho, volume)
-  - Etapa 4 -> submit: Fluxo final completo
+**`src/components/templates/LpWebinarNovoPadrao.tsx`**
+- Remover `import webinarHeroDuo from "@/assets/..."` e similares
+- Usar strings de URL: `"/images/webinar-hero-duo.jpg"`
+- Adicionar `loading="lazy"` nas imagens de mentores
+- Adicionar `decoding="async"` em todas as `<img>`
 
-**3. Outros formularios** (`FormConstruction.tsx`, `FormGrifoTalk.tsx`)
-- Mesma logica aplicada, adaptada ao numero de etapas de cada um.
+**`public/images/`**
+- Mover `webinar-hero-duo.jpg`, `daniel-gedeon-obra.jpg`, `estevao-farkasvolgyi.jpg` para esta pasta
 
-### Estrategia de salvamento
-
-- Usar `useRef<string | null>(null)` para o `partialLeadId` -- refs nao causam re-render.
-- A funcao `savePartialLead` e chamada dentro de `nextStep`, mas sem `await` -- ela roda em background.
-- No primeiro save (sem leadId), cria o lead e salva o id no ref.
-- Nos saves seguintes, faz update usando o id do ref.
-- No submit final, verifica se ja existe `partialLeadId` para fazer update em vez de insert.
-- O status "Parcial" permite diferenciar leads que completaram o formulario dos que abandonaram.
-
-### Tratamento de erros
-
-- Se o save parcial falhar, o erro e silenciosamente logado no console (sem toast).
-- O submit final continua funcionando normalmente mesmo se nenhum save parcial teve sucesso (fallback para o fluxo atual de criar lead do zero).
-
-### Impacto no banco de dados
-
-- Nenhuma alteracao de schema necessaria. O campo `status` da tabela `leads` ja aceita texto livre, entao "Parcial" funciona sem migracao.
-- Leads parciais (abandonados) ficam com `status = "Parcial"` para facil identificacao e filtragem.
-
+Essas mudancas devem reduzir significativamente o tempo de carregamento, especialmente para visitantes acessando a landing page pela primeira vez.
