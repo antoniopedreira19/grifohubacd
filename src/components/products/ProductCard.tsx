@@ -88,7 +88,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
   const duplicateProduct = useMutation({
     mutationFn: async () => {
-      const { id, created_at, ...rest } = product;
+      const { id, created_at, product_categories, ...rest } = product as any;
       const { data, error } = await supabase
         .from("products")
         .insert({ ...rest, name: `${product.name} (cópia)`, slug: product.slug ? `${product.slug}-copia` : null })
