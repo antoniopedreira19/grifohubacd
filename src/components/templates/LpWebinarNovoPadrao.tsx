@@ -27,9 +27,6 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { useMetaPixel } from "@/hooks/useMetaPixel";
-import webinarHeroDuo from "@/assets/webinar-hero-duo.jpg";
-import danielGedeonImg from "@/assets/daniel-gedeon-obra.jpg";
-import estevaoImg from "@/assets/estevao-farkasvolgyi.jpg";
 
 interface LpWebinarNovoPadraoProps {
   product: {
@@ -300,10 +297,13 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           </div>
           <div className="hidden md:flex justify-center items-center">
             <img
-              src={webinarHeroDuo}
+              src="/images/webinar-hero-duo.jpg"
               alt="Daniel Gedeon e Estevão Farkasvölgyi"
               className="rounded-2xl shadow-2xl shadow-black/40 w-full object-contain border border-[#a47428]/20"
-              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              width={600}
+              height={400}
             />
           </div>
           </div>
@@ -623,7 +623,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           {/* Daniel */}
           <div className="bg-[#112232] rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group border border-[#a47428]/10">
             <div className="aspect-[4/5] overflow-hidden">
-              <img src={danielGedeonImg} alt="Daniel Gedeon" className="w-full h-full object-cover object-[center_20%] group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+              <img src="/images/daniel-gedeon-obra.jpg" alt="Daniel Gedeon" className="w-full h-full object-cover object-[center_20%] group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" width={400} height={500} />
             </div>
             <div className="p-6">
               <h3 className="font-bold text-white text-xl mb-1">
@@ -643,7 +643,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           {/* Estevão */}
           <div className="bg-[#112232] rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group border border-[#a47428]/10">
             <div className="aspect-[4/5] overflow-hidden">
-              <img src={estevaoImg} alt="Estevão Farkasvölgyi" className="w-full h-full object-cover object-[center_15%] group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+              <img src="/images/estevao-farkasvolgyi.jpg" alt="Estevão Farkasvölgyi" className="w-full h-full object-cover object-[center_15%] group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" width={400} height={500} />
             </div>
             <div className="p-6">
               <h3 className="font-bold text-white text-xl mb-1">

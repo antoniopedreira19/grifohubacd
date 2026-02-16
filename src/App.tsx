@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,26 +8,34 @@ import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AppLayout } from "@/components/layout/AppLayout";
-import Login from "@/pages/Login";
-import Register from "@/pages/Register";
-import Dashboard from "@/pages/Dashboard";
-import Leads from "@/pages/Leads";
-import Pipeline from "@/pages/Pipeline";
-import Produtos from "@/pages/Produtos";
-import Marketing from "@/pages/Marketing";
-import Templates from "@/pages/Templates";
-import Configuracoes from "@/pages/Configuracoes";
-import Agenda from "@/pages/Agenda";
-import CRM from "@/pages/CRM";
-import Automacoes from "@/pages/Automacoes";
-import Eventos from "@/pages/Eventos";
-import NotFound from "@/pages/NotFound";
-import PublicPageRenderer from "@/pages/PublicPageRenderer";
-import NpsPageRenderer from "@/pages/NpsPageRenderer";
-import ThankYouPage from "@/pages/ThankYouPage";
-import Mentoria360 from "@/pages/Mentoria360";
+
+// Lazy-loaded pages
+const Login = lazy(() => import("@/pages/Login"));
+const Register = lazy(() => import("@/pages/Register"));
+const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const Leads = lazy(() => import("@/pages/Leads"));
+const Pipeline = lazy(() => import("@/pages/Pipeline"));
+const Produtos = lazy(() => import("@/pages/Produtos"));
+const Marketing = lazy(() => import("@/pages/Marketing"));
+const Templates = lazy(() => import("@/pages/Templates"));
+const Configuracoes = lazy(() => import("@/pages/Configuracoes"));
+const Agenda = lazy(() => import("@/pages/Agenda"));
+const CRM = lazy(() => import("@/pages/CRM"));
+const Automacoes = lazy(() => import("@/pages/Automacoes"));
+const Eventos = lazy(() => import("@/pages/Eventos"));
+const NotFound = lazy(() => import("@/pages/NotFound"));
+const PublicPageRenderer = lazy(() => import("@/pages/PublicPageRenderer"));
+const NpsPageRenderer = lazy(() => import("@/pages/NpsPageRenderer"));
+const ThankYouPage = lazy(() => import("@/pages/ThankYouPage"));
+const Mentoria360 = lazy(() => import("@/pages/Mentoria360"));
 
 const queryClient = new QueryClient();
+
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+  </div>
+);
 
 const App = () => (
   <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" enableSystem={false}>
@@ -36,6 +45,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <Suspense fallback={<PageLoader />}>
           <Routes>
             {/* Public page routes */}
             <Route path="/p/:slug" element={<PublicPageRenderer />} />
@@ -70,6 +80,7 @@ const App = () => (
             {/* Catch-all */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </Suspense>
         </BrowserRouter>
       </TooltipProvider>
       </AuthProvider>
