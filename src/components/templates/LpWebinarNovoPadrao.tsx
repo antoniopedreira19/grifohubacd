@@ -833,7 +833,6 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
       {/* ════════ TESTIMONIALS ════════ */}
       <Section dark={false}>
         <div className="text-center mb-12">
-          <SectionTag>Prova social</SectionTag>
           <GoldHeading className="text-[#0b1c2e]">
             Quem já passou pelo{" "}
             <span className="text-[#a47428]">Ecossistema Grifo</span>
@@ -949,48 +948,6 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
         </div>
       </Section>
 
-      {/* ════════ SOCIAL PROOF (Placeholders) ════════ */}
-      <Section dark={false}>
-        <div className="text-center mb-12">
-          <SectionTag>Prova social</SectionTag>
-          <GoldHeading className="text-[#0b1c2e]">
-            Quem já passou pelo{" "}
-            <span className="text-[#a47428]">ecossistema Grifo</span>
-          </GoldHeading>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-sm font-bold">
-                  ?
-                </div>
-                <div>
-                  <p className="font-bold text-[#0b1c2e] text-sm">
-                    [INSERIR NOME]
-                  </p>
-                  <p className="text-gray-400 text-xs">[INSERIR EMPRESA / CIDADE]</p>
-                </div>
-              </div>
-              <p className="text-gray-600 text-sm italic">
-                "[INSERIR DEPOIMENTO]"
-              </p>
-              <div className="flex gap-1 mt-3">
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <Star
-                    key={s}
-                    className="w-4 h-4 text-[#a47428] fill-[#a47428]"
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </Section>
 
       {/* ════════ URGENCY ════════ */}
       <Section>
