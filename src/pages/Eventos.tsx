@@ -17,7 +17,7 @@ export default function Eventos() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("id, name, slug, active, event_date, event_modality, event_location, is_event")
+        .select("id, name, slug, active, event_date, event_modality, event_location, event_participants, is_event")
         .eq("is_event", true)
         .order("event_date", { ascending: false });
       if (error) throw error;

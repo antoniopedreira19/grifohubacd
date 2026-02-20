@@ -1,0 +1,1 @@
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS event_participants jsonb DEFAULT '[]'::jsonb;
