@@ -54,6 +54,7 @@ const NpsCards = lazy(() => import("./nps/NpsCards"));
 const NpsWebinarCultura = lazy(() => import("./nps/NpsWebinarCultura"));
 const NpsWebinarCulturaVip = lazy(() => import("./nps/NpsWebinarCulturaVip"));
 const NpsGrifoTalk = lazy(() => import("./nps/NpsGrifoTalk"));
+const NpsGrifoTalksEstevao = lazy(() => import("./nps/NpsGrifoTalksEstevao"));
 
 // Registry mapping component_key strings to React components
 export const templateRegistry: Record<string, ComponentType<TemplateComponentProps>> = {
@@ -74,6 +75,7 @@ export const npsTemplateRegistry: Record<string, ComponentType<NpsTemplateProps>
   nps_webinar_cultura: NpsWebinarCultura,
   nps_webinar_cultura_vip: NpsWebinarCulturaVip,
   grifo_talk_nps: NpsGrifoTalk,
+  "grifotalks-estevao": NpsGrifoTalksEstevao,
 };
 
 export function getTemplateComponent(componentKey: string): ComponentType<TemplateComponentProps> | null {

@@ -4,4 +4,5 @@ export { default as NpsCards } from "./NpsCards";
 export { default as NpsWebinarCultura } from "./NpsWebinarCultura";
 export { default as NpsWebinarCulturaVip } from "./NpsWebinarCulturaVip";
 export { default as NpsGrifoTalk } from "./NpsGrifoTalk";
+export { default as NpsGrifoTalksEstevao } from "./NpsGrifoTalksEstevao";
 export type { NpsTemplateProps } from "./types";
