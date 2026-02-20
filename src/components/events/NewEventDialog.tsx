@@ -1,0 +1,251 @@
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Loader2, Check, Calendar } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { toast } from "sonner";
+
+interface NewEventDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export function NewEventDialog({ open, onOpenChange }: NewEventDialogProps) {
+  const queryClient = useQueryClient();
+
+  const [form, setForm] = useState({
+    name: "",
+    event_date: "",
+    event_modality: "presencial" as "presencial" | "online" | "hibrido",
+    event_location: "",
+    slug: "",
+    template_id: "",
+    active: true,
+  });
+
+  // Fetch application form templates
+  const { data: formTemplates } = useQuery({
+    queryKey: ["page_templates", "application_form"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("page_templates")
+        .select("*")
+        .eq("type", "application_form")
+        .order("name");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const generateSlug = () => {
+    if (form.name) {
+      const slug = form.name
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+      setForm((f) => ({ ...f, slug }));
+    }
+  };
+
+  const createEvent = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.from("products").insert({
+        name: form.name,
+        slug: form.slug || null,
+        template_id: form.template_id || null,
+        active: form.active,
+        is_event: true,
+        event_date: form.event_date || null,
+        event_modality: form.event_modality,
+        event_location: form.event_location || null,
+        funnel_type: "internal_form",
+        create_deal: false,
+      } as any);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+      toast.success("Evento criado com sucesso!");
+      onOpenChange(false);
+      setForm({
+        name: "",
+        event_date: "",
+        event_modality: "presencial",
+        event_location: "",
+        slug: "",
+        template_id: "",
+        active: true,
+      });
+    },
+    onError: (err: Error) => {
+      toast.error("Erro ao criar evento: " + err.message);
+    },
+  });
+
+  const handleSubmit = () => {
+    if (!form.name.trim()) {
+      toast.error("Nome do evento é obrigatório");
+      return;
+    }
+    createEvent.mutate();
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[480px]">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2 text-primary">
+            <Calendar className="h-5 w-5 text-secondary" />
+            Novo Evento
+          </DialogTitle>
+          <DialogDescription>
+            Crie um novo evento. Ele aparecerá na aba Eventos e terá sua página de inscrição pública.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-5 py-2">
+          {/* Nome */}
+          <div className="space-y-2">
+            <Label htmlFor="ev-name">Nome do Evento *</Label>
+            <Input
+              id="ev-name"
+              placeholder="Ex: Grifo Talks #3"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+            />
+          </div>
+
+          {/* Data */}
+          <div className="space-y-2">
+            <Label htmlFor="ev-date">Data e Hora</Label>
+            <Input
+              id="ev-date"
+              type="datetime-local"
+              value={form.event_date}
+              onChange={(e) => setForm({ ...form, event_date: e.target.value })}
+            />
+          </div>
+
+          {/* Modalidade */}
+          <div className="space-y-2">
+            <Label htmlFor="ev-modality">Modalidade</Label>
+            <Select
+              value={form.event_modality}
+              onValueChange={(v) => setForm({ ...form, event_modality: v as any })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="presencial">Presencial</SelectItem>
+                <SelectItem value="online">Online</SelectItem>
+                <SelectItem value="hibrido">Híbrido</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Local */}
+          <div className="space-y-2">
+            <Label htmlFor="ev-location">
+              {form.event_modality === "online" ? "Link da sala / plataforma" : "Endereço / Local"}
+            </Label>
+            <Input
+              id="ev-location"
+              placeholder={
+                form.event_modality === "online"
+                  ? "https://meet.google.com/..."
+                  : "Rua, Número, Bairro, Cidade"
+              }
+              value={form.event_location}
+              onChange={(e) => setForm({ ...form, event_location: e.target.value })}
+            />
+          </div>
+
+          {/* Template do formulário */}
+          <div className="space-y-2">
+            <Label>Template do Formulário de Inscrição</Label>
+            <Select
+              value={form.template_id || "none"}
+              onValueChange={(v) => setForm({ ...form, template_id: v === "none" ? "" : v })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione um formulário" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Nenhum (só landing page)</SelectItem>
+                {formTemplates?.map((tpl) => (
+                  <SelectItem key={tpl.id} value={tpl.id}>
+                    {tpl.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Slug */}
+          <div className="space-y-2">
+            <Label htmlFor="ev-slug">Slug (URL)</Label>
+            <div className="flex gap-2">
+              <Input
+                id="ev-slug"
+                placeholder="grifo-talks-3"
+                value={form.slug}
+                onChange={(e) => setForm({ ...form, slug: e.target.value })}
+              />
+              <Button type="button" variant="outline" onClick={generateSlug} className="shrink-0">
+                Gerar
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">URL: /p/{form.slug || "slug-do-evento"}</p>
+          </div>
+
+          {/* Ativo */}
+          <div className="flex items-center gap-4 p-3 rounded-lg border border-border">
+            <Switch
+              id="ev-active"
+              checked={form.active}
+              onCheckedChange={(v) => setForm({ ...form, active: v })}
+            />
+            <div>
+              <Label htmlFor="ev-active" className="cursor-pointer">
+                Evento Ativo
+              </Label>
+              <p className="text-xs text-muted-foreground">Inscrições abertas ao público</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-2 pt-2">
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={createEvent.isPending || !form.name.trim()}
+            className="bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+          >
+            {createEvent.isPending ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Check className="h-4 w-4 mr-2" />
+            )}
+            Criar Evento
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
