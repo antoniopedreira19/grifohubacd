@@ -17,6 +17,7 @@ export default function Produtos() {
       const { data, error } = await supabase
         .from("products")
         .select("*, product_categories(id, name, slug)")
+        .or("is_event.is.null,is_event.eq.false")
         .order("created_at", { ascending: false });
       
       if (error) throw error;

@@ -660,10 +660,14 @@ export type Database = {
           checkout_url: string | null
           create_deal: boolean | null
           created_at: string | null
+          event_date: string | null
+          event_location: string | null
+          event_modality: string | null
           external_id: string | null
           funnel_type: Database["public"]["Enums"]["product_funnel_type"] | null
           id: string
           is_crm_trigger: boolean | null
+          is_event: boolean | null
           lead_origin: string | null
           meta_pixel_id: string | null
           name: string
@@ -678,12 +682,16 @@ export type Database = {
           checkout_url?: string | null
           create_deal?: boolean | null
           created_at?: string | null
+          event_date?: string | null
+          event_location?: string | null
+          event_modality?: string | null
           external_id?: string | null
           funnel_type?:
             | Database["public"]["Enums"]["product_funnel_type"]
             | null
           id?: string
           is_crm_trigger?: boolean | null
+          is_event?: boolean | null
           lead_origin?: string | null
           meta_pixel_id?: string | null
           name: string
@@ -698,12 +706,16 @@ export type Database = {
           checkout_url?: string | null
           create_deal?: boolean | null
           created_at?: string | null
+          event_date?: string | null
+          event_location?: string | null
+          event_modality?: string | null
           external_id?: string | null
           funnel_type?:
             | Database["public"]["Enums"]["product_funnel_type"]
             | null
           id?: string
           is_crm_trigger?: boolean | null
+          is_event?: boolean | null
           lead_origin?: string | null
           meta_pixel_id?: string | null
           name?: string

@@ -40,6 +40,10 @@ interface ProductForm {
   nps_template_id: string;
   nps_slug: string;
   nps_active: boolean;
+  // Event fields
+  event_date: string;
+  event_modality: string;
+  event_location: string;
 }
 
 export function ProductEditSheet({ product, open, onOpenChange }: ProductEditSheetProps) {
@@ -61,9 +65,13 @@ export function ProductEditSheet({ product, open, onOpenChange }: ProductEditShe
     nps_template_id: "",
     nps_slug: "",
     nps_active: true,
+    event_date: "",
+    event_modality: "",
+    event_location: "",
   });
 
   const [npsResultsOpen, setNpsResultsOpen] = useState(false);
+  const isEvent = !!(product as any)?.is_event;
 
   const queryClient = useQueryClient();
 
@@ -85,7 +93,12 @@ export function ProductEditSheet({ product, open, onOpenChange }: ProductEditShe
         pipeline_id: (product as any).pipeline_id || "",
         is_crm_trigger: (product as any).is_crm_trigger ?? false,
         lead_origin: (product as any).lead_origin || "",
-        meta_pixel_id: (product as any).meta_pixel_id || "", // Carrega o Pixel
+        meta_pixel_id: (product as any).meta_pixel_id || "",
+        event_date: (product as any).event_date
+          ? new Date((product as any).event_date).toISOString().slice(0, 16)
+          : "",
+        event_modality: (product as any).event_modality || "",
+        event_location: (product as any).event_location || "",
       }));
     } else {
       // Reset form for new product
@@ -107,6 +120,9 @@ export function ProductEditSheet({ product, open, onOpenChange }: ProductEditShe
         nps_template_id: "",
         nps_slug: "",
         nps_active: true,
+        event_date: "",
+        event_modality: "",
+        event_location: "",
       });
     }
   }, [product, open]); // Added open dependency to reset on new
@@ -219,8 +235,13 @@ export function ProductEditSheet({ product, open, onOpenChange }: ProductEditShe
         pipeline_id: form.create_deal && form.pipeline_id ? form.pipeline_id : null,
         is_crm_trigger: form.is_crm_trigger,
         lead_origin: form.funnel_type === "internal_form" ? form.lead_origin || null : null,
-        meta_pixel_id: form.meta_pixel_id || null, // Salva o Pixel
-      };
+        meta_pixel_id: form.meta_pixel_id || null,
+        ...(isEvent && {
+          event_date: form.event_date || null,
+          event_modality: form.event_modality || null,
+          event_location: form.event_location || null,
+        }),
+      } as any;
 
       let data;
 
@@ -670,6 +691,52 @@ export function ProductEditSheet({ product, open, onOpenChange }: ProductEditShe
               </>
             )}
           </div>
+
+          {/* Event-specific fields */}
+          {isEvent && (
+            <div className="space-y-4">
+              <h3 className="font-semibold text-primary text-sm flex items-center gap-2">
+                <span>📅</span> Dados do Evento
+              </h3>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium leading-none">Data e Hora</label>
+                <input
+                  type="datetime-local"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  value={form.event_date}
+                  onChange={(e) => setForm({ ...form, event_date: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium leading-none">Modalidade</label>
+                <select
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  value={form.event_modality}
+                  onChange={(e) => setForm({ ...form, event_modality: e.target.value })}
+                >
+                  <option value="">Selecione...</option>
+                  <option value="presencial">Presencial</option>
+                  <option value="online">Online</option>
+                  <option value="hibrido">Híbrido</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium leading-none">
+                  {form.event_modality === "online" ? "Link da sala / plataforma" : "Local / Endereço"}
+                </label>
+                <input
+                  type="text"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 placeholder:text-muted-foreground"
+                  placeholder={form.event_modality === "online" ? "https://meet.google.com/..." : "Rua, Número, Bairro, Cidade"}
+                  value={form.event_location}
+                  onChange={(e) => setForm({ ...form, event_location: e.target.value })}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Slug */}
           <div className="space-y-4">
