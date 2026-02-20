@@ -663,6 +663,7 @@ export type Database = {
           event_date: string | null
           event_location: string | null
           event_modality: string | null
+          event_participants: Json | null
           external_id: string | null
           funnel_type: Database["public"]["Enums"]["product_funnel_type"] | null
           id: string
@@ -685,6 +686,7 @@ export type Database = {
           event_date?: string | null
           event_location?: string | null
           event_modality?: string | null
+          event_participants?: Json | null
           external_id?: string | null
           funnel_type?:
             | Database["public"]["Enums"]["product_funnel_type"]
@@ -709,6 +711,7 @@ export type Database = {
           event_date?: string | null
           event_location?: string | null
           event_modality?: string | null
+          event_participants?: Json | null
           external_id?: string | null
           funnel_type?:
             | Database["public"]["Enums"]["product_funnel_type"]
