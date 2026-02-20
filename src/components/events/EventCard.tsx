@@ -198,7 +198,7 @@ export function EventCard({ event, onEdit }: EventCardProps) {
             <div className="flex items-center gap-2 text-sm">
               <Users className="h-4 w-4 text-secondary" />
               <span className="font-semibold text-foreground">{submissionCount ?? "–"}</span>
-              <span className="text-muted-foreground">inscritos</span>
+              <span className="text-muted-foreground">convidados inscritos</span>
             </div>
           </div>
 
@@ -211,7 +211,7 @@ export function EventCard({ event, onEdit }: EventCardProps) {
               onClick={() => setAttendeesOpen(true)}
             >
               <Users className="h-3.5 w-3.5 mr-1.5" />
-              Confirmados
+              Ver Inscritos
             </Button>
 
             <Button
