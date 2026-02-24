@@ -1,0 +1,1 @@
+INSERT INTO page_templates (component_key, name, type) VALUES ('form_funil_360', 'Formulário Funil 360', 'application_form'), ('form_funil_frontend', 'Formulário Funil Front-End', 'application_form');
