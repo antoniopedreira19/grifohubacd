@@ -28,6 +28,8 @@ const PublicPageRenderer = lazy(() => import("@/pages/PublicPageRenderer"));
 const NpsPageRenderer = lazy(() => import("@/pages/NpsPageRenderer"));
 const ThankYouPage = lazy(() => import("@/pages/ThankYouPage"));
 const Mentoria360 = lazy(() => import("@/pages/Mentoria360"));
+const Vitrine = lazy(() => import("@/pages/Vitrine"));
+const RedirectWebinar = lazy(() => import("@/pages/RedirectWebinar"));
 
 const queryClient = new QueryClient();
 
@@ -52,7 +54,9 @@ const App = () => (
             <Route path="/nps/:slug" element={<NpsPageRenderer />} />
             <Route path="/obrigado/:slug" element={<ThankYouPage />} />
             <Route path="/mentoria-360" element={<Mentoria360 />} />
-            
+            <Route path="/vitrine" element={<Vitrine />} />
+            <Route path="/redirect-webinar" element={<RedirectWebinar />} />
+
             {/* Auth routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />

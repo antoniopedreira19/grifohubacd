@@ -47,6 +47,30 @@ const FormGrifoTalk = lazy(() =>
   })),
 );
 
+// FormFunil360 - Formulário funil 360 (tráfego frio)
+const FormFunil360 = lazy(() =>
+  import("./FormFunil360").then((m) => ({
+    default: (props: TemplateComponentProps) => (
+      <m.default
+        productId={props.product.id}
+        productSlug={props.product.slug || undefined}
+      />
+    ),
+  })),
+);
+
+// FormFunilFrontend - Formulário funil front-end (já comprou webinar)
+const FormFunilFrontend = lazy(() =>
+  import("./FormFunilFrontend").then((m) => ({
+    default: (props: TemplateComponentProps) => (
+      <m.default
+        productId={props.product.id}
+        productSlug={props.product.slug || undefined}
+      />
+    ),
+  })),
+);
+
 // NPS Templates
 const NpsPremium = lazy(() => import("./nps/NpsPremium"));
 const NpsSimple = lazy(() => import("./nps/NpsSimple"));
@@ -65,6 +89,8 @@ export const templateRegistry: Record<string, ComponentType<TemplateComponentPro
   lp_webinar_novo_padrao: LpWebinarNovoPadrao,
   form_construction: FormConstruction,
   form_grifo_talk: FormGrifoTalk,
+  form_funil_360: FormFunil360,
+  form_funil_frontend: FormFunilFrontend,
 };
 
 // NPS Template Registry
