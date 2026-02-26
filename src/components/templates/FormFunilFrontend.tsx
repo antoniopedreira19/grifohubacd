@@ -157,7 +157,7 @@ export default function FormFunilFrontend({ productId, productSlug }: FormFunilF
     set("cargo", cargo);
     savePartial({ full_name: data.full_name, email: data.email, phone: `${data.countryCode}${data.phone.replace(/\D/g, "")}` });
     if (cargo !== "Sócio / Proprietário") {
-      setTimeout(() => navigate("/vitrine"), 300);
+      setTimeout(() => navigate("/redirect-vitrine"), 300);
     } else {
       setTimeout(() => setStep(5), 250);
     }
@@ -168,7 +168,7 @@ export default function FormFunilFrontend({ productId, productSlug }: FormFunilF
     savePartial({ company_revenue: mapRevenue(fat) });
     // Front-end: low revenue also goes to Vitrine (already bought webinar)
     if (fat === "<500k" || fat === "500k-1M") {
-      setTimeout(() => navigate("/vitrine"), 300);
+      setTimeout(() => navigate("/redirect-vitrine"), 300);
     } else {
       setTimeout(() => setStep(6), 250);
     }
