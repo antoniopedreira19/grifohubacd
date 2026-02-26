@@ -153,7 +153,7 @@ export default function FormFunil360({ productId, productSlug }: FormFunil360Pro
     savePartial({});
     if (cargo !== "Sócio / Proprietário") {
       // Anti-ICP: redirect to Vitrine
-      setTimeout(() => navigate("/vitrine"), 300);
+      setTimeout(() => navigate("/redirect-vitrine"), 300);
     } else {
       setTimeout(() => setStep(1), 250);
     }
