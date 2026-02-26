@@ -350,7 +350,7 @@ export default function FormFunilFrontend({ productId, productSlug }: FormFunilF
 
           {/* Step 5: Faturamento */}
           {step === 5 && (
-            <QCard icon={<DollarSign className="text-[#A47428]" size={32} />} n={qNum} q="Qual o faturamento da sua empresa nos últimos 12 meses?" sub="Informação confidencial, usada apenas para qualificação.">
+            <QCard icon={<DollarSign className="text-[#A47428]" size={32} />} n={qNum} q="Qual o faturamento ANUAL da sua empresa?" sub="Informação confidencial, usada apenas para qualificação.">
               <div className="grid grid-cols-1 gap-3 mt-4">
                 {FATURAMENTOS.map((f) => (
                   <OptBtn key={f.value} label={f.label} selected={data.faturamento === f.value} onClick={() => handleFaturamentoSelect(f.value)} />

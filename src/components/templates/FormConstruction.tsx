@@ -459,7 +459,7 @@ export function FormConstruction({ productId, productSlug, onSubmitSuccess }: Fo
             <QuestionCard
               icon={<DollarSign className="text-[#A47428]" size={32} />}
               number={7}
-              question="Qual o faturamento atual da empresa?"
+              question="Qual o faturamento ANUAL da empresa?"
               subtext="Essa informação é confidencial e usada apenas para qualificação."
             >
               <div className="grid grid-cols-1 gap-3 mt-4">
