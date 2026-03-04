@@ -3,11 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Calendar, BarChart3, Settings, Target, TrendingUp, Users, ArrowRight, CheckCircle2, XCircle, ShieldCheck, Zap, Lock, MessageSquare, Layers, LayoutDashboard, Star } from "lucide-react";
 import { YouTubeFacade } from "@/components/YouTubeFacade";
 import { useInView } from "@/hooks/useInView";
-import heroBackground from "@/assets/mentoria-360-hero-bg.jpg";
-import solutionBackground from "@/assets/mentoria-360-solution-bg.jpg";
-import setupBackground from "@/assets/mentoria-360-setup-bg.jpg";
-import danielGedeon from "@/assets/daniel-gedeon.jpg";
-import grifoLogo from "@/assets/grifo-logo.png";
+// Static images served from /public (not bundled by Vite)
+const setupBackground = "/images/mentoria-360-setup-bg.jpg";
+const danielGedeon = "/images/daniel-gedeon.jpg";
+const grifoLogo = "/images/grifo-logo.png";
 
 const CTA_URL = "https://www.grifocrm.com.br/p/mentoria-grifo-360";
 

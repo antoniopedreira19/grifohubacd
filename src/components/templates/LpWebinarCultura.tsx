@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Lock, CheckCircle, XCircle, Star, X, Flame } from "lucide-react";
-import mentoresWebinar from "@/assets/mentores-webinar-cultura.jpg";
-import danielGedeon from "@/assets/daniel-gedeon.jpg";
-import rafaelSoares from "@/assets/rafael-soares.jpg";
+// Static images served from /public (not bundled by Vite)
+const mentoresWebinar = "/images/mentores-webinar-cultura.jpg";
+const danielGedeon = "/images/daniel-gedeon.jpg";
+const rafaelSoares = "/images/rafael-soares.jpg";
 import { useMetaPixel } from "@/hooks/useMetaPixel";
 
 interface LpWebinarCulturaProps {
