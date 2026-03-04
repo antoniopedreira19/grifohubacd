@@ -16,16 +16,18 @@
     <meta name="twitter:site" content="@GrifoAcademy" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
-    <!-- Preconnects -->
+    <!-- Preconnects (only universally used origins) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
-    <link rel="preload" href="https://fonts.cdnfonts.com/s/14107/DisketMono-Regular.woff" as="font" type="font/woff" crossorigin>
-    <link rel="preconnect" href="https://naroalxhbrvmosbqzhrb.supabase.co" crossorigin>
-    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Local DisketMono font preload -->
+    <link rel="preload" href="/fonts/DisketMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
+    <!-- Non-blocking Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    </noscript>
     <meta property="og:title" content="GrifoHub">
   <meta name="twitter:title" content="GrifoHub">
   <meta property="og:description" content="GrifoHub - CRM e Gestão de Vendas">
@@ -34,9 +36,6 @@
   <link rel="icon" type="image/png" sizes="16x16" href="https://storage.googleapis.com/gpt-engineer-file-uploads/GlLUnfIBasPhwDSvWDNXsfHTAWB2/uploads/1768411680869-LOGO_GRIFO_6-removebg-preview.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://storage.googleapis.com/gpt-engineer-file-uploads/GlLUnfIBasPhwDSvWDNXsfHTAWB2/uploads/1768411680869-LOGO_GRIFO_6-removebg-preview.png">
   
-  <!-- Preload Mentoria 360 images -->
-  <link rel="preload" as="image" href="/src/assets/mentoria-360-hero-bg.jpg">
-  <link rel="preload" as="image" href="/src/assets/daniel-gedeon.jpg">
 </head>
 
   <body>
