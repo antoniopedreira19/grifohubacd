@@ -1,61 +1,43 @@
 
 
-## Diagnostico de Performance das Landing Pages
+## Revisao de Performance - Problemas Remanescentes
+
+Apos analise detalhada de todas as landing pages, os problemas anteriores (framer-motion, YouTube facade, preconnects, lazy loading) ja foram corrigidos. Restam os seguintes problemas:
 
 ### Problemas Identificados
 
-**1. framer-motion no Mentoria360.tsx (~30KB gzipped)**
-A pagina Mentoria360 importa `framer-motion` para animacoes simples de fade-in. Esse pacote e pesado e so e usado nessa pagina. Substituir por animacoes CSS nativas elimina esse peso do bundle.
+**1. Mentoria360 - Fonte DisketMono ainda carregada via CSS inline (linha 63-67)**
+A fonte `DisketMono` continua sendo carregada via `@font-face` dentro de uma tag `<style>` inline. Apesar do `font-display: swap`, nao ha `preconnect` para `fonts.cdnfonts.com` no `index.html` (ja temos preconnect mas sem o crossorigin). O download da fonte so inicia apos o CSS ser parseado, atrasando o rendering.
 
-**2. Google Fonts via @import dentro de `<style>` (render-blocking)**
-Mentoria360 carrega fontes via `@import url(...)` dentro de uma tag `<style>`. Isso bloqueia a renderizacao. Deve ser movido para `<link>` com `preconnect` no `index.html`.
+**2. LpWebinarNovoPadrao - Imagem hero do Supabase Storage sem otimizacao**
+Linha 300: A imagem hero carrega a versao original do Supabase Storage (potencialmente varios MB). Nao ha parametros de resize na URL. Supabase Storage nao suporta transformacao de imagem nativamente, mas podemos ao menos garantir `loading="eager"` (ja tem) e adicionar dimensoes corretas.
 
-**3. Fonte externa CDN (DisketMono) sem preload**
-Mentoria360 carrega uma fonte custom de `fonts.cdnfonts.com` via CSS `@font-face`. Sem preconnect ou preload, isso atrasa o rendering.
+**3. LpWebinarNovoPadrao - Imagens de speakers sem lazy loading**
+Linhas 626 e 646: As imagens dos speakers (`/images/daniel-gedeon-obra.jpg` e `/images/estevao-farkasvolgyi.jpg`) ja tem `loading="lazy"` - OK.
 
-**4. YouTube iframe carregado eagerly**
-Mentoria360 carrega o iframe do YouTube assim que a pagina renderiza, mesmo estando abaixo da dobra. Deve usar um facade (thumbnail + click-to-load).
+**4. LpWebinarNovoPadrao - Countdown causa re-render a cada segundo**
+O `useCountdown` hook atualiza o state a cada 1 segundo via `setInterval`, causando re-render de todo o componente (1048 linhas). Isso nao e um problema grave de performance percebido pelo usuario, mas e ineficiente.
 
-**5. Imagens sem lazy loading nem dimensoes explicitas**
-Varias landing pages nao usam `loading="lazy"` para imagens abaixo da dobra, nem definem `width`/`height`, causando layout shift (CLS).
+**5. LpWebinarCultura - CSS `animate-fade-in` sem definicao**
+Linhas 99, 122, 130, 152: Usa classes `animate-fade-in` que dependem de definicoes no Tailwind config. Se nao estiverem definidas, as animacoes nao funcionam (nao e performance, mas e um bug potencial).
 
-**6. Imagens externas sem otimizacao de tamanho**
-Vitrine carrega 6 imagens do Unsplash em 800px sem considerar o tamanho real do container (~350px). LpWebinarNovoPadrao carrega imagem do Supabase Storage sem parametros de resize.
-
-**7. Script UTMify carregado sem estrategia**
-LpWebinarCultura injeta script UTMify via DOM manipulation no useEffect, o que e correto (async/defer), mas pode ser melhorado.
+**6. Inline `<style>` tags em Mentoria360 e Vitrine**
+Ambas as paginas injetam blocos `<style>` inline com `@keyframes` e classes customizadas. Isso forca o browser a re-parsear o CSSOM a cada render. Mover para `src/index.css` centraliza e permite caching.
 
 ---
 
 ### Plano de Implementacao
 
-**Arquivos a modificar:**
-
-| Arquivo | Mudancas |
+| Arquivo | Mudanca |
 |---|---|
-| `index.html` | Adicionar `preconnect` para Google Fonts, CDN fonts, Supabase Storage, Unsplash |
-| `src/pages/Mentoria360.tsx` | Remover framer-motion, substituir por CSS animations. YouTube facade. Mover fonts para index.html. Lazy loading em imagens below-fold. |
-| `src/components/templates/LpWebinarNovoPadrao.tsx` | Lazy loading em imagens below-fold, dimensoes explicitas |
-| `src/components/templates/LpWebinarCultura.tsx` | `loading="lazy"` em imagens below-fold, `width`/`height` explicitos |
-| `src/pages/Vitrine.tsx` | Reduzir tamanho das imagens Unsplash (w=400), `loading="lazy"`, dimensoes explicitas |
-| `src/pages/RedirectVitrine.tsx` | `loading="lazy"` no logo |
-| `src/pages/RedirectWebinar.tsx` | `loading="lazy"` no logo |
+| `src/index.css` | Mover `@keyframes fadeInUp`, `staggerIn`, `pulse-gold`, `grid-bg`, `font-disket`, `text-gradient-gold`, `ping-urgent` das tags `<style>` inline para o CSS global |
+| `src/pages/Mentoria360.tsx` | Remover bloco `<style>` inline (mover CSS para index.css) |
+| `src/pages/Vitrine.tsx` | Remover bloco `<style>` inline (mover CSS para index.css) |
+| `src/components/templates/LpWebinarNovoPadrao.tsx` | Isolar countdown em componente separado com `React.memo` para evitar re-render do componente inteiro |
+| `index.html` | Adicionar `crossorigin` no preconnect de `fonts.cdnfonts.com`; adicionar `<link rel="preload">` para a fonte DisketMono |
 
-**Detalhes tecnicos:**
-
-1. **framer-motion → CSS**: `motion.div` com `fadeInUp` vira `div` com classes CSS de animacao usando `@keyframes` + `IntersectionObserver` via um hook leve `useInView`.
-
-2. **YouTube Facade**: Substituir `<iframe>` por thumbnail + botao Play. Ao clicar, carrega o iframe. Elimina ~500KB de JS do YouTube no load inicial.
-
-3. **index.html preconnects**:
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="preconnect" href="https://naroalxhbrvmosbqzhrb.supabase.co" />
-<link rel="preconnect" href="https://images.unsplash.com" />
-```
-
-4. **Imagens Unsplash**: Reduzir `w=800` para `w=400` nos cards da Vitrine (container tem ~350px de largura).
-
-5. **Todas as imagens below-fold**: Adicionar `loading="lazy"` e `decoding="async"`.
+**Impacto esperado:**
+- Eliminacao de re-parse CSS a cada render (inline style → global CSS)
+- Reducao de re-renders desnecessarios no LpWebinarNovoPadrao
+- Carregamento mais rapido da fonte DisketMono via preload
 
