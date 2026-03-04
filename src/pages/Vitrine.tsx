@@ -19,7 +19,7 @@ const products = [
       "O fim do cronograma de parede. Tenha previsibilidade real e dite o ritmo de execução da sua obra.",
     cta: "ACESSAR PLANILHA",
     image:
-      "https://images.unsplash.com/photo-1503387762-592dee58c160?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1503387762-592dee58c160?q=80&w=400&auto=format&fit=crop",
     icon: <FileText size={20} />,
     url: "#",
   },
@@ -31,7 +31,7 @@ const products = [
       "Alinhe os interesses da sua equipe com o lucro da empresa. Chega de pagar bônus sem ter margem.",
     cta: "ACESSAR PLANILHA",
     image:
-      "https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=400&auto=format&fit=crop",
     icon: <Target size={20} />,
     url: "#",
   },
@@ -43,7 +43,7 @@ const products = [
       "A porta de entrada para a nossa filosofia. Insights imediatos para estancar perdas e organizar a casa.",
     cta: "ASSISTIR AGORA",
     image:
-      "https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=400&auto=format&fit=crop",
     icon: <Users size={20} />,
     url: "#",
   },
@@ -55,7 +55,7 @@ const products = [
       "Aulas táticas e aprofundadas sobre os maiores gargalos da gestão de obras e posicionamento comercial.",
     cta: "VER CATÁLOGO",
     image:
-      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=400&auto=format&fit=crop",
     icon: <GraduationCap size={20} />,
     url: "#",
   },
@@ -67,7 +67,7 @@ const products = [
       "Mapeie os gargalos da sua construtora em uma sessão estratégica 1 a 1 com um de nossos especialistas.",
     cta: "AGENDAR SESSÃO",
     image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=400&auto=format&fit=crop",
     icon: <LayoutGrid size={20} />,
     url: "#",
     primary: true,
@@ -80,7 +80,7 @@ const products = [
       "Instalação completa do nosso sistema de previsibilidade, com Setup prático direto na sua obra.",
     cta: "APLICAR PARA VAGA",
     image:
-      "https://images.unsplash.com/photo-1541888946425-d81bb19480c5?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1541888946425-d81bb19480c5?q=80&w=400&auto=format&fit=crop",
     icon: <ShieldCheck size={20} />,
     url: "#",
     featured: true,
@@ -112,10 +112,14 @@ export default function Vitrine() {
         <div className="max-w-5xl mx-auto px-6 pt-16 pb-20 text-center flex flex-col items-center">
           {/* Logo */}
           <div className="mb-8">
-            <img
+             <img
               src="https://naroalxhbrvmosbqzhrb.supabase.co/storage/v1/object/public/photos-wallpapers/LOGO_GRIFO_6-removebg-preview.png"
               alt="Grifo Logo"
               className="h-16 md:h-24 w-auto object-contain drop-shadow-2xl"
+              loading="eager"
+              decoding="async"
+              width={96}
+              height={96}
             />
           </div>
 
@@ -164,6 +168,10 @@ export default function Vitrine() {
                 <img
                   src={product.image}
                   alt={product.title}
+                  width={400}
+                  height={176}
+                  loading="lazy"
+                  decoding="async"
                   className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${
                     imgLoaded[product.id] ? "opacity-100" : "opacity-0"
                   }`}

@@ -12,6 +12,10 @@ export default function RedirectVitrine() {
           src="https://naroalxhbrvmosbqzhrb.supabase.co/storage/v1/object/public/photos-wallpapers/LOGO_GRIFO_6-removebg-preview.png"
           alt="Grifo Logo"
           className="h-16 md:h-24 w-auto object-contain drop-shadow-2xl"
+          loading="lazy"
+          decoding="async"
+          width={96}
+          height={96}
         />
       </div>
 
