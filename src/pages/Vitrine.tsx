@@ -92,21 +92,6 @@ export default function Vitrine() {
 
   return (
     <div className="min-h-screen w-full bg-[#112232] text-[#E1D8CF] font-sans">
-      {/* Subtle grid background */}
-      <style>{`
-        .grid-bg {
-          background-image: radial-gradient(rgba(163, 116, 40, 0.05) 1px, transparent 1px);
-          background-size: 30px 30px;
-        }
-        .pulse-border {
-          animation: pulse-gold 2s ease-in-out infinite;
-        }
-        @keyframes pulse-gold {
-          0%, 100% { border-color: rgba(164,116,40,0.3); }
-          50% { border-color: rgba(164,116,40,0.8); }
-        }
-      `}</style>
-
       {/* ─── Hero Section ─── */}
       <section className="relative grid-bg">
         <div className="max-w-5xl mx-auto px-6 pt-16 pb-20 text-center flex flex-col items-center">

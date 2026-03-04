@@ -209,3 +209,78 @@
     background-color: hsl(var(--muted-foreground) / 0.4);
   }
 }
+
+/* ─── Landing Page Animations (shared by Mentoria360, Vitrine, etc.) ─── */
+@font-face {
+  font-family: 'DisketMono';
+  src: url('https://fonts.cdnfonts.com/s/14107/DisketMono-Regular.woff') format('woff');
+  font-display: swap;
+}
+
+.font-disket {
+  font-family: 'DisketMono', monospace;
+  text-transform: uppercase;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, #a37428 0%, #f1c40f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes staggerIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ping-slow {
+  0% { transform: scale(1); opacity: 0.8; }
+  70% { transform: scale(1.2); opacity: 0; }
+  100% { transform: scale(1.2); opacity: 0; }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { border-color: rgba(164,116,40,0.3); }
+  50% { border-color: rgba(164,116,40,0.8); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.animate-stagger-in > * {
+  opacity: 0;
+  animation: staggerIn 0.4s ease-out forwards;
+}
+.animate-stagger-in > *:nth-child(1) { animation-delay: 0s; }
+.animate-stagger-in > *:nth-child(2) { animation-delay: 0.1s; }
+.animate-stagger-in > *:nth-child(3) { animation-delay: 0.2s; }
+.animate-stagger-in > *:nth-child(4) { animation-delay: 0.3s; }
+.animate-stagger-in > *:nth-child(5) { animation-delay: 0.4s; }
+.animate-stagger-in > *:nth-child(6) { animation-delay: 0.5s; }
+
+.ping-urgent {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  background: #a37428;
+  animation: ping-slow 2s infinite;
+  z-index: -1;
+}
+
+/* Vitrine grid background */
+.grid-bg {
+  background-image: radial-gradient(rgba(163, 116, 40, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+/* Vitrine pulse border */
+.pulse-border {
+  animation: pulse-gold 2s ease-in-out infinite;
+}
