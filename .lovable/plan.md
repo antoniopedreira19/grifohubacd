@@ -1,43 +1,36 @@
 
 
-## Diagnostico PageSpeed - Mentoria 360 (Score 65)
+## Diagnostico PageSpeed - Webinar Novo Padrao (Score 62)
 
-### Problemas Criticos Identificados
+### Problema Principal: Imagens locais poluindo TODOS os builds
 
-**1. Imagem LCP (daniel-gedeon.jpg) = 2.2MB, 1440x1920px**
-Este e o problema #1. A imagem do hero e o LCP element e tem 2.2MB. E exibida em no maximo 420x520px. Isso sozinho causa o LCP de 12.1s. Como e um asset local importado via Vite, nao ha como redimensionar em runtime. A solucao e:
-- Hospedar a imagem otimizada no Supabase Storage e carregar via URL com parametros de resize
-- Ou substituir o arquivo local por uma versao comprimida/redimensionada
+O PageSpeed mostra que `/assets/daniel-ge….jpg` (2.2MB) e `/assets/mentoria-….jpg` (197KB) estao sendo carregados nesta pagina **mesmo que ela nao os use**. Isso acontece porque:
 
-**2. Google Fonts render-blocking (990ms)**
-As duas tags `<link rel="stylesheet">` do Google Fonts bloqueiam a renderizacao. Devem ser carregadas de forma nao-bloqueante usando `media="print" onload="this.media='all'"`.
+- `Mentoria360.tsx` importa `daniel-gedeon.jpg`, `mentoria-360-hero-bg.jpg`, `mentoria-360-solution-bg.jpg`, `mentoria-360-setup-bg.jpg`, `grifo-logo.png`
+- `LpWebinarCultura.tsx` importa `daniel-gedeon.jpg`, `mentores-webinar-cultura.jpg`, `rafael-soares.jpg`
+- Quando dois lazy chunks importam o mesmo asset (ex: `daniel-gedeon.jpg`), o Vite cria um modulo compartilhado que pode ser carregado junto com o vendor chunk principal, afetando TODAS as paginas
 
-**3. DisketMono retornando 404**
-O PageSpeed mostra que `DisketMono-Regular.woff` retorna 404 do cdnfonts.com. O preload e o @font-face estao apontando para uma URL quebrada. Precisamos encontrar uma URL valida ou hospedar a fonte localmente.
+Isso explica os 2.4MB extras carregados desnecessariamente. E o maior problema de performance de todo o projeto.
 
-**4. Preconnects nao usados na /mentoria-360**
-`images.unsplash.com` e `naroalxhbrvmosbqzhrb.supabase.co` nao sao usados nessa pagina mas estao no index.html. Excesso de preconnects prejudica (o proprio PageSpeed avisa). Remover os que nao sao universais.
+### Solucao
 
-**5. grifo-logo.png = 67KB (500x500 exibido em 56x56)**
-O logo e um PNG de 500x500 sendo exibido em ~40x40. Deveria ser redimensionado.
-
-**6. Preload de imagens no index.html com paths /src/assets/**
-As linhas `<link rel="preload" as="image" href="/src/assets/daniel-gedeon.jpg">` nao funcionam em producao porque o Vite faz hash dos assets. Esses preloads sao ineficazes no build.
-
----
+Substituir TODOS os imports locais de imagens pesadas por URLs diretas (Supabase Storage ou caminhos em `/public/images/`). Imagens em `/public/` nao sao processadas pelo Vite e so carregam quando referenciadas via `<img src>`.
 
 ### Plano de Implementacao
 
 | Arquivo | Mudanca |
 |---|---|
-| `index.html` | (1) Tornar Google Fonts nao-bloqueante com `media="print" onload`. (2) Remover preconnects nao usados universalmente (unsplash, supabase). (3) Remover preloads de `/src/assets/` que nao funcionam em producao. (4) Corrigir URL do DisketMono ou remover preload quebrado. |
-| `src/pages/Mentoria360.tsx` | Substituir import local de `daniel-gedeon.jpg` por URL do Supabase Storage com resize (`/render/image/public/...?width=500&quality=80`). Mesma abordagem para `grifo-logo.png` (reduzir para width=80). Tambem para `mentoria-360-hero-bg.jpg` e `mentoria-360-solution-bg.jpg` e `mentoria-360-setup-bg.jpg` se forem pesados. |
-| `src/index.css` | Atualizar URL do @font-face do DisketMono para uma que funcione, ou usar fallback seguro. |
+| `src/pages/Mentoria360.tsx` | Remover imports de `@/assets/daniel-gedeon.jpg`, `mentoria-360-hero-bg.jpg`, `mentoria-360-solution-bg.jpg`, `mentoria-360-setup-bg.jpg`, `grifo-logo.png`. Usar URLs de `/images/` (arquivos ja existem em `public/images/`) ou Supabase Storage |
+| `src/components/templates/LpWebinarCultura.tsx` | Remover imports de `@/assets/daniel-gedeon.jpg`, `mentores-webinar-cultura.jpg`, `rafael-soares.jpg`. Usar URLs de `/images/` ou Supabase Storage |
+| Assets para `/public/images/` | Mover os arquivos de `src/assets/` que ainda nao existem em `public/images/` para la. Arquivos em public sao servidos estaticamente sem bundling |
 
-**Impacto esperado:**
-- **LCP**: 12.1s → ~3-4s (eliminando 2MB da imagem principal)
-- **FCP**: 3.0s → ~1.5s (removendo render-blocking fonts)
-- **Score**: 65 → 85+
+### Nota sobre Google Fonts e DisketMono
 
-**Nota importante:** Para a imagem do Daniel Gedeon, a melhor solucao e fazer upload de uma versao otimizada (max 500px largura, qualidade 80%, formato WebP) no Supabase Storage e usar a URL com transformacao. Se o Supabase Storage do projeto suporta Image Transformations, podemos usar `/render/image/public/` com `?width=500&quality=80`. Caso contrario, o arquivo precisa ser re-exportado manualmente em tamanho menor.
+O codigo fonte ja tem as correcoes (fonts nao-bloqueantes, DisketMono local). O PageSpeed mostra a versao deployada antiga. Apos deploy das mudancas, esses problemas desaparecem.
+
+### Impacto Esperado
+
+- **Payload**: -2.4MB por pagina (daniel-gedeon.jpg + mentoria bg nao serao mais bundled)
+- **LCP**: 12.3s → ~4-5s (eliminando download desnecessario de 2.4MB)
+- **Score**: 62 → 80+
 
