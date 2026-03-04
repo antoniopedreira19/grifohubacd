@@ -36,9 +36,22 @@ interface FormFunil360Props {
   productSlug?: string;
 }
 
-const ESTADOS_BR = [
-  "AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT",
-  "PA","PB","PE","PI","PR","RJ","RN","RO","RR","RS","SC","SE","SP","TO",
+const REGIOES = ["Norte", "Nordeste", "Centro-Oeste", "Sudeste", "Sul", "Nacional"];
+
+const TICKET_MEDIO_OPTIONS = [
+  { value: "<100k", label: "Até R$ 100 mil" },
+  { value: "100k-500k", label: "Entre R$ 100 mil e R$ 500 mil" },
+  { value: "500k-1M", label: "Entre R$ 500 mil e R$ 1 milhão" },
+  { value: "1M-5M", label: "Entre R$ 1 milhão e R$ 5 milhões" },
+  { value: "+5M", label: "Acima de R$ 5 milhões" },
+];
+
+const OBRAS_OPTIONS = [
+  { value: "1", label: "Somente 1" },
+  { value: "2-4", label: "Entre 2-4" },
+  { value: "5-7", label: "Entre 5-7" },
+  { value: "7-10", label: "Entre 7-10" },
+  { value: "+10", label: "Acima de 10" },
 ];
 
 const SETORES_ATUACAO = [
@@ -57,6 +70,7 @@ const SETORES_EQUIPE = [
   "Comercial / Vendas",
   "RH / Gestão de Pessoas",
   "Administrativo",
+  "Faço tudo sozinho",
 ];
 
 const CARGOS = [
@@ -355,30 +369,31 @@ export default function FormFunil360({ productId, productSlug }: FormFunil360Pro
           {/* Step 3: Ticket médio */}
           {step === 3 && (
             <QCard icon={<Hash className="text-[#A47428]" size={32} />} n={4} q="Qual o ticket médio dos seus contratos?" sub="Valor aproximado em reais.">
-              <InLine ref={inputRef} value={data.ticket_medio} onChange={(e: any) => set("ticket_medio", e.target.value)} onKeyDown={handleKeyDown} placeholder="Ex: 500000" type="number" />
+              <div className="grid grid-cols-1 gap-3 mt-4">
+                {TICKET_MEDIO_OPTIONS.map((t) => (
+                  <OptBtn key={t.value} label={t.label} selected={data.ticket_medio === t.value} onClick={() => { set("ticket_medio", t.value); setTimeout(nextStep, 200); }} />
+                ))}
+              </div>
             </QCard>
           )}
 
           {/* Step 4: Obras simultâneas */}
           {step === 4 && (
             <QCard icon={<Hash className="text-[#A47428]" size={32} />} n={5} q="Quantas obras simultâneas a empresa gerencia?" sub="Número aproximado atual.">
-              <InLine ref={inputRef} value={data.obras_simultaneas} onChange={(e: any) => set("obras_simultaneas", e.target.value)} onKeyDown={handleKeyDown} placeholder="Ex: 5" type="number" />
+              <div className="grid grid-cols-1 gap-3 mt-4">
+                {OBRAS_OPTIONS.map((o) => (
+                  <OptBtn key={o.value} label={o.label} selected={data.obras_simultaneas === o.value} onClick={() => { set("obras_simultaneas", o.value); setTimeout(nextStep, 200); }} />
+                ))}
+              </div>
             </QCard>
           )}
 
-          {/* Step 5: Estado */}
+          {/* Step 5: Região de atuação */}
           {step === 5 && (
-            <QCard icon={<MapPin className="text-[#A47428]" size={32} />} n={6} q="Em qual estado fica a sede da empresa?" sub="Selecione o estado.">
-              <div className="grid grid-cols-3 md:grid-cols-5 gap-2 mt-4">
-                {ESTADOS_BR.map((uf) => (
-                  <button key={uf} onClick={() => { set("estado", uf); setTimeout(nextStep, 200); }}
-                    className={cn(
-                      "p-3 rounded-lg border text-center font-bold transition-all",
-                      data.estado === uf
-                        ? "bg-[#A47428] border-[#A47428] text-white"
-                        : "bg-transparent border-[#E1D8CF]/20 text-[#E1D8CF] hover:border-[#A47428]"
-                    )}
-                  >{uf}</button>
+            <QCard icon={<MapPin className="text-[#A47428]" size={32} />} n={6} q="Qual a região de atuação da empresa?" sub="Selecione a região.">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
+                {REGIOES.map((r) => (
+                  <OptBtn key={r} label={r} selected={data.estado === r} onClick={() => { set("estado", r); setTimeout(nextStep, 200); }} />
                 ))}
               </div>
             </QCard>
