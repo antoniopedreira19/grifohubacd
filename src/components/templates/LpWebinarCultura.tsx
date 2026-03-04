@@ -100,10 +100,14 @@ export function LpWebinarCultura({ product }: LpWebinarCulturaProps) {
               style={{ animationDelay: "0.3s" }}
             >
               <div className="relative w-[70vw] sm:w-full max-w-[280px] sm:max-w-sm md:max-w-md lg:max-w-lg mx-auto">
-                <img
+              <img
                   src={mentoresWebinar}
                   alt="Daniel Gedeon e Rafael Soares - Mentores do Webinar Cultura e Liderança"
                   className="w-full rounded-xl lg:rounded-2xl shadow-2xl shadow-[#b8860b]/20 border border-[#b8860b]/30"
+                  fetchPriority="high"
+                  decoding="async"
+                  width={500}
+                  height={500}
                 />
               </div>
             </div>
@@ -380,6 +384,10 @@ export function LpWebinarCultura({ product }: LpWebinarCulturaProps) {
                   src={danielGedeon}
                   alt="Daniel Gedeon"
                   className="w-full h-full rounded-full object-cover border-4 border-[#b8860b] group-hover:border-[#d4a017] transition-colors group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                  decoding="async"
+                  width={128}
+                  height={128}
                 />
                 <div className="absolute -bottom-2 -right-2 bg-[#b8860b] p-2 rounded-full group-hover:bg-[#d4a017] transition-colors">
                   <Star className="w-4 h-4 text-black" />
@@ -404,6 +412,10 @@ export function LpWebinarCultura({ product }: LpWebinarCulturaProps) {
                   src={rafaelSoares}
                   alt="Rafael Soares"
                   className="w-full h-full rounded-full object-cover border-4 border-[#b8860b] group-hover:border-[#d4a017] transition-colors group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                  decoding="async"
+                  width={128}
+                  height={128}
                 />
                 <div className="absolute -bottom-2 -right-2 bg-[#b8860b] p-2 rounded-full group-hover:bg-[#d4a017] transition-colors">
                   <Star className="w-4 h-4 text-black" />
