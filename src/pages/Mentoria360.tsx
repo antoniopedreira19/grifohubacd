@@ -59,53 +59,6 @@ export default function Mentoria360() {
   };
 
   return <div className="min-h-screen bg-[#112232] text-white overflow-x-hidden">
-      <style>{`
-        @font-face {
-          font-family: 'DisketMono';
-          src: url('https://fonts.cdnfonts.com/s/14107/DisketMono-Regular.woff') format('woff');
-          font-display: swap;
-        }
-        .font-disket { font-family: 'DisketMono', monospace; text-transform: uppercase; }
-        .text-gradient-gold {
-          background: linear-gradient(135deg, #a37428 0%, #f1c40f 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-        @keyframes ping-slow {
-          0% { transform: scale(1); opacity: 0.8; }
-          70% { transform: scale(1.2); opacity: 0; }
-          100% { transform: scale(1.2); opacity: 0; }
-        }
-        .ping-urgent {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          border-radius: 4px;
-          background: #a37428;
-          animation: ping-slow 2s infinite;
-          z-index: -1;
-        }
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes staggerIn {
-          from { opacity: 0; transform: translateY(12px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
-        .animate-stagger-in > * {
-          opacity: 0;
-          animation: staggerIn 0.4s ease-out forwards;
-        }
-        .animate-stagger-in > *:nth-child(1) { animation-delay: 0s; }
-        .animate-stagger-in > *:nth-child(2) { animation-delay: 0.1s; }
-        .animate-stagger-in > *:nth-child(3) { animation-delay: 0.2s; }
-        .animate-stagger-in > *:nth-child(4) { animation-delay: 0.3s; }
-        .animate-stagger-in > *:nth-child(5) { animation-delay: 0.4s; }
-        .animate-stagger-in > *:nth-child(6) { animation-delay: 0.5s; }
-      `}</style>
-
       {/* HEADER */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-[#112232]/90 backdrop-blur-md border-b border-white/10">
         <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">

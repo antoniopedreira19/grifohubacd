@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -58,6 +58,37 @@ function useCountdown(targetDate: Date) {
   return time;
 }
 
+/* ─── Isolated countdown bar (React.memo prevents parent re-renders from propagating) ─── */
+const CountdownBar = React.memo(function CountdownBar({ targetDate }: { targetDate: Date }) {
+  const countdown = useCountdown(targetDate);
+  return (
+    <div className="bg-[#a47428]/10 border-y border-[#a47428]/20 py-6 px-4">
+      <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
+        <span className="text-[#a47428] font-bold text-sm uppercase tracking-wider">
+          O webinar começa em:
+        </span>
+        <div className="flex gap-4">
+          {[
+            { v: countdown.days, l: "dias" },
+            { v: countdown.hours, l: "hrs" },
+            { v: countdown.minutes, l: "min" },
+            { v: countdown.seconds, l: "seg" },
+          ].map(({ v, l }) => (
+            <div key={l} className="text-center">
+              <div className="text-2xl md:text-3xl font-black text-white tabular-nums">
+                {String(v).padStart(2, "0")}
+              </div>
+              <div className="text-[10px] text-gray-400 uppercase tracking-wider">
+                {l}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+});
+
 /* ─── section wrapper ─── */
 const Section = ({
   children,
@@ -104,7 +135,6 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
   useMetaPixel(product.id);
 
   const eventDate = useMemo(() => new Date("2026-03-18T19:30:00-03:00"), []);
-  const countdown = useCountdown(eventDate);
 
   const [showStickyCTA, setShowStickyCTA] = useState(false);
   const [dismissedSticky, setDismissedSticky] = useState(false);
@@ -311,30 +341,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
       </section>
 
       {/* ════════ COUNTDOWN BAR ════════ */}
-      <div className="bg-[#a47428]/10 border-y border-[#a47428]/20 py-6 px-4">
-        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
-          <span className="text-[#a47428] font-bold text-sm uppercase tracking-wider">
-            O webinar começa em:
-          </span>
-          <div className="flex gap-4">
-            {[
-              { v: countdown.days, l: "dias" },
-              { v: countdown.hours, l: "hrs" },
-              { v: countdown.minutes, l: "min" },
-              { v: countdown.seconds, l: "seg" },
-            ].map(({ v, l }) => (
-              <div key={l} className="text-center">
-                <div className="text-2xl md:text-3xl font-black text-white tabular-nums">
-                  {String(v).padStart(2, "0")}
-                </div>
-                <div className="text-[10px] text-gray-400 uppercase tracking-wider">
-                  {l}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <CountdownBar targetDate={eventDate} />
 
       {/* ════════ PROBLEM SECTION ════════ */}
       <Section dark={false}>
@@ -967,23 +974,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           </p>
 
           {/* Countdown inline */}
-          <div className="flex justify-center gap-6 mb-8">
-            {[
-              { v: countdown.days, l: "dias" },
-              { v: countdown.hours, l: "hrs" },
-              { v: countdown.minutes, l: "min" },
-              { v: countdown.seconds, l: "seg" },
-            ].map(({ v, l }) => (
-              <div key={l} className="text-center">
-                <div className="text-3xl md:text-4xl font-black text-[#a47428] tabular-nums">
-                  {String(v).padStart(2, "0")}
-                </div>
-                <div className="text-[10px] text-gray-500 uppercase tracking-wider">
-                  {l}
-                </div>
-              </div>
-            ))}
-          </div>
+          <CountdownBar targetDate={eventDate} />
 
           <Button
             onClick={() => scrollTo("pricing-section")}
