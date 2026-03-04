@@ -213,7 +213,7 @@
 /* ─── Landing Page Animations (shared by Mentoria360, Vitrine, etc.) ─── */
 @font-face {
   font-family: 'DisketMono';
-  src: url('https://fonts.cdnfonts.com/s/14107/DisketMono-Regular.woff') format('woff');
+  src: url('/fonts/DisketMono-Regular.woff2') format('woff2');
   font-display: swap;
 }
 
