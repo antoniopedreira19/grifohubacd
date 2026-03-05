@@ -1,33 +1,16 @@
 
 
-## Mudança na lógica de redirect do Funil 360
+## Problema
 
-### Situação atual
-O formulário redireciona o usuário **durante** as perguntas:
-- Se cargo != "Sócio / Proprietário" → redireciona imediatamente para `/redirect-vitrine` (step 0)
-- Se faturamento < 1M → redireciona imediatamente para `/redirect-webinar` (step 1)
+No mobile, o container principal usa `overflow-hidden` (linha 324) e `justify-center`, fazendo com que steps com muitas opções (como "Setores com equipe" com 7 itens) ultrapassem a viewport. A última opção fica escondida e não há como rolar.
 
-### Nova lógica
-Todos os usuários completam o formulário inteiro. O redirect acontece **após o envio**, baseado na combinação cargo + faturamento:
-
-| Cargo | Faturamento | Ação |
-|---|---|---|
-| Sócio / Proprietário | >= 1M (1M-5M, 5M-10M, 10M-50M, +50M) | Fluxo normal: salva lead, cria deal, vai para página de obrigado |
-| Sócio / Proprietário | < 1M (<500k, 500k-1M) | Redirect externo: `https://www.grifocrm.com.br/p/masterclass-o-novo-padrao-da-construcao` |
-| Qualquer outro cargo | >= 1M | Redirect externo: `https://www.grifocrm.com.br/p/masterclass-o-novo-padrao-da-construcao` |
-| Qualquer outro cargo | < 1M | Redirect para `/redirect-vitrine` |
-
-### Mudanças técnicas
+## Solução
 
 **Arquivo:** `src/components/templates/FormFunil360.tsx`
 
-1. **`handleCargoSelect`** (linhas 165-174): Remover o redirect. Apenas setar o valor e avançar para step 1 (faturamento).
+1. **Container principal** (linha 324): Trocar `overflow-hidden` por `overflow-y-auto` para permitir scroll. Mudar `justify-center` para `justify-start md:justify-center` para que no mobile o conteúdo comece do topo (evitando corte). Adicionar padding bottom extra (`pb-28`) para compensar a nav fixa no bottom.
 
-2. **`handleFaturamentoSelect`** (linhas 176-185): Remover o redirect. Apenas setar o valor e avançar para step 2.
+2. **Scrollbar customizada**: Adicionar classes inline de estilo para scrollbar minimalista — track transparente, thumb em `rgba(225,216,207,0.15)` (tom do `#E1D8CF` com baixa opacidade, combinando com o fundo escuro), largura fina. Usar as utility classes `scrollbar-thin` já definidas no `src/index.css` e complementar com uma tag `<style>` específica para o thumb color correto.
 
-3. **`handleSubmit`** (linhas 233-317): Após salvar o lead e o form_submission, avaliar a combinação cargo + faturamento:
-   - Se Sócio + faturamento >= 1M: manter fluxo atual (cria deal se configurado, navega para obrigado)
-   - Nos outros 3 cenários: salva lead e submission (sem criar deal), e faz o redirect adequado usando `window.location.href` (para URLs externas) ou `navigate` (para internas)
-
-4. **Navegação** (linha 479): Ajustar a condição `step > 1` para `step > 0` já que agora step 0 e 1 não fazem auto-advance com redirect, precisam do botão Voltar a partir do step 1.
+3. **Padding no wrapper de opções**: Adicionar `pb-20 md:pb-0` no `div` interno (`max-w-2xl`) para garantir que a última opção não fique atrás da barra de navegação fixa no mobile.
 
