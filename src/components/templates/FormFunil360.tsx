@@ -307,8 +307,8 @@ export default function FormFunil360({ productId, productSlug }: FormFunil360Pro
         // Não sócio + baixo faturamento → vitrine
         navigate("/redirect-vitrine");
       } else {
-        // Sócio + baixo faturamento OU não sócio + alto faturamento → masterclass
-        window.location.href = MASTERCLASS_URL;
+        // Sócio + baixo faturamento OU não sócio + alto faturamento → página intermediária webinar
+        navigate("/redirect-webinar");
       }
     } catch (err) {
       console.error(err);
