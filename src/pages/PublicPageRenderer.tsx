@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Loader2, Home, AlertTriangle } from "lucide-react";
+import { Home, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getTemplateComponent } from "@/components/templates/registry";
 import { Button } from "@/components/ui/button";
@@ -29,11 +29,8 @@ export default function PublicPageRenderer() {
   // Loading state
   if (productLoading) {
     return (
-      <div className="min-h-screen bg-primary flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-secondary mx-auto" />
-          <p className="mt-4 text-white/70">Carregando...</p>
-        </div>
+      <div className="min-h-screen bg-[#112232] flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-white/10 border-t-white/30 rounded-full animate-spin" />
       </div>
     );
   }
@@ -60,8 +57,8 @@ export default function PublicPageRenderer() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-primary flex items-center justify-center">
-          <Loader2 className="h-12 w-12 animate-spin text-secondary" />
+        <div className="min-h-screen bg-[#112232] flex items-center justify-center">
+          <div className="w-6 h-6 border-2 border-white/10 border-t-white/30 rounded-full animate-spin" />
         </div>
       }
     >
