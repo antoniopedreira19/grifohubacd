@@ -331,6 +331,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
               alt="Daniel Gedeon e Estevão Farkasvölgyi"
               className="rounded-xl shadow-2xl shadow-black/40 w-full h-auto border border-[#a47428]/20"
               fetchPriority="high"
+              loading="eager"
               decoding="async"
             />
           </div>
