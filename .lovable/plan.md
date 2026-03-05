@@ -1,16 +1,20 @@
 
 
-## Diagnostico: Imagem cortada no hero da LP Webinar Novo Padrao
+## Problema: Tela "Carregando..." antes da LP
 
-### Causa
+A LP do webinar passa por **duas camadas de loading** antes de renderizar:
 
-A imagem do hero usa a URL do Supabase **render** (`/render/image/public/...?width=800&quality=80`), que pode estar fazendo crop server-side ao redimensionar. Alem disso, o `rounded-2xl` com bordas grossas pode estar clipando conteudo nas bordas da imagem.
+1. **Supabase query** (`PublicPageRenderer.tsx` linhas 30-38) — mostra spinner + "Carregando..." enquanto busca o produto no banco
+2. **Suspense fallback** (`PublicPageRenderer.tsx` linhas 61-66) — mostra outro spinner enquanto o lazy component carrega
 
-### Correcao
+Isso causa uma experiencia amadora: o usuario ve uma tela cinza com spinner antes de ver a LP.
+
+### Solucao
 
 | Arquivo | Mudanca |
 |---|---|
-| `src/components/templates/LpWebinarNovoPadrao.tsx` | Trocar a URL de `/render/image/public/` para `/object/public/` (URL direta sem transformacao server-side). Manter `w-full h-auto` para que o browser exiba a imagem completa no tamanho correto. Reduzir o `rounded-2xl` para `rounded-xl` para menos clipping nas bordas. |
+| `src/pages/PublicPageRenderer.tsx` | Remover o texto "Carregando..." e substituir ambos os fallbacks (loading state e Suspense) por um fundo escuro (`bg-[#112232]`) sem texto, apenas com um spinner minimalista discreto. Isso combina com o fundo da LP e faz a transicao parecer seamless. |
+| `src/components/templates/LpWebinarNovoPadrao.tsx` (hero img) | Adicionar `loading="eager"` na hero image para garantir que o browser comece a baixar a imagem imediatamente, sem lazy loading padrao. |
 
-A imagem sera carregada no tamanho original sem crop. Como e a imagem LCP, manter `fetchPriority="high"`.
+O fundo escuro (#112232) e a cor dominante das LPs (webinar e mentoria), entao o loading sera quase imperceptivel — apenas um spinner sutil no mesmo tom de fundo.
 
