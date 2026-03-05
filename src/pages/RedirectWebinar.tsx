@@ -1,28 +1,7 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight } from "lucide-react";
 
 export default function RedirectWebinar() {
-  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Busca o produto de Masterclass/Webinar mais recente que tenha checkout_url
-    const fetchWebinar = async () => {
-      const { data } = await supabase
-        .from("products")
-        .select("checkout_url")
-        .eq("active", true)
-        .ilike("name", "%masterclass%")
-        .not("checkout_url", "is", null)
-        .order("created_at", { ascending: false })
-        .limit(1);
-
-      if (data && data.length > 0) {
-        setCheckoutUrl(data[0].checkout_url);
-      }
-    };
-    fetchWebinar();
-  }, []);
+  const MASTERCLASS_URL = "https://www.grifocrm.com.br/p/masterclass-o-novo-padrao-da-construcao";
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#112232] text-[#E1D8CF] font-sans p-6">
@@ -65,18 +44,14 @@ export default function RedirectWebinar() {
         </div>
 
         {/* CTA Button */}
-        {checkoutUrl ? (
-          <a
-            href={checkoutUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 bg-[#A47428] hover:bg-[#8a6120] text-white px-10 py-5 rounded-xl font-bold text-lg md:text-xl transition-all shadow-[0_0_40px_rgba(164,116,40,0.3)] hover:shadow-[0_0_60px_rgba(164,116,40,0.5)] animate-pulse hover:animate-none"
-          >
-            PARTICIPE AGORA <ArrowRight size={22} />
-          </a>
-        ) : (
-          <div className="text-[#E1D8CF]/40 text-sm">Carregando link...</div>
-        )}
+        <a
+          href={MASTERCLASS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-3 bg-[#A47428] hover:bg-[#8a6120] text-white px-10 py-5 rounded-xl font-bold text-lg md:text-xl transition-all shadow-[0_0_40px_rgba(164,116,40,0.3)] hover:shadow-[0_0_60px_rgba(164,116,40,0.5)] animate-pulse hover:animate-none"
+        >
+          PARTICIPE AGORA <ArrowRight size={22} />
+        </a>
       </div>
 
       {/* Footer */}
