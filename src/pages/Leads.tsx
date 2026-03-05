@@ -513,7 +513,7 @@ export default function Leads() {
                               <AlertDialogCancel>Cancelar</AlertDialogCancel>
                               <AlertDialogAction
                                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                onClick={() => deleteLead.mutate(lead.id)}
+                                onClick={(e) => { e.stopPropagation(); deleteLead.mutate(lead.id); }}
                               >
                                 Excluir
                               </AlertDialogAction>
