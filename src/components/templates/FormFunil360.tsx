@@ -165,23 +165,13 @@ export default function FormFunil360({ productId, productSlug }: FormFunil360Pro
   const handleCargoSelect = (cargo: string) => {
     set("cargo", cargo);
     savePartial({});
-    if (cargo !== "Sócio / Proprietário") {
-      // Anti-ICP: redirect to Vitrine
-      setTimeout(() => navigate("/redirect-vitrine"), 300);
-    } else {
-      setTimeout(() => setStep(1), 250);
-    }
+    setTimeout(() => setStep(1), 250);
   };
 
   const handleFaturamentoSelect = (fat: string) => {
     set("faturamento", fat);
     savePartial({ company_revenue: mapRevenue(fat) });
-    if (fat === "<500k" || fat === "500k-1M") {
-      // Low revenue: redirect to Webinar page
-      setTimeout(() => navigate("/redirect-webinar"), 300);
-    } else {
-      setTimeout(() => setStep(2), 250);
-    }
+    setTimeout(() => setStep(2), 250);
   };
 
   const nextStep = () => setStep((s) => s + 1);
@@ -291,23 +281,35 @@ export default function FormFunil360({ productId, productSlug }: FormFunil360Pro
         },
       });
 
-      // Create deal if configured
-      if (productId) {
-        const { data: cfg } = await supabase.from("products").select("create_deal, pipeline_id, price").eq("id", productId).single();
-        if (cfg?.create_deal && cfg?.pipeline_id) {
-          const { data: stages } = await supabase.from("pipeline_stages").select("id").eq("pipeline_id", cfg.pipeline_id).order("order_index", { ascending: true }).limit(1);
-          if (stages?.length) {
-            await supabase.from("deals").insert({
-              lead_id: leadId, product_id: productId, pipeline_id: cfg.pipeline_id,
-              stage_id: stages[0].id, status: "open", value: cfg.price || 0, priority: "Medium",
-            });
+      // Determine redirect based on cargo + faturamento
+      const isSocio = data.cargo === "Sócio / Proprietário";
+      const highRevenue = ["1M-5M", "5M-10M", "10M-50M", "+50M"].includes(data.faturamento);
+      const MASTERCLASS_URL = "https://www.grifocrm.com.br/p/masterclass-o-novo-padrao-da-construcao";
+
+      if (isSocio && highRevenue) {
+        // ICP qualificado: cria deal + obrigado
+        if (productId) {
+          const { data: cfg } = await supabase.from("products").select("create_deal, pipeline_id, price").eq("id", productId).single();
+          if (cfg?.create_deal && cfg?.pipeline_id) {
+            const { data: stages } = await supabase.from("pipeline_stages").select("id").eq("pipeline_id", cfg.pipeline_id).order("order_index", { ascending: true }).limit(1);
+            if (stages?.length) {
+              await supabase.from("deals").insert({
+                lead_id: leadId, product_id: productId, pipeline_id: cfg.pipeline_id,
+                stage_id: stages[0].id, status: "open", value: cfg.price || 0, priority: "Medium",
+              });
+            }
           }
         }
+        toast.success("Aplicação enviada com sucesso!");
+        if (productSlug) navigate(`/obrigado/${productSlug}`);
+        else setStep(TOTAL + 1);
+      } else if (!isSocio && !highRevenue) {
+        // Não sócio + baixo faturamento → vitrine
+        navigate("/redirect-vitrine");
+      } else {
+        // Sócio + baixo faturamento OU não sócio + alto faturamento → masterclass
+        window.location.href = MASTERCLASS_URL;
       }
-
-      toast.success("Aplicação enviada com sucesso!");
-      if (productSlug) navigate(`/obrigado/${productSlug}`);
-      else setStep(TOTAL + 1);
     } catch (err) {
       console.error(err);
       toast.error("Erro ao enviar. Tente novamente.");
@@ -476,7 +478,7 @@ export default function FormFunil360({ productId, productSlug }: FormFunil360Pro
         </div>
 
         {/* Navigation */}
-        {step <= TOTAL && step > 1 && (
+        {step <= TOTAL && step > 0 && (
           <div className="fixed bottom-0 left-0 w-full p-6 bg-[#112232] md:bg-transparent md:static flex items-center justify-between max-w-2xl mt-8">
             <button onClick={prevStep} disabled={isSubmitting}
               className="flex items-center text-[#E1D8CF]/60 hover:text-[#A47428] transition-colors font-medium text-sm md:text-base disabled:opacity-50">
