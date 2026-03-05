@@ -321,12 +321,13 @@ export default function FormFunil360({ productId, productSlug }: FormFunil360Pro
   // ============ RENDER ============
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#112232] text-[#E1D8CF] font-sans relative overflow-hidden p-4">
-      <div className="absolute top-0 left-0 w-full h-2 bg-[#112232] z-50">
+    <div className="min-h-screen w-full flex flex-col items-center justify-start md:justify-center bg-[#112232] text-[#E1D8CF] font-sans relative overflow-y-auto p-4 pb-28">
+      <style>{`.funil360-scroll::-webkit-scrollbar{width:6px}.funil360-scroll::-webkit-scrollbar-track{background:transparent}.funil360-scroll::-webkit-scrollbar-thumb{background:rgba(225,216,207,0.15);border-radius:3px}.funil360-scroll::-webkit-scrollbar-thumb:hover{background:rgba(225,216,207,0.25)}`}</style>
+      <div className="fixed top-0 left-0 w-full h-2 bg-[#112232] z-50">
         <div className="h-full bg-[#A47428] transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
       </div>
 
-      <div className="w-full max-w-2xl z-10 flex flex-col items-center">
+      <div className="w-full max-w-2xl z-10 flex flex-col items-center pb-20 md:pb-0 pt-6">
         <div className="mb-8 md:mb-12">
           <img
             src="https://naroalxhbrvmosbqzhrb.supabase.co/storage/v1/object/public/photos-wallpapers/LOGO_GRIFO_6-removebg-preview.png"
