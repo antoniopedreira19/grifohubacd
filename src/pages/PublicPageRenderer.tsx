@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Home, AlertTriangle } from "lucide-react";
@@ -26,13 +27,8 @@ export default function PublicPageRenderer() {
     enabled: !!slug,
   });
 
-  // Loading state
   if (productLoading) {
-    return (
-      <div className="min-h-screen bg-[#112232] flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-white/10 border-t-white/30 rounded-full animate-spin" />
-      </div>
-    );
+    return <LandingPageSkeleton />;
   }
 
   // Error or not found state
@@ -55,15 +51,26 @@ export default function PublicPageRenderer() {
   }
 
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-[#112232] flex items-center justify-center">
-          <div className="w-6 h-6 border-2 border-white/10 border-t-white/30 rounded-full animate-spin" />
-        </div>
-      }
-    >
+    <Suspense fallback={<LandingPageSkeleton />}>
       <TemplateComponent product={product} />
     </Suspense>
+  );
+}
+
+function LandingPageSkeleton() {
+  return (
+    <div className="min-h-screen bg-[#0b1c2e] flex flex-col items-center justify-center px-6">
+      <img
+        src="https://storage.googleapis.com/gpt-engineer-file-uploads/GlLUnfIBasPhwDSvWDNXsfHTAWB2/uploads/1768411680869-LOGO_GRIFO_6-removebg-preview.png"
+        alt=""
+        className="w-[72px] h-[72px] object-contain mb-8 opacity-80"
+        width={72}
+        height={72}
+      />
+      <Skeleton className="w-[min(80%,420px)] h-7 mb-3.5 bg-[rgba(225,216,207,0.08)]" />
+      <Skeleton className="w-[min(60%,300px)] h-4 mb-8 bg-[rgba(225,216,207,0.06)]" />
+      <Skeleton className="w-[200px] h-12 rounded-full bg-[rgba(225,216,207,0.08)]" />
+    </div>
   );
 }
 

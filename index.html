@@ -16,7 +16,8 @@
     <meta name="twitter:site" content="@GrifoAcademy" />
     <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/JFN85KsCybP2wyCDkBhzfB5Ya553/social-images/social-1772738449896-2_(1).webp">
 
-    <!-- Preconnects (only universally used origins) -->
+    <!-- Preconnects -->
+    <link rel="preconnect" href="https://naroalxhbrvmosbqzhrb.supabase.co" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- Local DisketMono font preload -->
@@ -43,7 +44,23 @@
 </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <style>
+        .ll-skeleton{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#0b1c2e;color:#E1D8CF;font-family:Inter,sans-serif;padding:1.5rem}
+        .ll-skeleton img{width:72px;height:72px;object-fit:contain;margin-bottom:2rem;opacity:.85}
+        .ll-shim{border-radius:8px;background:linear-gradient(90deg,rgba(225,216,207,.06) 25%,rgba(225,216,207,.12) 50%,rgba(225,216,207,.06) 75%);background-size:200% 100%;animation:llShim 1.8s infinite linear}
+        @keyframes llShim{to{background-position:-200% 0}}
+        .ll-skeleton .ll-h{width:min(80%,420px);height:28px;margin-bottom:14px}
+        .ll-skeleton .ll-p{width:min(60%,300px);height:16px;margin-bottom:2rem}
+        .ll-skeleton .ll-btn{width:200px;height:48px;border-radius:24px}
+      </style>
+      <div class="ll-skeleton" aria-hidden="true">
+        <img src="https://storage.googleapis.com/gpt-engineer-file-uploads/GlLUnfIBasPhwDSvWDNXsfHTAWB2/uploads/1768411680869-LOGO_GRIFO_6-removebg-preview.png" alt="" width="72" height="72">
+        <div class="ll-shim ll-h"></div>
+        <div class="ll-shim ll-p"></div>
+        <div class="ll-shim ll-btn"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
