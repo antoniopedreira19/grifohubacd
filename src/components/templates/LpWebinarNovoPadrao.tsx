@@ -685,7 +685,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
               <p className="text-gray-400 text-sm leading-relaxed">
                 Referência em obras residenciais de altíssimo padrão. DNA de
                 organização, excelência e respeito. Metodologia com
-                modularidade e foco total na satisfação do cliente. (inserir métricas reais)
+                modularidade e foco total na satisfação do cliente.
               </p>
             </div>
           </div>
