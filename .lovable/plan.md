@@ -2,15 +2,26 @@
 
 ## Problema
 
-No mobile, o container principal usa `overflow-hidden` (linha 324) e `justify-center`, fazendo com que steps com muitas opções (como "Setores com equipe" com 7 itens) ultrapassem a viewport. A última opção fica escondida e não há como rolar.
+1. **Imagem hero demora para aparecer**: A imagem vem de uma URL do Supabase Storage e só começa a baixar quando o React monta o componente. Mesmo com `fetchPriority="high"`, o browser precisa primeiro baixar o JS, executar, montar o React, e só então descobre a URL da imagem.
+
+2. **Texto "(inserir métricas reais)"** aparece nos cards dos mentores (linhas 668 e 688).
 
 ## Solução
 
-**Arquivo:** `src/components/templates/FormFunil360.tsx`
+### 1. Preload da imagem hero no `index.html`
 
-1. **Container principal** (linha 324): Trocar `overflow-hidden` por `overflow-y-auto` para permitir scroll. Mudar `justify-center` para `justify-start md:justify-center` para que no mobile o conteúdo comece do topo (evitando corte). Adicionar padding bottom extra (`pb-28`) para compensar a nav fixa no bottom.
+Adicionar `<link rel="preload">` no `<head>` do `index.html` para que o browser comece a baixar a imagem hero **imediatamente**, antes mesmo do JS carregar:
 
-2. **Scrollbar customizada**: Adicionar classes inline de estilo para scrollbar minimalista — track transparente, thumb em `rgba(225,216,207,0.15)` (tom do `#E1D8CF` com baixa opacidade, combinando com o fundo escuro), largura fina. Usar as utility classes `scrollbar-thin` já definidas no `src/index.css` e complementar com uma tag `<style>` específica para o thumb color correto.
+```html
+<link rel="preload" as="image" href="https://naroalxhbrvmosbqzhrb.supabase.co/storage/v1/object/public/photos-wallpapers/WhatsApp%20Image%202026-02-16%20at%205.38.48%20PM%20(2).jpeg">
+```
 
-3. **Padding no wrapper de opções**: Adicionar `pb-20 md:pb-0` no `div` interno (`max-w-2xl`) para garantir que a última opção não fique atrás da barra de navegação fixa no mobile.
+Isso elimina o delay porque o browser descobre a imagem no HTML inicial, não precisa esperar o React.
+
+### 2. Remover "(inserir métricas reais)" dos mentores
+
+**Arquivo:** `src/components/templates/LpWebinarNovoPadrao.tsx`
+
+- Linha 668: remover ` (inserir métricas reais)` do texto do Daniel Gedeon
+- Linha 688: remover ` (inserir métricas reais)` do texto do Estevão Farkasvölgyi
 
