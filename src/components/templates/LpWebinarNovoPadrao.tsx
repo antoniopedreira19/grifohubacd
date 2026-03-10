@@ -665,7 +665,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
               <p className="text-gray-400 text-sm leading-relaxed">
                 Referência em obras comerciais e criador do Método Fast
                 Construction — gestão, performance, velocidade com padrão e
-                processos que funcionam na prática. (inserir métricas reais)
+                processos que funcionam na prática.
               </p>
             </div>
           </div>
@@ -685,7 +685,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
               <p className="text-gray-400 text-sm leading-relaxed">
                 Referência em obras residenciais de altíssimo padrão. DNA de
                 organização, excelência e respeito. Metodologia com
-                modularidade e foco total na satisfação do cliente. (inserir métricas reais)
+                modularidade e foco total na satisfação do cliente.
               </p>
             </div>
           </div>
