@@ -27,13 +27,8 @@ export default function PublicPageRenderer() {
     enabled: !!slug,
   });
 
-  // Loading state
   if (productLoading) {
-    return (
-      <div className="min-h-screen bg-[#112232] flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-white/10 border-t-white/30 rounded-full animate-spin" />
-      </div>
-    );
+    return <LandingPageSkeleton />;
   }
 
   // Error or not found state
