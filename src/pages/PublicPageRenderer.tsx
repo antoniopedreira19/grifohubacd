@@ -55,13 +55,7 @@ export default function PublicPageRenderer() {
   }
 
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-[#112232] flex items-center justify-center">
-          <div className="w-6 h-6 border-2 border-white/10 border-t-white/30 rounded-full animate-spin" />
-        </div>
-      }
-    >
+    <Suspense fallback={<LandingPageSkeleton />}>
       <TemplateComponent product={product} />
     </Suspense>
   );
