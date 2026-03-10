@@ -27,6 +27,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { useMetaPixel } from "@/hooks/useMetaPixel";
+import { useInView } from "@/hooks/useInView";
 
 interface LpWebinarNovoPadraoProps {
   product: {
@@ -129,6 +130,16 @@ const GoldHeading = ({
     {children}
   </h2>
 );
+
+/* ─── Lazy section wrapper — only renders children when visible ─── */
+function LazySection({ children, fallbackHeight = "200px" }: { children: React.ReactNode; fallbackHeight?: string }) {
+  const { ref, isInView } = useInView({ rootMargin: "200px" });
+  return (
+    <div ref={ref}>
+      {isInView ? children : <div style={{ minHeight: fallbackHeight }} />}
+    </div>
+  );
+}
 
 /* ─── MAIN COMPONENT ─── */
 export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
@@ -333,6 +344,8 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
               fetchPriority="high"
               loading="eager"
               decoding="async"
+              width={800}
+              height={1000}
             />
           </div>
           </div>
@@ -342,6 +355,9 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
       {/* ════════ COUNTDOWN BAR ════════ */}
       <CountdownBar targetDate={eventDate} />
 
+      {/* ════════ BELOW-FOLD SECTIONS — lazy-rendered ════════ */}
+
+      <LazySection fallbackHeight="600px">
       {/* ════════ PROBLEM SECTION ════════ */}
       <Section dark={false}>
         <div className="text-center mb-12">
@@ -418,7 +434,9 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           </Button>
         </div>
       </Section>
+      </LazySection>
 
+      <LazySection fallbackHeight="500px">
       {/* ════════ CONVERGENCE ════════ */}
       <Section>
         <div className="text-center mb-12">
@@ -501,7 +519,9 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           </p>
         </div>
       </Section>
+      </LazySection>
 
+      <LazySection fallbackHeight="500px">
       {/* ════════ O QUE VOCÊ VAI APRENDER ════════ */}
       <Section dark={false} id="o-que-voce-vai-aprender">
         <div className="text-center mb-12">
@@ -558,7 +578,9 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           ))}
         </div>
       </Section>
+      </LazySection>
 
+      <LazySection fallbackHeight="400px">
       {/* ════════ PARA QUEM É / NÃO É ════════ */}
       <Section>
         <div className="text-center mb-12">
@@ -614,7 +636,9 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           </div>
         </div>
       </Section>
+      </LazySection>
 
+      <LazySection fallbackHeight="600px">
       {/* ════════ SPEAKERS ════════ */}
       <Section>
         <div className="text-center mb-12">
@@ -667,7 +691,9 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           </div>
         </div>
       </Section>
+      </LazySection>
 
+      <LazySection fallbackHeight="800px">
       {/* ════════ PRICING / TICKETS ════════ */}
       <Section id="pricing-section">
         <div className="text-center mb-12">
@@ -780,7 +806,9 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           </div>
         </div>
       </Section>
+      </LazySection>
 
+      <LazySection fallbackHeight="300px">
       {/* ════════ BONUS ════════ */}
       <Section dark={false}>
         <div className="text-center mb-12">
@@ -835,7 +863,9 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           </div>
         </div>
       </Section>
+      </LazySection>
 
+      <LazySection fallbackHeight="200px">
       {/* ════════ TESTIMONIALS ════════ */}
       <Section dark={false}>
         <div className="text-center mb-12">
@@ -875,7 +905,9 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           ))}
         </div>
       </Section>
+      </LazySection>
 
+      <LazySection fallbackHeight="600px">
       {/* ════════ OBJECTIONS ════════ */}
       <Section>
         <div className="text-center mb-12">
@@ -953,8 +985,9 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           </Accordion>
         </div>
       </Section>
+      </LazySection>
 
-
+      <LazySection fallbackHeight="300px">
       {/* ════════ URGENCY ════════ */}
       <Section>
         <div className="relative bg-gradient-to-br from-[#a47428]/20 to-[#a47428]/5 border border-[#a47428]/30 rounded-3xl p-8 md:p-12 text-center">
@@ -984,7 +1017,9 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           </Button>
         </div>
       </Section>
+      </LazySection>
 
+      <LazySection fallbackHeight="150px">
       {/* ════════ GUARANTEE ════════ */}
       <Section dark={false}>
         <div className="max-w-2xl mx-auto text-center">
@@ -1002,6 +1037,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           </p>
         </div>
       </Section>
+      </LazySection>
 
       {/* ════════ FOOTER ════════ */}
       <footer className="bg-[#071420] py-10 px-4 border-t border-white/5">
