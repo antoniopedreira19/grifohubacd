@@ -284,7 +284,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
         <div className="relative z-10 max-w-6xl mx-auto w-full">
           <div className="grid md:grid-cols-2 gap-8 items-center">
           <div>
-            <SectionTag>AULA AO VIVO PARA DONOS DE CONSTRUTORA E ENGENHEIROS QUE QUEREM ESCALAR</SectionTag>
+            <SectionTag>Webinar ao vivo · 18 de março de 2026</SectionTag>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase leading-[1.1] mb-6">
               O MAPA DE EXECUÇÃO PARA{" "}
