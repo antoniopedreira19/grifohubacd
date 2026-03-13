@@ -287,9 +287,9 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
             <SectionTag>Webinar ao vivo · 18 de março de 2026</SectionTag>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase leading-[1.1] mb-6">
-              O Novo Padrão da Construção:{" "}
+              O MAPA DE EXECUÇÃO PARA{" "}
               <span className="text-[#a47428]">
-                Quando a Execução Vira Marca
+                MULTIPLICAR O SEU TICKET MÉDIO
               </span>
             </h1>
 
