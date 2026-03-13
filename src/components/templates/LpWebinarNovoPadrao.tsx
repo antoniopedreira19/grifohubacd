@@ -294,12 +294,11 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
             </h1>
 
             <p className="text-gray-300 text-base sm:text-lg md:text-xl leading-relaxed mb-8 max-w-2xl">
-              Dois dos maiores nomes da construção brasileira juntos, ao vivo,
-              para mostrar como{" "}
+              Descubra o posicionamento exato que as construtoras de referência usam para{" "}
               <strong className="text-white">
-                parar de competir por preço e virar referência
+                sair da guerra de preços, afastar clientes que choram orçamento
               </strong>{" "}
-              — unindo execução impecável com experiência premium do cliente.
+              e dominar os maiores contratos milionários da região.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
