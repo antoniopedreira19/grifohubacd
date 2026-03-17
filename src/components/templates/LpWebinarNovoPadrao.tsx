@@ -430,11 +430,13 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
 
         <div className="text-center mt-10">
           <Button
-            onClick={() => scrollTo("pricing-section")}
+            asChild
             className="bg-[#a47428] hover:bg-[#8a6220] text-white font-bold text-base px-10 py-6 uppercase tracking-wide hover:scale-105 transition-all duration-300"
           >
-            Quero entrar no Novo Padrão
-            <ArrowRight className="w-5 h-5 ml-2" />
+            <a href="#pricing-anchor">
+              Quero entrar no Novo Padrão
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </a>
           </Button>
         </div>
       </Section>
