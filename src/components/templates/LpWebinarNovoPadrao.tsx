@@ -263,10 +263,10 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           </div>
           <div className="flex items-center gap-2">
             <Button
-              onClick={() => scrollTo("pricing-section")}
+              asChild
               className="bg-[#a47428] hover:bg-[#8a6220] text-white font-bold text-xs sm:text-sm px-4 sm:px-6 py-2 uppercase tracking-wide"
             >
-              Garantir Ingresso
+              <a href="#pricing-anchor">Garantir Ingresso</a>
             </Button>
             <button
               onClick={() => setDismissedSticky(true)}
