@@ -132,9 +132,9 @@ const GoldHeading = ({
 );
 
 /* ─── Lazy section wrapper — only renders children when visible ─── */
-function LazySection({ children, fallbackHeight = "200px", id }: { children: React.ReactNode; fallbackHeight?: string; id?: string }) {
+function LazySection({ children, fallbackHeight = "200px", id, eager = false }: { children: React.ReactNode; fallbackHeight?: string; id?: string; eager?: boolean }) {
   const { ref, isInView } = useInView({ rootMargin: "200px" });
-  const shouldRender = isInView || id === "pricing-section";
+  const shouldRender = isInView || eager;
 
   return (
     <div ref={ref} id={id}>
