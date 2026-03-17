@@ -692,9 +692,9 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
       </Section>
       </LazySection>
 
-      <LazySection fallbackHeight="800px">
+      <LazySection fallbackHeight="800px" id="pricing-section">
       {/* ════════ PRICING / TICKETS ════════ */}
-      <Section id="pricing-section">
+      <Section>
         <div className="text-center mb-12">
           <SectionTag>Ingressos</SectionTag>
           <GoldHeading className="text-white">
