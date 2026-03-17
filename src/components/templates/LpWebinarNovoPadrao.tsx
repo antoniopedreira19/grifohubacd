@@ -164,8 +164,14 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
     return () => window.removeEventListener("scroll", h);
   }, [dismissedSticky]);
 
-  const scrollTo = (id: string) =>
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    // First scroll brings the lazy section into view so it renders real content
+    el.scrollIntoView({ behavior: "smooth" });
+    // After content loads and changes height, scroll again to land precisely
+    setTimeout(() => el.scrollIntoView({ behavior: "smooth" }), 600);
+  };
 
   /* ─── ticket card ─── */
   const TicketCard = ({
