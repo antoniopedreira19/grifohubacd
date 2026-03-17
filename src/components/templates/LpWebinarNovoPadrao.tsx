@@ -134,9 +134,11 @@ const GoldHeading = ({
 /* ─── Lazy section wrapper — only renders children when visible ─── */
 function LazySection({ children, fallbackHeight = "200px", id }: { children: React.ReactNode; fallbackHeight?: string; id?: string }) {
   const { ref, isInView } = useInView({ rootMargin: "200px" });
+  const shouldRender = isInView || id === "pricing-section";
+
   return (
     <div ref={ref} id={id}>
-      {isInView ? children : <div style={{ minHeight: fallbackHeight }} />}
+      {shouldRender ? children : <div style={{ minHeight: fallbackHeight }} />}
     </div>
   );
 }
@@ -165,12 +167,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
   }, [dismissedSticky]);
 
   const scrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    // First scroll brings the lazy section into view so it renders real content
-    el.scrollIntoView({ behavior: "smooth" });
-    // After content loads and changes height, scroll again to land precisely
-    setTimeout(() => el.scrollIntoView({ behavior: "smooth" }), 600);
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   /* ─── ticket card ─── */
