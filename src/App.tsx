@@ -31,6 +31,7 @@ const Mentoria360 = lazy(() => import("@/pages/Mentoria360"));
 const Vitrine = lazy(() => import("@/pages/Vitrine"));
 const RedirectVitrine = lazy(() => import("@/pages/RedirectVitrine"));
 const RedirectWebinar = lazy(() => import("@/pages/RedirectWebinar"));
+const FormularioAplicacao = lazy(() => import("@/pages/FormularioAplicacao"));
 
 const queryClient = new QueryClient();
 
