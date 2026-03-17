@@ -1070,11 +1070,13 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
       {/* ════════ MOBILE STICKY CTA ════════ */}
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#0b1c2e]/95 backdrop-blur-md border-t border-[#a47428]/30 p-3 md:hidden">
         <Button
-          onClick={() => scrollTo("pricing-section")}
+          asChild
           className="w-full bg-[#a47428] hover:bg-[#8a6220] text-white font-bold text-sm py-5 uppercase tracking-wide"
         >
-          Ver ingressos — a partir de R$ 97
-          <ArrowRight className="w-4 h-4 ml-2" />
+          <a href="#pricing-anchor">
+            Ver ingressos — a partir de R$ 97
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </a>
         </Button>
       </div>
     </div>
