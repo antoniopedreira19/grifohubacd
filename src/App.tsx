@@ -67,6 +67,7 @@ const App = () => (
             <Route path="/vitrine" element={<Vitrine />} />
             <Route path="/redirect-vitrine" element={<RedirectVitrine />} />
             <Route path="/redirect-webinar" element={<RedirectWebinar />} />
+            <Route path="/aplicacao" element={<FormularioAplicacao />} />
 
             {/* ═══ Auth-dependent routes — wrapped in AuthProvider ═══ */}
             <Route element={<AuthLayout />}>
