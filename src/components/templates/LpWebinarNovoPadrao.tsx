@@ -306,11 +306,13 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
 
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
               <Button
-                onClick={() => scrollTo("pricing-section")}
+                asChild
                 className="bg-[#a47428] hover:bg-[#8a6220] text-white font-black text-base sm:text-lg px-8 py-6 uppercase tracking-wide transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-[#a47428]/30"
               >
-                Garantir meu ingresso
-                <ArrowRight className="w-5 h-5 ml-2" />
+                <a href="#pricing-anchor">
+                  Garantir meu ingresso
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </a>
               </Button>
               <Button
                 onClick={() => scrollTo("o-que-voce-vai-aprender")}
