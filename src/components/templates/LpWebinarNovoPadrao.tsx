@@ -132,9 +132,9 @@ const GoldHeading = ({
 );
 
 /* ─── Lazy section wrapper — only renders children when visible ─── */
-function LazySection({ children, fallbackHeight = "200px", id }: { children: React.ReactNode; fallbackHeight?: string; id?: string }) {
+function LazySection({ children, fallbackHeight = "200px", id, eager = false }: { children: React.ReactNode; fallbackHeight?: string; id?: string; eager?: boolean }) {
   const { ref, isInView } = useInView({ rootMargin: "200px" });
-  const shouldRender = isInView || id === "pricing-section";
+  const shouldRender = isInView || eager;
 
   return (
     <div ref={ref} id={id}>
@@ -263,10 +263,10 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           </div>
           <div className="flex items-center gap-2">
             <Button
-              onClick={() => scrollTo("pricing-section")}
+              asChild
               className="bg-[#a47428] hover:bg-[#8a6220] text-white font-bold text-xs sm:text-sm px-4 sm:px-6 py-2 uppercase tracking-wide"
             >
-              Garantir Ingresso
+              <a href="#pricing-anchor">Garantir Ingresso</a>
             </Button>
             <button
               onClick={() => setDismissedSticky(true)}
@@ -306,11 +306,13 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
 
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
               <Button
-                onClick={() => scrollTo("pricing-section")}
+                asChild
                 className="bg-[#a47428] hover:bg-[#8a6220] text-white font-black text-base sm:text-lg px-8 py-6 uppercase tracking-wide transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-[#a47428]/30"
               >
-                Garantir meu ingresso
-                <ArrowRight className="w-5 h-5 ml-2" />
+                <a href="#pricing-anchor">
+                  Garantir meu ingresso
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </a>
               </Button>
               <Button
                 onClick={() => scrollTo("o-que-voce-vai-aprender")}
@@ -428,11 +430,13 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
 
         <div className="text-center mt-10">
           <Button
-            onClick={() => scrollTo("pricing-section")}
+            asChild
             className="bg-[#a47428] hover:bg-[#8a6220] text-white font-bold text-base px-10 py-6 uppercase tracking-wide hover:scale-105 transition-all duration-300"
           >
-            Quero entrar no Novo Padrão
-            <ArrowRight className="w-5 h-5 ml-2" />
+            <a href="#pricing-anchor">
+              Quero entrar no Novo Padrão
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </a>
           </Button>
         </div>
       </Section>
@@ -695,10 +699,10 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
       </Section>
       </LazySection>
 
-      <LazySection fallbackHeight="800px" id="pricing-section">
+      <LazySection fallbackHeight="800px" eager>
       {/* ════════ PRICING / TICKETS ════════ */}
       <Section>
-        <div className="text-center mb-12">
+        <div id="pricing-anchor" className="text-center mb-12 scroll-mt-24">
           <SectionTag>Ingressos</SectionTag>
           <GoldHeading className="text-white">
             Escolha o nível de{" "}
@@ -1011,11 +1015,13 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           <CountdownBar targetDate={eventDate} />
 
           <Button
-            onClick={() => scrollTo("pricing-section")}
+            asChild
             className="w-full max-w-md bg-[#a47428] hover:bg-[#8a6220] text-white font-black text-sm sm:text-lg px-6 sm:px-12 py-6 sm:py-7 uppercase tracking-wide hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-[#a47428]/30 text-center"
           >
-            Garantir meu ingresso agora
-            <ArrowRight className="w-5 h-5 ml-2 shrink-0" />
+            <a href="#pricing-anchor">
+              Garantir meu ingresso agora
+              <ArrowRight className="w-5 h-5 ml-2 shrink-0" />
+            </a>
           </Button>
         </div>
       </Section>
@@ -1064,11 +1070,13 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
       {/* ════════ MOBILE STICKY CTA ════════ */}
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#0b1c2e]/95 backdrop-blur-md border-t border-[#a47428]/30 p-3 md:hidden">
         <Button
-          onClick={() => scrollTo("pricing-section")}
+          asChild
           className="w-full bg-[#a47428] hover:bg-[#8a6220] text-white font-bold text-sm py-5 uppercase tracking-wide"
         >
-          Ver ingressos — a partir de R$ 97
-          <ArrowRight className="w-4 h-4 ml-2" />
+          <a href="#pricing-anchor">
+            Ver ingressos — a partir de R$ 97
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </a>
         </Button>
       </div>
     </div>
