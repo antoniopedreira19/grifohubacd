@@ -1015,11 +1015,13 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
           <CountdownBar targetDate={eventDate} />
 
           <Button
-            onClick={() => scrollTo("pricing-section")}
+            asChild
             className="w-full max-w-md bg-[#a47428] hover:bg-[#8a6220] text-white font-black text-sm sm:text-lg px-6 sm:px-12 py-6 sm:py-7 uppercase tracking-wide hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-[#a47428]/30 text-center"
           >
-            Garantir meu ingresso agora
-            <ArrowRight className="w-5 h-5 ml-2 shrink-0" />
+            <a href="#pricing-anchor">
+              Garantir meu ingresso agora
+              <ArrowRight className="w-5 h-5 ml-2 shrink-0" />
+            </a>
           </Button>
         </div>
       </Section>
