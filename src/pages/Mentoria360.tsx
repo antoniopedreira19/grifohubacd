@@ -296,7 +296,7 @@ export default function Mentoria360() {
               A equipe da Grifo faz o onboarding e diagnóstico da sua construtora para direcionar sua empresa para ter resultados reais no curto prazo e um plano consolidado para o próximo ano.
             </p>
             <div className="flex flex-wrap justify-center gap-4 pt-4">
-               {["Acompanhamento por especialistas", "Resultados reais", "Primeiro Planejamento de Curto Prazo"].map((item, i) => <div key={i} className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#a37428]/20 border border-[#a37428]/30">
+              {["Resultados reais", "Primeiro Planejamento de Curto Prazo"].map((item, i) => <div key={i} className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#a37428]/20 border border-[#a37428]/30">
                     <CheckCircle2 className="w-4 h-4 text-[#a37428]" />
                     <span className="text-white text-sm">{item}</span>
                   </div>)}
