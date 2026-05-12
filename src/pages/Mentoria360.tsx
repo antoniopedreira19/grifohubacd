@@ -383,7 +383,7 @@ export default function Mentoria360() {
                   <p className="font-disket text-lg">O QUE VOCÊ LEVA:</p>
                 </div>
                 <div className="space-y-4">
-                   {["Acesso à Plataforma Grifo 360 (1 Ano)", "Acompanhamento de 1 ano no grupo exclusivo do Whatsapp", "Acesso ao grupo de mentorados da Mentoria 360", "Setup na Sua Obra (Consultoria Individual)", "Acesso ao GrifoBoard (1 ano)", "Pack de Planilhas e Materiais Grifo", "Acesso a um encontro presencial no Grifo Hub SP"].map((item, idx) => <div key={idx} className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-200">
+                    {["Acesso à Plataforma Grifo 360 (1 Ano)", "Acompanhamento de 1 ano no grupo exclusivo do Whatsapp", "Acesso ao grupo de mentorados da Mentoria 360", "Acompanhamento personalizado", "Acesso ao GrifoBoard (1 ano)", "Pack de Planilhas e Materiais Grifo", "Acesso a um encontro presencial no Grifo Hub SP"].map((item, idx) => <div key={idx} className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-200">
                         <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
                         <span>{item}</span>
                       </div>)}
