@@ -175,8 +175,8 @@ export default function Mentoria360() {
       <section className="py-16 sm:py-20 lg:py-24 bg-[#112232]">
         <div className="container mx-auto px-4 sm:px-6">
           <AnimatedSection className="max-w-4xl mx-auto text-center space-y-8">
-            <h2 className="font-disket text-2xl sm:text-3xl md:text-4xl text-white font-mono">
-              DESCUBRA COMO SAIR DO CAOS OPERACIONAL EM 90 DIAS
+            <h2 className="font-disket text-2xl sm:text-3xl md:text-4xl text-white font-mono uppercase">
+              DESCUBRA COMO SAIR DO CAOS OPERACIONAL NO CURTO PRAZO
             </h2>
             <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
               <YouTubeFacade videoId="80GKMBz39Lg" title="Descubra como sair do caos operacional" />
