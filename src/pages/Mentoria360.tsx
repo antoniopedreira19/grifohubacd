@@ -134,8 +134,8 @@ export default function Mentoria360() {
               <div className="flex items-center gap-3">
                 <Calendar className="w-6 h-6 text-[#a37428]" />
                 <div>
-                  <p className="text-xs text-gray-400">Próxima Turma:</p>
-                  <p className="text-sm text-white font-medium">Março 2026</p>
+                  <p className="text-xs text-gray-400">Data de início:</p>
+                  <p className="text-sm text-white font-medium">Acesso imediato</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -149,7 +149,7 @@ export default function Mentoria360() {
                 <Settings className="w-6 h-6 text-[#a37428]" />
                 <div>
                   <p className="text-xs text-gray-400">Duração:</p>
-                  <p className="text-sm text-white font-medium">3 meses</p>
+                  <p className="text-sm text-white font-medium">1 Ano&nbsp;</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -384,7 +384,7 @@ export default function Mentoria360() {
                   <p className="font-disket text-lg">O QUE VOCÊ LEVA:</p>
                 </div>
                 <div className="space-y-4">
-                  {["Acesso à Plataforma Grifo 360 (1 Ano)", "6 encontros ao vivo online no Meet", "Acompanhamento de 3 meses no grupo do Whatsapp", "Setup na Sua Obra (Consultoria Individual)", "Acesso ao GrifoBoard (1 ano)", "Pack de Planilhas e Materiais Grifo", "Acesso a um encontro presencial no Grifo Hub SP"].map((item, idx) => <div key={idx} className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-200">
+                  {["Acesso à Plataforma Grifo 360 (1 Ano)", "Acompanhamento de 1 ano no grupo exclusivo do Whatsapp", "Acompanhamento de 1 Ano&nbsp; no grupo do Whatsapp", "Setup na Sua Obra (Consultoria Individual)", "Acesso ao GrifoBoard (1 ano)", "Pack de Planilhas e Materiais Grifo", "Acesso a um encontro presencial no Grifo Hub SP"].map((item, idx) => <div key={idx} className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-200">
                         <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
                         <span>{item}</span>
                       </div>)}
@@ -394,14 +394,14 @@ export default function Mentoria360() {
               <div className="relative p-6 sm:p-8 rounded-2xl bg-[#112232] text-white">
                 <div className="ping-urgent rounded-2xl" />
                 <div className="relative z-10 text-center space-y-6 py-[60px]">
-                  <h3 className="font-disket text-2xl sm:text-3xl leading-tight">AONDE VOCÊ GOSTARIA DE ESTAR EM 3 MESES?​<br /> ​</h3>
+                  <h3 className="font-disket text-2xl sm:text-3xl leading-tight">AONDE VOCÊ GOSTARIA DE ESTAR EM 1 Ano&nbsp;?​<br /> ​</h3>
                   <p className="text-gray-300">Vagas limitadas para garantir a qualidade do Setup.</p>
                   <div className="py-4 border-t border-b border-white/10">
                     <div className="flex items-center justify-center gap-2 text-gray-400 mb-2">
                       <Calendar className="w-4 h-4" />
-                      <span className="text-sm">Próxima Turma:</span>
+                      <span className="text-sm">Data de início:</span>
                     </div>
-                    <p className="font-disket text-2xl text-[#a37428]">MARÇO 2026</p>
+                    <p className="font-disket text-2xl text-[#a37428]">ACESSO IMEDIATO</p>
                   </div>
                   <Button size="lg" onClick={handleCTAClick} className="w-full text-base sm:text-lg px-8 py-6 h-auto bg-[#a37428] hover:bg-[#8b6322] text-white font-semibold">
                     APLICAR PARA A MENTORIA
