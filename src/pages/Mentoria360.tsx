@@ -274,7 +274,7 @@ export default function Mentoria360() {
                     <p className="text-gray-600">{module.text}</p>
                   </div>)}
                 <div className="p-6 rounded-2xl bg-[#112232] text-white flex flex-col justify-center items-center text-center">
-                  <p className="text-[#a37428] font-semibold mb-2">Mais de 25h de conteúdo</p>
+                   <p className="text-[#a37428] font-semibold mb-2">Mais de 50h de conteúdo</p>
                   <Button onClick={handleCTAClick} className="bg-[#a37428] hover:bg-[#8b6322] text-white">
                     QUERO ME INSCREVER
                   </Button>
@@ -290,14 +290,13 @@ export default function Mentoria360() {
         <div className="absolute inset-0 bg-[#112232]/90" />
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <AnimatedSection className="max-w-3xl mx-auto text-center space-y-6">
-            <p className="text-[#a37428] font-semibold text-lg">SETUP NA SUA OBRA</p>
+             <p className="text-[#a37428] font-semibold text-lg uppercase">DIAGNÓSTICO E ACOMPANHAMENTO PERSONALIZADO</p>
             <h2 className="font-disket text-2xl sm:text-3xl md:text-4xl">O DIFERENCIAL QUE MUDA O JOGO</h2>
             <p className="text-lg sm:text-xl text-gray-300 leading-relaxed">
-              Um mentor especialista da Grifo vai estruturar o Planejamento de Elite de uma obra sua (até R$ 20M),
-              montando o primeiro ciclo de controle junto com seu time.
+              A equipe da Grifo faz o onboarding e diagnóstico da sua construtora para direcionar sua empresa para ter resultados reais no curto prazo e um plano consolidado para o próximo ano.
             </p>
             <div className="flex flex-wrap justify-center gap-4 pt-4">
-              {["Planejamento Médio Prazo", "Direcionamento de Restrições", "Primeiro Planejamento de Curto Prazo"].map((item, i) => <div key={i} className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#a37428]/20 border border-[#a37428]/30">
+              {["Plano de ação consolidado", "Resultados reais", "Primeiro Planejamento de Curto Prazo"].map((item, i) => <div key={i} className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#a37428]/20 border border-[#a37428]/30">
                     <CheckCircle2 className="w-4 h-4 text-[#a37428]" />
                     <span className="text-white text-sm">{item}</span>
                   </div>)}
@@ -384,7 +383,7 @@ export default function Mentoria360() {
                   <p className="font-disket text-lg">O QUE VOCÊ LEVA:</p>
                 </div>
                 <div className="space-y-4">
-                  {["Acesso à Plataforma Grifo 360 (1 Ano)", "Acompanhamento de 1 ano no grupo exclusivo do Whatsapp", "Acompanhamento de 1 Ano&nbsp; no grupo do Whatsapp", "Setup na Sua Obra (Consultoria Individual)", "Acesso ao GrifoBoard (1 ano)", "Pack de Planilhas e Materiais Grifo", "Acesso a um encontro presencial no Grifo Hub SP"].map((item, idx) => <div key={idx} className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-200">
+                  {["Acesso à Plataforma Grifo 360 (1 Ano)", "Acompanhamento de 1 ano no grupo exclusivo do Whatsapp", "Acesso ao grupo da Mentoria 360 por 1 ano", "Setup na Sua Obra (Consultoria Individual)", "Acesso ao GrifoBoard (1 ano)", "Pack de Planilhas e Materiais Grifo", "Acesso a um encontro presencial no Grifo Hub SP"].map((item, idx) => <div key={idx} className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-200">
                         <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
                         <span>{item}</span>
                       </div>)}
@@ -395,7 +394,7 @@ export default function Mentoria360() {
                 <div className="ping-urgent rounded-2xl" />
                 <div className="relative z-10 text-center space-y-6 py-[60px]">
                   <h3 className="font-disket text-2xl sm:text-3xl leading-tight">AONDE VOCÊ GOSTARIA DE ESTAR EM 1 Ano&nbsp;?​<br /> ​</h3>
-                  <p className="text-gray-300">Vagas limitadas para garantir a qualidade do Setup.</p>
+                  <p className="text-gray-300">Vagas limitadas para garantir a qualidade do acompanhamento.</p>
                   <div className="py-4 border-t border-b border-white/10">
                     <div className="flex items-center justify-center gap-2 text-gray-400 mb-2">
                       <Calendar className="w-4 h-4" />
