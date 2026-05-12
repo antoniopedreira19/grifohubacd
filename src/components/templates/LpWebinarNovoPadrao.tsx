@@ -754,7 +754,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
             features={[
               "Tudo do ingresso VIP",
               "Diagnóstico individual da sua empresa (30 min com Daniel)",
-              "Estratégia de diferenciação personalizada para os próximos 3 meses",
+              "Estratégia de diferenciação personalizada para o próximo 1 Ano&nbsp;",
               "1 imersão presencial no Hub Grifo Academy em São Paulo",
               "Networking com construtores de todo o Brasil",
               "Caminho direto para o próximo nível de implantação",
@@ -952,7 +952,7 @@ export function LpWebinarNovoPadrao({ product }: LpWebinarNovoPadraoProps) {
               },
               {
                 q: "Como funciona o Diagnóstico Individual do Diamond?",
-                a: "Daniel analisa o cenário da sua empresa (região, posicionamento, dores, momento) em 30 minutos de apresentação personalizada e entrega uma estratégia de diferenciação para aplicar nos próximos 3 meses.",
+                a: "Daniel analisa o cenário da sua empresa (região, posicionamento, dores, momento) em 30 minutos de apresentação personalizada e entrega uma estratégia de diferenciação para aplicar no próximo 1 Ano&nbsp;.",
               },
               {
                 q: "Posso parcelar?",
