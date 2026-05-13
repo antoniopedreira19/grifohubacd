@@ -85,6 +85,7 @@ export default function Pipeline() {
   const [isNewDealOpen, setIsNewDealOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [minRevenueFilter, setMinRevenueFilter] = useState<string>("-1");
+  const [ticketMedioFilter, setTicketMedioFilter] = useState<string>("all");
 
   // Estados dos Modais
   const [meetingDialog, setMeetingDialog] = useState<{
