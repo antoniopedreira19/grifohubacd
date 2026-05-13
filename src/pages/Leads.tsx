@@ -82,6 +82,7 @@ export default function Leads() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [answersFilters, setAnswersFilters] = useState<Record<string, string[]>>({});
 
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Lead | "created_at";
