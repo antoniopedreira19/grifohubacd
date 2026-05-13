@@ -556,6 +556,25 @@ export default function Pipeline() {
                 </SelectItem>
               </SelectContent>
             </Select>
+
+            <Select value={ticketMedioFilter} onValueChange={setTicketMedioFilter}>
+              <SelectTrigger className="w-full md:w-[240px] bg-card text-foreground border-input">
+                <div className="flex items-center gap-2 text-sm">
+                  <Hash className="h-4 w-4 text-muted-foreground" />
+                  <span>{ticketMedioFilter === "all" ? "Ticket Médio: Todos" : "Ticket Médio"}</span>
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">
+                  <span className="font-medium">Todos os Tickets</span>
+                </SelectItem>
+                <SelectItem value="&lt;100k">Até R$ 100 mil</SelectItem>
+                <SelectItem value="100k-500k">R$ 100k - R$ 500k</SelectItem>
+                <SelectItem value="500k-1M">R$ 500k - R$ 1M</SelectItem>
+                <SelectItem value="1M-5M">R$ 1M - R$ 5M</SelectItem>
+                <SelectItem value="+5M">Acima de R$ 5M</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <DragDropContext onDragEnd={handleDragEnd}>
