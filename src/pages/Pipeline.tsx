@@ -205,6 +205,34 @@ export default function Pipeline() {
     enabled: !!selectedPipelineId && deals.length > 0,
   });
 
+  // Fetch form submissions for ticket medio filter
+  const { data: formSubmissions = [] } = useQuery({
+    queryKey: ["form-submissions-ticket-medio", selectedPipelineId],
+    queryFn: async () => {
+      if (!selectedPipelineId || deals.length === 0) return [];
+      const leadIds = [...new Set(deals.map((d) => d.lead_id).filter(Boolean))];
+      if (leadIds.length === 0) return [];
+      const { data, error } = await supabase
+        .from("form_submissions")
+        .select("lead_id, answers")
+        .in("lead_id", leadIds);
+      if (error) throw error;
+      return data as { lead_id: string; answers: Record<string, any> }[];
+    },
+    enabled: !!selectedPipelineId && deals.length > 0,
+  });
+
+  // Build a map of lead_id -> ticket_medio
+  const ticketMedioMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    formSubmissions.forEach((sub) => {
+      if (sub.lead_id && sub.answers?.ticket_medio) {
+        map[sub.lead_id] = sub.answers.ticket_medio;
+      }
+    });
+    return map;
+  }, [formSubmissions]);
+
   // Build a map of deal_id -> DealTag[]
   const dealTagsMap = useMemo(() => {
     const map: Record<string, DealTag[]> = {};
