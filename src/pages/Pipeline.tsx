@@ -436,7 +436,7 @@ export default function Pipeline() {
         totalValue: filteredAndSortedDeals.reduce((acc, curr) => acc + Number(curr.value), 0),
       };
     });
-  }, [stages, deals, searchTerm, minRevenueFilter]);
+  }, [stages, deals, searchTerm, minRevenueFilter, ticketMedioFilter, ticketMedioMap]);
 
   const selectedPipeline = pipelines.find((p) => p.id === selectedPipelineId);
 
