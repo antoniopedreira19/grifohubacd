@@ -1,30 +1,23 @@
-## Objetivo
-Adicionar na página `/leads` filtros baseados nas respostas do histórico de formulários e permitir exportar XLSX incluindo essas respostas.
+## Ajustes no filtro "Filtros de respostas" (página /leads)
 
-## Como vai funcionar
+### 1. Remover campos de identificação (ex.: nome da empresa)
+Em `answersFieldsForProduct` (src/pages/Leads.tsx), aplicar uma blacklist de chaves que não fazem sentido como filtro categórico (são texto livre / dados de contato), pulando-as ao agregar:
 
-### 1. Filtros por respostas
-Como cada produto tem campos diferentes (ex.: Mentoria 360 tem `faturamento`, `estado`, `cargo`, `ticket_medio`, `obras_simultaneas`, etc; GBC tem `revenue`, `niche`, `role`…), os filtros por resposta só fazem sentido quando há um produto selecionado.
+- `nome`, `name`, `nome_completo`
+- `email`, `e_mail`
+- `telefone`, `whatsapp`, `phone`, `celular`
+- `empresa`, `company`, `nome_empresa`, `company_name`, `razao_social`
 
-Comportamento:
-- Quando o filtro "Produto" estiver em **Todos**: nenhum filtro de resposta aparece (igual hoje).
-- Quando um **produto específico** for selecionado: aparece um botão **"Filtros de respostas"** ao lado dos filtros existentes. Ao clicar, abre um popover com um seletor para cada campo daquele produto (ex.: Faturamento, Estado, Cargo, Ticket médio…). Cada campo lista os valores únicos encontrados nas submissões daquele produto, com multi-seleção.
-- Um lead aparece se tiver pelo menos uma `form_submission` daquele produto que satisfaça TODOS os filtros marcados (AND entre campos, OR entre valores do mesmo campo).
-- Badge mostrando quantos filtros estão ativos + botão "Limpar".
+Match case-insensitive. Assim o campo "nome da empresa" (e demais identificadores) não aparece mais no popover, e também não vira coluna duplicada de filtragem.
 
-### 2. Exportação XLSX enriquecida
-Substituir o botão `XLSX` atual para exportar:
-- Colunas fixas: Nome, Email, Telefone, Estado (DDD), LTV, Status, Origem, Cadastro.
-- Colunas dinâmicas: uma coluna por campo de resposta encontrado nas submissões dos leads exportados (ex.: `Mentoria 360 — faturamento`, `Mentoria 360 — estado`, `GBC — revenue`…). Se um lead tem múltiplas submissões do mesmo produto, usa a mais recente.
-- Quando há produto selecionado no filtro, exporta apenas as colunas daquele produto (mais limpo). Quando "Todos", exporta todos os campos de todos os produtos com prefixo do nome do produto.
-- Arrays (ex.: `setores_atuacao`) são serializados como `valor1; valor2`.
+### 2. Corrigir scroll do popover
+O `ScrollArea` está com `max-h-[420px]`, que no Radix ScrollArea não rola corretamente (precisa de altura definida no viewport interno). Trocar por:
 
-## Detalhes técnicos
-- Buscar `form_submissions` (com `product_id` e `answers`) no mesmo `useQuery` ou em query separada com cache.
-- Construir o mapa `valores únicos por campo por produto` em memória (client-side) — datasets atuais são pequenos (<1k subs).
-- Filtragem: estender o `.filter()` existente em `Leads.tsx` para cruzar com as submissões do lead.
-- Exportação: estender `handleExportXLSX` para fazer o `flatten` dos answers conforme regra acima usando `xlsx` (já está no projeto).
-- Sem mudanças de schema/RLS.
+- `<ScrollArea className="h-[420px]">` (altura fixa) e manter o `<div className="p-3 space-y-4">` interno.
 
-## Pergunta
-Confirma esse comportamento, ou prefere algo diferente em algum ponto (ex.: filtros aparecendo sempre, mesmo sem produto selecionado)?
+Isso garante que, quando há muitos campos/valores, o conteúdo role dentro do popover.
+
+### Arquivos
+- `src/pages/Leads.tsx` — ajustar `answersFieldsForProduct` (blacklist) e o `ScrollArea` do `PopoverContent`.
+
+Sem mudanças de schema, RLS ou lógica de exportação.
