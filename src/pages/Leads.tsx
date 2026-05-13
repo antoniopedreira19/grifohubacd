@@ -114,6 +114,63 @@ export default function Leads() {
     },
   });
 
+  const { data: submissionsData } = useQuery({
+    queryKey: ["form-submissions-all"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("form_submissions")
+        .select("lead_id, product_id, answers, submitted_at")
+        .order("submitted_at", { ascending: false });
+      if (error) throw error;
+      return data as Array<{ lead_id: string | null; product_id: string | null; answers: Record<string, any>; submitted_at: string | null }>;
+    },
+  });
+
+  const flattenValue = (v: any): string => {
+    if (v === null || v === undefined) return "";
+    if (Array.isArray(v)) return v.map((x) => String(x)).join("; ");
+    if (typeof v === "object") return JSON.stringify(v);
+    return String(v);
+  };
+
+  const answersFieldsForProduct = (() => {
+    if (productFilter === "all" || !submissionsData) return null;
+    const fields: Record<string, Set<string>> = {};
+    for (const s of submissionsData) {
+      if (s.product_id !== productFilter || !s.answers) continue;
+      for (const [k, v] of Object.entries(s.answers)) {
+        if (!fields[k]) fields[k] = new Set();
+        if (Array.isArray(v)) v.forEach((x) => x !== null && x !== undefined && String(x).trim() !== "" && fields[k].add(String(x)));
+        else if (v !== null && v !== undefined && String(v).trim() !== "") fields[k].add(String(v));
+      }
+    }
+    return fields;
+  })();
+
+  const submissionsByLead = (() => {
+    const map = new Map<string, any[]>();
+    if (!submissionsData) return map;
+    for (const s of submissionsData) {
+      if (!s.lead_id) continue;
+      if (!map.has(s.lead_id)) map.set(s.lead_id, []);
+      map.get(s.lead_id)!.push(s);
+    }
+    return map;
+  })();
+
+  const activeAnswerFiltersCount = Object.values(answersFilters).filter((arr) => arr && arr.length > 0).length;
+
+  const toggleAnswerValue = (field: string, value: string) => {
+    setAnswersFilters((prev) => {
+      const cur = prev[field] || [];
+      const next = cur.includes(value) ? cur.filter((v) => v !== value) : [...cur, value];
+      const updated = { ...prev, [field]: next };
+      if (next.length === 0) delete updated[field];
+      return updated;
+    });
+    setCurrentPage(1);
+  };
+
   const deleteLead = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("leads").delete().eq("id", id);
