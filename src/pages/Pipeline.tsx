@@ -423,7 +423,10 @@ export default function Pipeline() {
           const minRevenue = Number(minRevenueFilter);
           const matchesRevenue = dealRevenue >= minRevenue;
 
-          return matchesSearch && matchesRevenue;
+          const leadTicketMedio = ticketMedioMap[deal.lead_id || ""];
+          const matchesTicketMedio = ticketMedioFilter === "all" || leadTicketMedio === ticketMedioFilter;
+
+          return matchesSearch && matchesRevenue && matchesTicketMedio;
         })
         .sort((a, b) => compareDeals(a, b, isFirstStage)); // Aplica a lógica diferenciada por estágio
 
