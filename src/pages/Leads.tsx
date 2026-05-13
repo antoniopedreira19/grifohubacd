@@ -220,7 +220,21 @@ export default function Leads() {
         const leadState = getRegionByPhone(lead.phone)?.state;
         const matchesRegion = regionFilter === "all" || leadState === regionFilter;
 
-        return matchesSearch && matchesProduct && matchesRegion;
+        let matchesAnswers = true;
+        if (productFilter !== "all" && activeAnswerFiltersCount > 0) {
+          const subs = (submissionsByLead.get(lead.id) || []).filter((s: any) => s.product_id === productFilter);
+          matchesAnswers = subs.some((sub: any) => {
+            return Object.entries(answersFilters).every(([field, selected]) => {
+              if (!selected || selected.length === 0) return true;
+              const val = sub.answers?.[field];
+              if (val === undefined || val === null) return false;
+              if (Array.isArray(val)) return val.some((x) => selected.includes(String(x)));
+              return selected.includes(String(val));
+            });
+          });
+        }
+
+        return matchesSearch && matchesProduct && matchesRegion && matchesAnswers;
       })
       .sort((a, b) => {
         const aValue = a[sortConfig.key];
