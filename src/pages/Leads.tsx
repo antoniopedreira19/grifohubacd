@@ -405,6 +405,7 @@ export default function Leads() {
             value={productFilter}
             onValueChange={(value) => {
               setProductFilter(value);
+              setAnswersFilters({});
               setCurrentPage(1);
             }}
           >
@@ -424,6 +425,56 @@ export default function Leads() {
             </SelectContent>
           </Select>
         </div>
+
+        {productFilter !== "all" && answersFieldsForProduct && Object.keys(answersFieldsForProduct).length > 0 && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="whitespace-nowrap">
+                <Filter className="h-4 w-4 mr-2" />
+                Filtros de respostas
+                {activeAnswerFiltersCount > 0 && (
+                  <Badge variant="secondary" className="ml-2 h-5 px-1.5">{activeAnswerFiltersCount}</Badge>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[340px] p-0" align="start">
+              <div className="flex items-center justify-between p-3 border-b">
+                <span className="text-sm font-semibold">Filtrar por respostas</span>
+                {activeAnswerFiltersCount > 0 && (
+                  <Button variant="ghost" size="sm" className="h-7" onClick={() => { setAnswersFilters({}); setCurrentPage(1); }}>
+                    Limpar
+                  </Button>
+                )}
+              </div>
+              <ScrollArea className="max-h-[420px]">
+                <div className="p-3 space-y-4">
+                  {Object.entries(answersFieldsForProduct)
+                    .sort(([a], [b]) => a.localeCompare(b))
+                    .map(([field, valuesSet]) => {
+                      const values = Array.from(valuesSet).sort((a, b) => a.localeCompare(b, "pt-BR"));
+                      const selected = answersFilters[field] || [];
+                      return (
+                        <div key={field} className="space-y-2">
+                          <div className="text-xs font-semibold uppercase text-muted-foreground">{field}</div>
+                          <div className="space-y-1.5">
+                            {values.map((v) => (
+                              <label key={v} className="flex items-center gap-2 text-sm cursor-pointer hover:bg-muted/50 px-1 py-0.5 rounded">
+                                <Checkbox
+                                  checked={selected.includes(v)}
+                                  onCheckedChange={() => toggleAnswerValue(field, v)}
+                                />
+                                <span className="flex-1">{v}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </ScrollArea>
+            </PopoverContent>
+          </Popover>
+        )}
 
         <div className="w-full md:w-[160px]">
           <Select
