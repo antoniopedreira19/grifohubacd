@@ -134,10 +134,11 @@ export default function Leads() {
   };
 
   const answersFieldsForProduct = (() => {
-    if (productFilter === "all" || !submissionsData) return null;
+    if (!submissionsData) return null;
     const fields: Record<string, Set<string>> = {};
     for (const s of submissionsData) {
-      if (s.product_id !== productFilter || !s.answers) continue;
+      if (!s.answers) continue;
+      if (productFilter !== "all" && s.product_id !== productFilter) continue;
       for (const [k, v] of Object.entries(s.answers)) {
         if (!fields[k]) fields[k] = new Set();
         if (Array.isArray(v)) v.forEach((x) => x !== null && x !== undefined && String(x).trim() !== "" && fields[k].add(String(x)));
@@ -221,8 +222,10 @@ export default function Leads() {
         const matchesRegion = regionFilter === "all" || leadState === regionFilter;
 
         let matchesAnswers = true;
-        if (productFilter !== "all" && activeAnswerFiltersCount > 0) {
-          const subs = (submissionsByLead.get(lead.id) || []).filter((s: any) => s.product_id === productFilter);
+        if (activeAnswerFiltersCount > 0) {
+          const subs = (submissionsByLead.get(lead.id) || []).filter(
+            (s: any) => productFilter === "all" || s.product_id === productFilter,
+          );
           matchesAnswers = subs.some((sub: any) => {
             return Object.entries(answersFilters).every(([field, selected]) => {
               if (!selected || selected.length === 0) return true;
@@ -426,7 +429,7 @@ export default function Leads() {
           </Select>
         </div>
 
-        {productFilter !== "all" && answersFieldsForProduct && Object.keys(answersFieldsForProduct).length > 0 && (
+        {answersFieldsForProduct && Object.keys(answersFieldsForProduct).length > 0 && (
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" className="whitespace-nowrap">
