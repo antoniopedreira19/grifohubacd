@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
-import { Plus, Search, GitBranch, AlertCircle, MoreHorizontal, Trash2, DollarSign } from "lucide-react";
+import { Plus, Search, GitBranch, AlertCircle, MoreHorizontal, Trash2, DollarSign, Hash } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -85,6 +85,7 @@ export default function Pipeline() {
   const [isNewDealOpen, setIsNewDealOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [minRevenueFilter, setMinRevenueFilter] = useState<string>("-1");
+  const [ticketMedioFilter, setTicketMedioFilter] = useState<string>("all");
 
   // Estados dos Modais
   const [meetingDialog, setMeetingDialog] = useState<{
@@ -203,6 +204,34 @@ export default function Pipeline() {
     },
     enabled: !!selectedPipelineId && deals.length > 0,
   });
+
+  // Fetch form submissions for ticket medio filter
+  const { data: formSubmissions = [] } = useQuery({
+    queryKey: ["form-submissions-ticket-medio", selectedPipelineId],
+    queryFn: async () => {
+      if (!selectedPipelineId || deals.length === 0) return [];
+      const leadIds = [...new Set(deals.map((d) => d.lead_id).filter(Boolean))];
+      if (leadIds.length === 0) return [];
+      const { data, error } = await supabase
+        .from("form_submissions")
+        .select("lead_id, answers")
+        .in("lead_id", leadIds);
+      if (error) throw error;
+      return data as { lead_id: string; answers: Record<string, any> }[];
+    },
+    enabled: !!selectedPipelineId && deals.length > 0,
+  });
+
+  // Build a map of lead_id -> ticket_medio
+  const ticketMedioMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    formSubmissions.forEach((sub) => {
+      if (sub.lead_id && sub.answers?.ticket_medio) {
+        map[sub.lead_id] = sub.answers.ticket_medio;
+      }
+    });
+    return map;
+  }, [formSubmissions]);
 
   // Build a map of deal_id -> DealTag[]
   const dealTagsMap = useMemo(() => {
@@ -394,7 +423,10 @@ export default function Pipeline() {
           const minRevenue = Number(minRevenueFilter);
           const matchesRevenue = dealRevenue >= minRevenue;
 
-          return matchesSearch && matchesRevenue;
+          const leadTicketMedio = ticketMedioMap[deal.lead_id || ""];
+          const matchesTicketMedio = ticketMedioFilter === "all" || leadTicketMedio === ticketMedioFilter;
+
+          return matchesSearch && matchesRevenue && matchesTicketMedio;
         })
         .sort((a, b) => compareDeals(a, b, isFirstStage)); // Aplica a lógica diferenciada por estágio
 
@@ -404,7 +436,7 @@ export default function Pipeline() {
         totalValue: filteredAndSortedDeals.reduce((acc, curr) => acc + Number(curr.value), 0),
       };
     });
-  }, [stages, deals, searchTerm, minRevenueFilter]);
+  }, [stages, deals, searchTerm, minRevenueFilter, ticketMedioFilter, ticketMedioMap]);
 
   const selectedPipeline = pipelines.find((p) => p.id === selectedPipelineId);
 
@@ -522,6 +554,25 @@ export default function Pipeline() {
                 <SelectItem value="50000000">
                   Acima de <span className="font-bold">R$ 50 Milhões</span>
                 </SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={ticketMedioFilter} onValueChange={setTicketMedioFilter}>
+              <SelectTrigger className="w-full md:w-[240px] bg-card text-foreground border-input">
+                <div className="flex items-center gap-2 text-sm">
+                  <Hash className="h-4 w-4 text-muted-foreground" />
+                  <span>{ticketMedioFilter === "all" ? "Ticket Médio: Todos" : "Ticket Médio"}</span>
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">
+                  <span className="font-medium">Todos os Tickets</span>
+                </SelectItem>
+                <SelectItem value="&lt;100k">Até R$ 100 mil</SelectItem>
+                <SelectItem value="100k-500k">R$ 100k - R$ 500k</SelectItem>
+                <SelectItem value="500k-1M">R$ 500k - R$ 1M</SelectItem>
+                <SelectItem value="1M-5M">R$ 1M - R$ 5M</SelectItem>
+                <SelectItem value="+5M">Acima de R$ 5M</SelectItem>
               </SelectContent>
             </Select>
           </div>
