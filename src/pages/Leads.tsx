@@ -140,6 +140,8 @@ export default function Leads() {
       "email", "e_mail", "mail",
       "telefone", "whatsapp", "phone", "celular", "fone",
       "empresa", "company", "nome_empresa", "company_name", "razao_social", "razaosocial",
+      "instagram", "insta", "ig", "instagram_handle",
+      "investment_commitment", "investmentcommitment", "compromisso_investimento", "comprometimento_investimento",
     ]);
     const isBlacklisted = (k: string) => BLACKLIST.has(k.toLowerCase().replace(/[\s-]/g, "_"));
     const fields: Record<string, Set<string>> = {};
