@@ -135,11 +135,19 @@ export default function Leads() {
 
   const answersFieldsForProduct = (() => {
     if (!submissionsData) return null;
+    const BLACKLIST = new Set([
+      "nome", "name", "nome_completo", "fullname", "full_name",
+      "email", "e_mail", "mail",
+      "telefone", "whatsapp", "phone", "celular", "fone",
+      "empresa", "company", "nome_empresa", "company_name", "razao_social", "razaosocial",
+    ]);
+    const isBlacklisted = (k: string) => BLACKLIST.has(k.toLowerCase().replace(/[\s-]/g, "_"));
     const fields: Record<string, Set<string>> = {};
     for (const s of submissionsData) {
       if (!s.answers) continue;
       if (productFilter !== "all" && s.product_id !== productFilter) continue;
       for (const [k, v] of Object.entries(s.answers)) {
+        if (isBlacklisted(k)) continue;
         if (!fields[k]) fields[k] = new Set();
         if (Array.isArray(v)) v.forEach((x) => x !== null && x !== undefined && String(x).trim() !== "" && fields[k].add(String(x)));
         else if (v !== null && v !== undefined && String(v).trim() !== "") fields[k].add(String(v));
@@ -449,7 +457,7 @@ export default function Leads() {
                   </Button>
                 )}
               </div>
-              <ScrollArea className="max-h-[420px]">
+              <ScrollArea className="h-[420px]">
                 <div className="p-3 space-y-4">
                   {Object.entries(answersFieldsForProduct)
                     .sort(([a], [b]) => a.localeCompare(b))
