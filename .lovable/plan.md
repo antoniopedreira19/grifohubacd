@@ -1,34 +1,30 @@
+## Objetivo
+Adicionar na página `/leads` filtros baseados nas respostas do histórico de formulários e permitir exportar XLSX incluindo essas respostas.
 
+## Como vai funcionar
 
-## Plano: Importação de Leads e Vendas da Planilha do Webinar
+### 1. Filtros por respostas
+Como cada produto tem campos diferentes (ex.: Mentoria 360 tem `faturamento`, `estado`, `cargo`, `ticket_medio`, `obras_simultaneas`, etc; GBC tem `revenue`, `niche`, `role`…), os filtros por resposta só fazem sentido quando há um produto selecionado.
 
-### Resumo
+Comportamento:
+- Quando o filtro "Produto" estiver em **Todos**: nenhum filtro de resposta aparece (igual hoje).
+- Quando um **produto específico** for selecionado: aparece um botão **"Filtros de respostas"** ao lado dos filtros existentes. Ao clicar, abre um popover com um seletor para cada campo daquele produto (ex.: Faturamento, Estado, Cargo, Ticket médio…). Cada campo lista os valores únicos encontrados nas submissões daquele produto, com multi-seleção.
+- Um lead aparece se tiver pelo menos uma `form_submission` daquele produto que satisfaça TODOS os filtros marcados (AND entre campos, OR entre valores do mesmo campo).
+- Badge mostrando quantos filtros estão ativos + botão "Limpar".
 
-A planilha contém 70 linhas com email, telefone e produto principal. Vou criar um script Python que lê a planilha e insere os dados diretamente no banco via `psql`.
+### 2. Exportação XLSX enriquecida
+Substituir o botão `XLSX` atual para exportar:
+- Colunas fixas: Nome, Email, Telefone, Estado (DDD), LTV, Status, Origem, Cadastro.
+- Colunas dinâmicas: uma coluna por campo de resposta encontrado nas submissões dos leads exportados (ex.: `Mentoria 360 — faturamento`, `Mentoria 360 — estado`, `GBC — revenue`…). Se um lead tem múltiplas submissões do mesmo produto, usa a mais recente.
+- Quando há produto selecionado no filtro, exporta apenas as colunas daquele produto (mais limpo). Quando "Todos", exporta todos os campos de todos os produtos com prefixo do nome do produto.
+- Arrays (ex.: `setores_atuacao`) são serializados como `valor1; valor2`.
 
-### Mapeamento de Produtos (já existentes no banco)
+## Detalhes técnicos
+- Buscar `form_submissions` (com `product_id` e `answers`) no mesmo `useQuery` ou em query separada com cache.
+- Construir o mapa `valores únicos por campo por produto` em memória (client-side) — datasets atuais são pequenos (<1k subs).
+- Filtragem: estender o `.filter()` existente em `Leads.tsx` para cruzar com as submissões do lead.
+- Exportação: estender `handleExportXLSX` para fazer o `flatten` dos answers conforme regra acima usando `xlsx` (já está no projeto).
+- Sem mudanças de schema/RLS.
 
-| Produto na Planilha | Produto no Banco | ID | Preço |
-|---|---|---|---|
-| Masterclass - O Novo Padrão da Construção | MASTERCLASS: O NOVO PADRÃO DA CONSTRUÇÃO | `aa5db57f-57f2-40d1-ba53-cc216f16db13` | R$ 97 |
-| ... (VIP) | ... (VIP) | `417d4734-2dbf-4bdd-8c20-7e8ecc1bd18f` | R$ 297 |
-| ... (DIAMOND) | ... (DIAMOND) | `85668aab-150b-44be-a8bb-440718e35226` | R$ 2.997 |
-
-### O que o script fará
-
-1. **Ler a planilha** com pandas
-2. **Para cada linha**, mapear o "Produto principal" ao produto correto do banco
-3. **Upsert do Lead** na tabela `leads` (by email) com status "Cliente", origin "Lastlink"
-4. **Inserir Sale** na tabela `sales` com o produto, valor e origin `lastlink_auto`
-5. Gerar um relatório de quantos leads/vendas foram criados
-
-### Notas importantes
-- Emails duplicados na planilha (ex: `lucas@construtoravaug.com.br` aparece 2x com produtos diferentes) serão tratados como vendas separadas do mesmo lead
-- O preço usado será o do produto cadastrado no banco (97, 297, 2997), não o valor da coluna "Nome da oferta" que às vezes mostra "2900 (Combo)"
-- O trigger `update_lead_stats` já existente recalculará o LTV automaticamente após inserir as sales
-
-### Execução
-- Script Python com `psql` para inserções diretas
-- Sem necessidade de migração (estrutura já existe)
-- Sem necessidade de alterações no código React
-
+## Pergunta
+Confirma esse comportamento, ou prefere algo diferente em algum ponto (ex.: filtros aparecendo sempre, mesmo sem produto selecionado)?

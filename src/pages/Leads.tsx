@@ -45,6 +45,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { NewLeadDialog } from "@/components/leads/NewLeadDialog";
 import { LeadDetailSheet } from "@/components/leads/LeadDetailSheet";
 
@@ -79,6 +82,7 @@ export default function Leads() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [answersFilters, setAnswersFilters] = useState<Record<string, string[]>>({});
 
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Lead | "created_at";
@@ -109,6 +113,63 @@ export default function Leads() {
       return data;
     },
   });
+
+  const { data: submissionsData } = useQuery({
+    queryKey: ["form-submissions-all"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("form_submissions")
+        .select("lead_id, product_id, answers, submitted_at")
+        .order("submitted_at", { ascending: false });
+      if (error) throw error;
+      return data as Array<{ lead_id: string | null; product_id: string | null; answers: Record<string, any>; submitted_at: string | null }>;
+    },
+  });
+
+  const flattenValue = (v: any): string => {
+    if (v === null || v === undefined) return "";
+    if (Array.isArray(v)) return v.map((x) => String(x)).join("; ");
+    if (typeof v === "object") return JSON.stringify(v);
+    return String(v);
+  };
+
+  const answersFieldsForProduct = (() => {
+    if (productFilter === "all" || !submissionsData) return null;
+    const fields: Record<string, Set<string>> = {};
+    for (const s of submissionsData) {
+      if (s.product_id !== productFilter || !s.answers) continue;
+      for (const [k, v] of Object.entries(s.answers)) {
+        if (!fields[k]) fields[k] = new Set();
+        if (Array.isArray(v)) v.forEach((x) => x !== null && x !== undefined && String(x).trim() !== "" && fields[k].add(String(x)));
+        else if (v !== null && v !== undefined && String(v).trim() !== "") fields[k].add(String(v));
+      }
+    }
+    return fields;
+  })();
+
+  const submissionsByLead = (() => {
+    const map = new Map<string, any[]>();
+    if (!submissionsData) return map;
+    for (const s of submissionsData) {
+      if (!s.lead_id) continue;
+      if (!map.has(s.lead_id)) map.set(s.lead_id, []);
+      map.get(s.lead_id)!.push(s);
+    }
+    return map;
+  })();
+
+  const activeAnswerFiltersCount = Object.values(answersFilters).filter((arr) => arr && arr.length > 0).length;
+
+  const toggleAnswerValue = (field: string, value: string) => {
+    setAnswersFilters((prev) => {
+      const cur = prev[field] || [];
+      const next = cur.includes(value) ? cur.filter((v) => v !== value) : [...cur, value];
+      const updated = { ...prev, [field]: next };
+      if (next.length === 0) delete updated[field];
+      return updated;
+    });
+    setCurrentPage(1);
+  };
 
   const deleteLead = useMutation({
     mutationFn: async (id: string) => {
@@ -159,7 +220,21 @@ export default function Leads() {
         const leadState = getRegionByPhone(lead.phone)?.state;
         const matchesRegion = regionFilter === "all" || leadState === regionFilter;
 
-        return matchesSearch && matchesProduct && matchesRegion;
+        let matchesAnswers = true;
+        if (productFilter !== "all" && activeAnswerFiltersCount > 0) {
+          const subs = (submissionsByLead.get(lead.id) || []).filter((s: any) => s.product_id === productFilter);
+          matchesAnswers = subs.some((sub: any) => {
+            return Object.entries(answersFilters).every(([field, selected]) => {
+              if (!selected || selected.length === 0) return true;
+              const val = sub.answers?.[field];
+              if (val === undefined || val === null) return false;
+              if (Array.isArray(val)) return val.some((x) => selected.includes(String(x)));
+              return selected.includes(String(val));
+            });
+          });
+        }
+
+        return matchesSearch && matchesProduct && matchesRegion && matchesAnswers;
       })
       .sort((a, b) => {
         const aValue = a[sortConfig.key];
@@ -234,15 +309,54 @@ export default function Leads() {
       return;
     }
 
+    const productNameById = new Map<string, string>();
+    productsData?.forEach((p: any) => productNameById.set(p.id, p.name));
+
+    const includedProductIds: string[] =
+      productFilter !== "all"
+        ? [productFilter]
+        : Array.from(new Set((submissionsData || []).map((s) => s.product_id).filter(Boolean) as string[]));
+
+    const exportLeadIds = new Set(filteredAndSortedLeads.map((l) => l.id));
+    const fieldsByProduct = new Map<string, string[]>();
+    for (const pid of includedProductIds) {
+      const set = new Set<string>();
+      (submissionsData || []).forEach((s) => {
+        if (s.product_id !== pid) return;
+        if (!s.lead_id || !exportLeadIds.has(s.lead_id)) return;
+        Object.keys(s.answers || {}).forEach((k) => set.add(k));
+      });
+      if (set.size > 0) fieldsByProduct.set(pid, Array.from(set));
+    }
+
+    // submissionsData is already ordered desc by submitted_at
+    const latestSubByLeadProduct = new Map<string, Record<string, any>>();
+    (submissionsData || []).forEach((s) => {
+      if (!s.lead_id || !s.product_id) return;
+      const key = `${s.lead_id}::${s.product_id}`;
+      if (!latestSubByLeadProduct.has(key)) latestSubByLeadProduct.set(key, s.answers || {});
+    });
+
     const data = filteredAndSortedLeads.map((lead) => {
       const regionInfo = getRegionByPhone(lead.phone);
-      return {
+      const row: Record<string, any> = {
         Nome: lead.full_name || "",
         Email: lead.email || "",
         Telefone: lead.phone || "",
         Estado: regionInfo?.state || "-",
         LTV: lead.ltv || 0,
+        Status: lead.status || "",
+        Origem: lead.origin || "",
+        Cadastro: lead.created_at ? format(new Date(lead.created_at), "dd/MM/yyyy", { locale: ptBR }) : "",
       };
+      for (const [pid, fields] of fieldsByProduct.entries()) {
+        const answers = latestSubByLeadProduct.get(`${lead.id}::${pid}`) || {};
+        const prefix = productFilter !== "all" ? "" : `${productNameById.get(pid) || "Produto"} — `;
+        for (const f of fields) {
+          row[`${prefix}${f}`] = flattenValue(answers[f]);
+        }
+      }
+      return row;
     });
 
     const worksheet = XLSX.utils.json_to_sheet(data);
@@ -291,6 +405,7 @@ export default function Leads() {
             value={productFilter}
             onValueChange={(value) => {
               setProductFilter(value);
+              setAnswersFilters({});
               setCurrentPage(1);
             }}
           >
@@ -310,6 +425,56 @@ export default function Leads() {
             </SelectContent>
           </Select>
         </div>
+
+        {productFilter !== "all" && answersFieldsForProduct && Object.keys(answersFieldsForProduct).length > 0 && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="whitespace-nowrap">
+                <Filter className="h-4 w-4 mr-2" />
+                Filtros de respostas
+                {activeAnswerFiltersCount > 0 && (
+                  <Badge variant="secondary" className="ml-2 h-5 px-1.5">{activeAnswerFiltersCount}</Badge>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[340px] p-0" align="start">
+              <div className="flex items-center justify-between p-3 border-b">
+                <span className="text-sm font-semibold">Filtrar por respostas</span>
+                {activeAnswerFiltersCount > 0 && (
+                  <Button variant="ghost" size="sm" className="h-7" onClick={() => { setAnswersFilters({}); setCurrentPage(1); }}>
+                    Limpar
+                  </Button>
+                )}
+              </div>
+              <ScrollArea className="max-h-[420px]">
+                <div className="p-3 space-y-4">
+                  {Object.entries(answersFieldsForProduct)
+                    .sort(([a], [b]) => a.localeCompare(b))
+                    .map(([field, valuesSet]) => {
+                      const values = Array.from(valuesSet).sort((a, b) => a.localeCompare(b, "pt-BR"));
+                      const selected = answersFilters[field] || [];
+                      return (
+                        <div key={field} className="space-y-2">
+                          <div className="text-xs font-semibold uppercase text-muted-foreground">{field}</div>
+                          <div className="space-y-1.5">
+                            {values.map((v) => (
+                              <label key={v} className="flex items-center gap-2 text-sm cursor-pointer hover:bg-muted/50 px-1 py-0.5 rounded">
+                                <Checkbox
+                                  checked={selected.includes(v)}
+                                  onCheckedChange={() => toggleAnswerValue(field, v)}
+                                />
+                                <span className="flex-1">{v}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </ScrollArea>
+            </PopoverContent>
+          </Popover>
+        )}
 
         <div className="w-full md:w-[160px]">
           <Select
