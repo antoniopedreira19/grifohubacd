@@ -309,15 +309,54 @@ export default function Leads() {
       return;
     }
 
+    const productNameById = new Map<string, string>();
+    productsData?.forEach((p: any) => productNameById.set(p.id, p.name));
+
+    const includedProductIds: string[] =
+      productFilter !== "all"
+        ? [productFilter]
+        : Array.from(new Set((submissionsData || []).map((s) => s.product_id).filter(Boolean) as string[]));
+
+    const exportLeadIds = new Set(filteredAndSortedLeads.map((l) => l.id));
+    const fieldsByProduct = new Map<string, string[]>();
+    for (const pid of includedProductIds) {
+      const set = new Set<string>();
+      (submissionsData || []).forEach((s) => {
+        if (s.product_id !== pid) return;
+        if (!s.lead_id || !exportLeadIds.has(s.lead_id)) return;
+        Object.keys(s.answers || {}).forEach((k) => set.add(k));
+      });
+      if (set.size > 0) fieldsByProduct.set(pid, Array.from(set));
+    }
+
+    // submissionsData is already ordered desc by submitted_at
+    const latestSubByLeadProduct = new Map<string, Record<string, any>>();
+    (submissionsData || []).forEach((s) => {
+      if (!s.lead_id || !s.product_id) return;
+      const key = `${s.lead_id}::${s.product_id}`;
+      if (!latestSubByLeadProduct.has(key)) latestSubByLeadProduct.set(key, s.answers || {});
+    });
+
     const data = filteredAndSortedLeads.map((lead) => {
       const regionInfo = getRegionByPhone(lead.phone);
-      return {
+      const row: Record<string, any> = {
         Nome: lead.full_name || "",
         Email: lead.email || "",
         Telefone: lead.phone || "",
         Estado: regionInfo?.state || "-",
         LTV: lead.ltv || 0,
+        Status: lead.status || "",
+        Origem: lead.origin || "",
+        Cadastro: lead.created_at ? format(new Date(lead.created_at), "dd/MM/yyyy", { locale: ptBR }) : "",
       };
+      for (const [pid, fields] of fieldsByProduct.entries()) {
+        const answers = latestSubByLeadProduct.get(`${lead.id}::${pid}`) || {};
+        const prefix = productFilter !== "all" ? "" : `${productNameById.get(pid) || "Produto"} — `;
+        for (const f of fields) {
+          row[`${prefix}${f}`] = flattenValue(answers[f]);
+        }
+      }
+      return row;
     });
 
     const worksheet = XLSX.utils.json_to_sheet(data);
