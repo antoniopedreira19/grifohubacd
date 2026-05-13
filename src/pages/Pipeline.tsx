@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
-import { Plus, Search, GitBranch, AlertCircle, MoreHorizontal, Trash2, DollarSign } from "lucide-react";
+import { Plus, Search, GitBranch, AlertCircle, MoreHorizontal, Trash2, DollarSign, Hash } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
