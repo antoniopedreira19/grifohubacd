@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
-import { Plus, Search, GitBranch, AlertCircle, MoreHorizontal, Trash2, DollarSign, Hash, MapPin } from "lucide-react";
+import { Plus, Search, GitBranch, AlertCircle, MoreHorizontal, Trash2, DollarSign, Hash, MapPin, Globe } from "lucide-react";
+import { getRegionByPhone } from "@/lib/ddd-regions";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -87,6 +88,7 @@ export default function Pipeline() {
   const [minRevenueFilter, setMinRevenueFilter] = useState<string>("-1");
   const [ticketMedioFilter, setTicketMedioFilter] = useState<string>("all");
   const [locationFilter, setLocationFilter] = useState<string>("all");
+  const [regionFilter, setRegionFilter] = useState<string>("all");
 
   // Estados dos Modais
   const [meetingDialog, setMeetingDialog] = useState<{
@@ -444,7 +446,10 @@ export default function Pipeline() {
           const leadLocation = locationMap[deal.lead_id || ""];
           const matchesLocation = locationFilter === "all" || leadLocation === locationFilter;
 
-          return matchesSearch && matchesRevenue && matchesTicketMedio && matchesLocation;
+          const phoneRegion = getRegionByPhone(deal.lead?.phone ?? null)?.region ?? "Desconhecido";
+          const matchesRegion = regionFilter === "all" || phoneRegion === regionFilter;
+
+          return matchesSearch && matchesRevenue && matchesTicketMedio && matchesLocation && matchesRegion;
         })
         .sort((a, b) => compareDeals(a, b, isFirstStage)); // Aplica a lógica diferenciada por estágio
 
@@ -454,7 +459,7 @@ export default function Pipeline() {
         totalValue: filteredAndSortedDeals.reduce((acc, curr) => acc + Number(curr.value), 0),
       };
     });
-  }, [stages, deals, searchTerm, minRevenueFilter, ticketMedioFilter, ticketMedioMap, locationFilter, locationMap]);
+  }, [stages, deals, searchTerm, minRevenueFilter, ticketMedioFilter, ticketMedioMap, locationFilter, locationMap, regionFilter]);
 
   const selectedPipeline = pipelines.find((p) => p.id === selectedPipelineId);
 
