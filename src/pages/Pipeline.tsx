@@ -620,6 +620,29 @@ export default function Pipeline() {
                 <SelectItem value="Nacional">Nacional</SelectItem>
               </SelectContent>
             </Select>
+
+            <Select value={regionFilter} onValueChange={setRegionFilter}>
+              <SelectTrigger className="w-full md:w-[220px] bg-card text-foreground border-input">
+                <div className="flex items-center gap-2 text-sm">
+                  <Globe className="h-4 w-4 text-muted-foreground" />
+                  <span className="whitespace-nowrap">
+                    {regionFilter === "all" ? "Região (DDD): Todas" : `Região: ${regionFilter}`}
+                  </span>
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">
+                  <span className="font-medium">Todas as Regiões</span>
+                </SelectItem>
+                <SelectItem value="Sudeste">Sudeste</SelectItem>
+                <SelectItem value="Sul">Sul</SelectItem>
+                <SelectItem value="Nordeste">Nordeste</SelectItem>
+                <SelectItem value="Norte">Norte</SelectItem>
+                <SelectItem value="Centro-Oeste">Centro-Oeste</SelectItem>
+                <SelectItem value="Internacional">Internacional</SelectItem>
+                <SelectItem value="Desconhecido">Desconhecido</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <DragDropContext onDragEnd={handleDragEnd}>
